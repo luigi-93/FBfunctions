@@ -25,7 +25,7 @@ build/**/*.ts
 
 # Sensitive files (Firebase credentials)
 # Make sure to exclude any sensitive files containing keys or private data
-/share-responsibly-firebase-adminsdk-zk5sf-f3fd70318f.json
+src/auth/share-responsibly-firebase-adminsdk-zk5sf-f3fd70318f.json 
 
 # Editor and build files
 .source
