@@ -1,0 +1,48 @@
+{
+    "entryFile": "src/app.ts",
+    "noImplicitAdditionalProperties": "throw-on-extras",
+    "controllerPathGlobs": [
+      "src/api/controllers/**/*.ts"],
+  
+    "spec": {
+      "outputDirectory": "build/api",
+      "specVersion": 3,
+      "securityDefinitions": {
+            "jwt": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+                "description": "Firebase JWT authentication"
+            },
+            "apiKey": {
+                "type": "apiKey",
+                "name": "x-api-key",
+                "in": "header",
+                "description": "API Key authentication"
+            }
+        }
+  },
+    "routes": {
+      "routesDir": "build",
+      "iocModule": "src/ioc/index",
+      "authenticationModule": "src/api/tsoaAuth.ts"
+  
+    },
+      "compilerOptions": {
+        "target": "ES2017",
+        "module": "CommonJS",
+        "outDir": "./dist",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "baseUrl": "./",
+        "paths": {
+          "*": ["node_modules/*"]
+        }
+      },
+      "include": ["src/**/*"],
+      "exclude": ["node_modules", "dist", "test/**/*"]
+    }
+    
+  
+  
