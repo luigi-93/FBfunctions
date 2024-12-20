@@ -1,5 +1,17 @@
 {
   "extends": "../tsconfig.base.json",
   "exclude": ["**/test.ts"],
-  "include": ["."]
+  "include": ["."],
+  "compilerOptions": {
+        "target": "ES2017",
+        "module": "CommonJS",
+        "outDir": "./dist",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "baseUrl": "./",
+        "paths": {
+          "*": ["node_modules/*"]
+        }
+      },
 }
