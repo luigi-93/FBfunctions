@@ -1,17 +1,14 @@
 {
   "extends": "../tsconfig.base.json",
-  "exclude": ["**/test.ts"],
-  "include": ["."],
+  "exclude": ["**/test.ts", "../dist"],
+  "include": [
+    "../src/**/*",
+    "../build/**/*"
+  ],
   "compilerOptions": {
-        "target": "ES2017",
-        "module": "CommonJS",
-        "outDir": "./dist",
-        "strict": true,
-        "esModuleInterop": true,
-        "skipLibCheck": true,
-        "baseUrl": "./",
-        "paths": {
-          "*": ["node_modules/*"]
-        }
+        "rootDir": "..",
+        "baseUrl": "..",
+        "outDir": "../dist",
+        "paths": {"*": ["../node_modules/*", "build/*"]} 
       },
 }

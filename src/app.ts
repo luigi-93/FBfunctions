@@ -1,12 +1,12 @@
 import express from 'express';
 import { iocContainer, loadProviderModule } from './ioc';
 import dotenv from 'dotenv';
-import { CustomLogger } from './utility/loggerType';
 import { Server } from './server/server';
 import { ApiApp } from './routes';
 import { ApikeyManager } from './services/apiKeyManager';
 import { configureFirebase, createFirebaseConfig } from './config/firebaseConfig';
 import { ServerInitializer } from './server/serverInitializer';
+import { CustomLogger } from './utility/loggerType';
 
 
 //Load environment varibles 
@@ -18,6 +18,8 @@ loadProviderModule();
 async function main() {
     const app: express.Express = express();
     const logger = iocContainer.get(CustomLogger)
+
+    
 
     logger.info('strarting app...');
 

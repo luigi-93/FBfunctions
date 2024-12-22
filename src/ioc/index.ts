@@ -4,7 +4,7 @@ import {
     inject, 
     injectable } from "inversify";
 import { Controller } from "tsoa";
-import { IoCSetup } from "./iocConfig";
+import { ContainerAdapter, IoCSetup } from "./iocConfig";
 import { ApiApp } from "../routes";
 import { buildProviderModule } from "inversify-binding-decorators";
 import { ModelManager } from "../validation/validationModel";
@@ -12,15 +12,15 @@ import { ModelManager } from "../validation/validationModel";
 
 
 
-const iocContainer = new Container();
+const container = new Container();
 
 decorate(injectable(), Controller);
 
 function setupIoC() {
     try {
-        IoCSetup(iocContainer)
-        iocContainer.bind(ApiApp).toSelf();
-        iocContainer.bind(ModelManager).toSelf();
+        IoCSetup(container)
+        container.bind(ApiApp).toSelf();
+        container.bind(ModelManager).toSelf();
     } catch (error) {
         console.error("Error setting up IoC container:", error)
     }
@@ -30,8 +30,8 @@ function setupIoC() {
 export function loadProviderModule() {
     setupIoC();
 
-    iocContainer.load(buildProviderModule());
+    container.load(buildProviderModule());
 }
 
 
-export {iocContainer, inject}
+export const iocContainer = new ContainerAdapter(container);

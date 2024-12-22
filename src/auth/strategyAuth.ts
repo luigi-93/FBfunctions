@@ -13,9 +13,10 @@ import express from 'express';
 import { AuthenticatedUser } from './userAuth';
 import * as admin from 'firebase-admin';
 import { ApikeyManager } from '../services/apiKeyManager';
+import { IocContainer } from 'tsoa';
 
 export class AuthStrategyFactory {
-    constructor(private container: Container) {}
+    constructor(private container: IocContainer) {}
 
     getStrategy(name: StrategyName): IAuthStrategy {
         if(!name) {

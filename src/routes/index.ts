@@ -1,6 +1,6 @@
 import { injectable } from "inversify";
 import { ServerConfig } from "../config/servConfig";
-import { RegisterRoutes } from "../../build/api/routes"
+import { RegisterRoutes } from "../../build/api/routes";
 import express, 
         { Response } 
         from 'express';

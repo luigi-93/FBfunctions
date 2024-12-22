@@ -23,7 +23,7 @@
         }
   },
     "routes": {
-      "routesDir": "build",
+      "routesDir": "build/api",
       "iocModule": "src/ioc/index",
       "authenticationModule": "src/api/tsoaAuth.ts"
   
