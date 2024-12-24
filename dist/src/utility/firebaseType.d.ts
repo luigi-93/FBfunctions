@@ -43,6 +43,11 @@ export declare enum SecurityScopes {
     User = "usr",
     SuperAdmin = "supr_admn"
 }
+export declare const registry: {
+    FirebaseAdmin: symbol;
+    FirebaseJwtAuthStrategy: symbol;
+    ApiKeyAuthStrategy: symbol;
+};
 export interface CustomClaims {
     acl?: SecurityScopes[];
     [key: string]: any;

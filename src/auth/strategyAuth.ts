@@ -14,9 +14,10 @@ import { AuthenticatedUser } from './userAuth';
 import * as admin from 'firebase-admin';
 import { ApikeyManager } from '../services/apiKeyManager';
 import { IocContainer } from 'tsoa';
+import { ContainerAdapter } from '../ioc/iocConfig';
 
 export class AuthStrategyFactory {
-    constructor(private container: IocContainer) {}
+    constructor(private container: ContainerAdapter) {}
 
     getStrategy(name: StrategyName): IAuthStrategy {
         if(!name) {
@@ -38,7 +39,20 @@ export class AuthStrategyFactory {
             );
         }
 
-        return this.container.get<IAuthStrategy>(strategySymbol)
+        try {
+            return this.container.get<IAuthStrategy>(strategySymbol);
+        } catch (error) {
+            throw CustomError.create(
+                'Failed to initialize authentication strategy',
+                500,
+                {
+                    strategy: name,
+                    error: error instanceof Error
+                    ? error.message
+                    : 'Unknown error'
+                }
+            )
+        }
     }
 }
 

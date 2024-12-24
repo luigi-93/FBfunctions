@@ -1,13 +1,13 @@
-import { Container } from 'inversify';
 import { IAuthStrategy, StrategyName } from '../utility/firebaseType';
 import { CustomLogger } from '../utility/loggerType';
 import express from 'express';
 import { AuthenticatedUser } from './userAuth';
 import * as admin from 'firebase-admin';
 import { ApikeyManager } from '../services/apiKeyManager';
+import { ContainerAdapter } from '../ioc/iocConfig';
 export declare class AuthStrategyFactory {
     private container;
-    constructor(container: Container);
+    constructor(container: ContainerAdapter);
     getStrategy(name: StrategyName): IAuthStrategy;
 }
 export declare abstract class BaseAthStrategy implements IAuthStrategy {

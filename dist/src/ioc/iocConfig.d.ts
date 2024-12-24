@@ -7,13 +7,9 @@ export declare class ContainerAdapter implements IocContainer {
     constructor(container: Container);
     get<T>(controller: {
         prototype: T;
-    }): T | Promise<T>;
+    } | symbol): T;
+    getBySymbol<T>(symbol: symbol): T;
 }
-export declare const registry: {
-    FirebaseAdmin: symbol;
-    FirebaseJwtAuthStrategy: symbol;
-    ApiKeyAuthStrategy: symbol;
-};
 export declare function IoCSetup(iocContainer: Container, options?: {
     apiKeys?: {
         name: string;
@@ -23,5 +19,4 @@ export declare function IoCSetup(iocContainer: Container, options?: {
     needAdminPrivileges?: boolean;
 }): {
     apiKeyManager: ApikeyManager;
-    registeredApikey: void[] | undefined;
 };

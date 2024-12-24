@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.StrategyRegistry = exports.SecurityScopes = exports.SecurityNameTypes = exports.FirebaseAuthProvider = void 0;
-const iocConfig_1 = require("../ioc/iocConfig");
+exports.StrategyRegistry = exports.registry = exports.SecurityScopes = exports.SecurityNameTypes = exports.FirebaseAuthProvider = void 0;
 var FirebaseAuthProvider;
 (function (FirebaseAuthProvider) {
     FirebaseAuthProvider["EMAIL_PASSWORD"] = "email_pass";
@@ -21,8 +20,13 @@ var SecurityScopes;
     SecurityScopes["User"] = "usr";
     SecurityScopes["SuperAdmin"] = "supr_admn";
 })(SecurityScopes || (exports.SecurityScopes = SecurityScopes = {}));
+exports.registry = {
+    FirebaseAdmin: Symbol.for('FirebaseAdmin'),
+    FirebaseJwtAuthStrategy: Symbol.for('FirebaseJwtAuthStrategy'),
+    ApiKeyAuthStrategy: Symbol.for('ApiKeyAuthStrategy'),
+};
 exports.StrategyRegistry = {
-    FirebaseJwtAuthStrategy: iocConfig_1.registry.FirebaseJwtAuthStrategy,
-    ApiKeyStrategy: iocConfig_1.registry.ApiKeyAuthStrategy,
+    FirebaseJwtAuthStrategy: exports.registry.FirebaseJwtAuthStrategy,
+    ApiKeyStrategy: exports.registry.ApiKeyAuthStrategy,
 };
 //# sourceMappingURL=firebaseType.js.map

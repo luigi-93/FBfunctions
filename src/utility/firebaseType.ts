@@ -1,6 +1,5 @@
 import express from 'express';
 import { AuthenticatedUser } from '../auth/userAuth';
-import { registry } from "../ioc/iocConfig";
 import { config } from 'winston';
 
 
@@ -72,6 +71,13 @@ export enum SecurityScopes {
     SuperAdmin = "supr_admn"
 }
 
+export const registry = {
+    FirebaseAdmin: Symbol.for('FirebaseAdmin'),
+    FirebaseJwtAuthStrategy: Symbol.for('FirebaseJwtAuthStrategy'),
+    ApiKeyAuthStrategy: Symbol.for('ApiKeyAuthStrategy'),
+
+}
+
 
 export interface CustomClaims {
     acl?: SecurityScopes[];
@@ -97,6 +103,7 @@ export interface DecodedFirebaseToken {
     };
     [key: string]: any;
 }
+
 export const StrategyRegistry = {
     FirebaseJwtAuthStrategy: registry.FirebaseJwtAuthStrategy,
     ApiKeyStrategy: registry.ApiKeyAuthStrategy,

@@ -20,7 +20,17 @@ class AuthStrategyFactory {
                 availableStrategies: Object.keys(firebaseType_1.StrategyRegistry),
             });
         }
-        return this.container.get(strategySymbol);
+        try {
+            return this.container.get(strategySymbol);
+        }
+        catch (error) {
+            throw errorType_1.CustomError.create('Failed to initialize authentication strategy', 500, {
+                strategy: name,
+                error: error instanceof Error
+                    ? error.message
+                    : 'Unknown error'
+            });
+        }
     }
 }
 exports.AuthStrategyFactory = AuthStrategyFactory;

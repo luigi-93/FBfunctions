@@ -5,7 +5,7 @@ import { CustomLogger } from '../utility/loggerType';
 import { ApiKeyAuthstrategy, 
         FirebaseJwtAuthStrategy } 
         from '../auth/strategyAuth';
-import { SecurityScopes } from '../utility/firebaseType';
+import { registry, SecurityScopes } from '../utility/firebaseType';
 import { ApikeyManager } from '../services/apiKeyManager';
 import { IocContainer } from '@tsoa/runtime';
 import { CustomError } from '../utility/errorType';
@@ -17,6 +17,10 @@ export class ContainerAdapter implements IocContainer {
         get<T>(controller: { prototype: T } | symbol ): T  {
             try {
                 if(typeof controller === 'symbol') {
+                    const dummyController = {
+                        prototype: {} as T,
+                        constructor: controller
+                    }
                     return this.container.get<T>(controller)
                 }
                 return this.container.get<T>(controller.constructor as any);
@@ -28,19 +32,15 @@ export class ContainerAdapter implements IocContainer {
                         controller: controller.toString(),
                         originalError: error instanceof Error ? error.message : 'Unknown error'
                     }
-                )
+                );
             }
-    }
+        }
+
+        getBySymbol<T>(symbol: symbol): T {
+            return this.container.get<T>(symbol);
+        }
 
 }
-
-export const registry = {
-    FirebaseAdmin: Symbol.for('FirebaseAdmin'),
-    FirebaseJwtAuthStrategy: Symbol.for('FirebaseJwtAuthStrategy'),
-    ApiKeyAuthStrategy: Symbol.for('ApiKeyAuthStrategy'),
-
-}
-
 
 
 export function IoCSetup(
@@ -57,6 +57,9 @@ export function IoCSetup(
          needAdminPrivileges: false
     }
     ) {
+
+    //Destructure options at the beginning
+    const { apiKeys = [], needAdminPrivileges = false } = options
 
     iocContainer
         .bind(CustomLogger)
