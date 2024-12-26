@@ -1,19 +1,20 @@
 {
   "compilerOptions": {
-      "esModuleInterop": true,
-      "resolveJsonModule": true,
-      "emitDecoratorMetadata": true,
-      "experimentalDecorators": true,
-      "declaration": true,
-      "lib": ["es2021"],
-      "module": "CommonJS",
-      "noImplicitReturns": true,
-      "outDir": "dist",
-      "removeComments": true,
-      "sourceMap": true,
-      "strict": true,
-      "target": "es2021",
-      "typeRoots": ["./types", "./node_modules/@types"]
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "declaration": true,
+    "lib": ["es2021"],
+    "module": "CommonJS",
+    "noImplicitReturns": true,
+    "outDir": "dist",
+    "removeComments": true,
+    "sourceMap": true,
+    "strict": true,
+    "target": "es2021",
+    "typeRoots": ["./types", "./node_modules/@types"],
+    "rootDir": "."
   }
 }
 
