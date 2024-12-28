@@ -15,7 +15,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.app = void 0;
+exports.app = exports.App = void 0;
 exports.createApp = createApp;
 const express_1 = __importDefault(require("express"));
 const ioc_1 = require("./ioc");
@@ -52,16 +52,17 @@ let App = class App {
         return app;
     }
 };
-App = __decorate([
+exports.App = App;
+exports.App = App = __decorate([
     (0, inversify_1.injectable)(),
     __param(0, (0, inversify_1.inject)(loggerType_1.CustomLogger)),
     __param(1, (0, inversify_1.inject)(server_1.Server)),
     __param(2, (0, inversify_1.inject)(routes_1.ApiApp)),
-    __param(3, (0, inversify_1.inject)(apiKeyManager_1.ApikeyManager)),
+    __param(3, (0, inversify_1.inject)(apiKeyManager_1.ApiKeyManager)),
     __metadata("design:paramtypes", [loggerType_1.CustomLogger,
         server_1.Server,
         routes_1.ApiApp,
-        apiKeyManager_1.ApikeyManager])
+        apiKeyManager_1.ApiKeyManager])
 ], App);
 (0, ioc_1.loadProviderModule)();
 async function createApp() {

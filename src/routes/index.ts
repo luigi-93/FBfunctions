@@ -13,8 +13,6 @@ export class ApiApp extends ServerConfig {
         RegisterRoutes(this.app);
     }
 
-
-
     protected setErrorHandler() {
         this.app.use(
             (
@@ -27,8 +25,5 @@ export class ApiApp extends ServerConfig {
                 setErrorHandler(err, res, this.setGeneralErrorHandler.bind(this));
             }
         );
-        
     }
-
-
 }

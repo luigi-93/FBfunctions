@@ -4,13 +4,15 @@ import { iocContainer } from '../ioc';
 import express from 'express';
 import { CustomError } from '../utility/errorType';
 
-const authStrategyFactory = new AuthStrategyFactory(iocContainer)
+
 
 export async function expressAuthentication(
     request:express.Request,
     securityName: string,
     scopes: string[] = []): Promise<AuthenticatedUser> {
         try {
+
+            const authStrategyFactory = iocContainer.get(AuthStrategyFactory)
             //Map security names from tsoa.json to your strategy registry
             if (!['jwt', 'apikey'].includes(securityName.toLowerCase())) {
                 throw CustomError.create(

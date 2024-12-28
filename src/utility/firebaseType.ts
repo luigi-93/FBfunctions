@@ -1,8 +1,5 @@
 import express from 'express';
 import { AuthenticatedUser } from '../auth/userAuth';
-import { config } from 'winston';
-
-
 
 export enum FirebaseAuthProvider {
     EMAIL_PASSWORD = 'email_pass',
@@ -24,16 +21,12 @@ export interface IAuthStrategy {
 export interface AuthConfig {
     provider: FirebaseAuthProvider;
     options?: {
-        //example: user and pw for google
         scope?: string [];
         customParameters?: Record<string, string>;
-        // Provider specific options can be added here
         [key: string]: any;
     };
 } 
 
-
-//let's define an interface for type safefty, maybe a class validation could be usefull
 export interface FirebaseConfig {
     apiKey: string;
     authDomain: string;
@@ -42,7 +35,6 @@ export interface FirebaseConfig {
     messagingSenderId?: string;
     appId: string;
     measurementId?: string;
-
 }
 
 export interface ServiceConfig{
@@ -50,20 +42,13 @@ export interface ServiceConfig{
     serviceAccountPath?: string;
 }
 
-/**
- * it allow objtes with dinamic property names
- * permit any type of value for those properties
- * provide type savety
- */
 export interface IJson {
     [key: string]: any;
 }
 
-
 export enum SecurityNameTypes {
     JWT = 'jwt',
 }
-
 
 export enum SecurityScopes {
     Admin = "admn",
@@ -75,9 +60,7 @@ export const registry = {
     FirebaseAdmin: Symbol.for('FirebaseAdmin'),
     FirebaseJwtAuthStrategy: Symbol.for('FirebaseJwtAuthStrategy'),
     ApiKeyAuthStrategy: Symbol.for('ApiKeyAuthStrategy'),
-
 }
-
 
 export interface CustomClaims {
     acl?: SecurityScopes[];
@@ -125,7 +108,6 @@ export interface ApiKeyMetadata {
     status?: 'ACTIVE' | 'REVOKED' | 'EXPIRED';
 }
 
-//Storage Adapter Interface
 export interface ApiKeyStorageAdapter {
     save(apiKey: string, metadata: ApiKeyMetadata): Promise<void>;
     get(apiKey: string): Promise<ApiKeyMetadata | undefined>;
@@ -133,8 +115,6 @@ export interface ApiKeyStorageAdapter {
     listAll(): Promise<Record<string, ApiKeyMetadata>>;
     prune(): Promise<void>;
 }
-
-
 
 export interface ValidationResult {
     isValid: boolean;

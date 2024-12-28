@@ -15,6 +15,12 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
@@ -22,16 +28,24 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ApiKeyManagerInstance = exports.ApikeyManager = void 0;
+exports.ApiKeyManager = void 0;
+const inversify_1 = require("inversify");
 const errorType_1 = require("../utility/errorType");
 const firebaseType_1 = require("../utility/firebaseType");
 const loggerType_1 = require("../utility/loggerType");
 const validationApiKey_1 = require("../validation/validationApiKey");
 const apiKeyStorage_1 = require("./apiKeyStorage");
 const crypto = __importStar(require("crypto"));
-class ApikeyManager {
-    constructor(storageAdapter, logger) {
+let ApiKeyManager = class ApiKeyManager {
+    constructor(logger, storageAdapter) {
+        this.logger = logger;
         this.keyRotationInterval = 30 * 24 * 60 * 60;
         this.storageAdapter = storageAdapter || new apiKeyStorage_1.InMemoryStorageAdapter();
         this.validator = new validationApiKey_1.ApiKeyValidator(logger);
@@ -59,7 +73,7 @@ class ApikeyManager {
             return { apiKey, metadata };
         }
         catch (error) {
-            this.logger.error('Failed to create API key', 'ApikeyManager', {
+            this.logger.error('Failed to create API key', 'ApiKeyManager', {
                 error,
                 name
             });
@@ -70,13 +84,13 @@ class ApikeyManager {
         try {
             const metadata = await this.storageAdapter.get(apiKey);
             if (!metadata) {
-                this.logger.warn('API key not found', 'ApiKeymanager', {
+                this.logger.warn('API key not found', 'ApiKeyManager', {
                     keyId: apiKey.slice(0, 4) + '****'
                 });
                 return undefined;
             }
             if (!this.validator.validate(metadata)) {
-                this.logger.warn('API key validation failed', 'ApikeyManagere', {
+                this.logger.warn('API key validation failed', 'ApiKeyManagere', {
                     keyId: apiKey.slice(0, 4) + '****'
                 });
                 return undefined;
@@ -84,7 +98,7 @@ class ApikeyManager {
             return metadata;
         }
         catch (error) {
-            this.logger.error('Error retrieving API key', 'ApikeyManager', {
+            this.logger.error('Error retrieving API key', 'ApiKeyManager', {
                 error,
                 keyId: apiKey.slice(0, 4) + '****'
             });
@@ -136,17 +150,17 @@ class ApikeyManager {
             return { newApiKey, metadata: newMetadata };
         }
         catch (error) {
-            this.logger.error('Key rotation failed', 'ApikeyManager', { error });
+            this.logger.error('Key rotation failed', 'ApiKeyManager', { error });
             throw errorType_1.CustomError.create('Key rotation failed', 500, { error });
         }
     }
     async pruneExpiredKeys() {
         try {
             await this.storageAdapter.prune();
-            this.logger.info('Expired API keys pruned', 'ApikeyManager');
+            this.logger.info('Expired API keys pruned', 'ApiKeyManager');
         }
         catch (error) {
-            this.logger.error('Failed to prune expired kets', 'ApiKEyManager', { error });
+            this.logger.error('Failed to prune expired kets', 'ApiKeyManager', { error });
             throw errorType_1.CustomError.create('Failed to prune expired keys', 500, { error });
         }
     }
@@ -176,7 +190,11 @@ class ApikeyManager {
     generateSecureApiKey() {
         return `sk_${crypto.randomBytes(16).toString('hex')}`;
     }
-}
-exports.ApikeyManager = ApikeyManager;
-exports.ApiKeyManagerInstance = new ApikeyManager();
+};
+exports.ApiKeyManager = ApiKeyManager;
+exports.ApiKeyManager = ApiKeyManager = __decorate([
+    (0, inversify_1.injectable)(),
+    __param(0, (0, inversify_1.inject)(loggerType_1.CustomLogger)),
+    __metadata("design:paramtypes", [loggerType_1.CustomLogger, Object])
+], ApiKeyManager);
 //# sourceMappingURL=apiKeyManager.js.map

@@ -67,19 +67,3 @@ export function initializeFirebaseAdmin(needAdminPrivileges: boolean): typeof ad
   return admin;
 }
 
-
-
-
-
-    
-
-
-
-    
-  
-
-
-
-
-
-

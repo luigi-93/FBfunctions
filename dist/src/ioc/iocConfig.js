@@ -8,6 +8,10 @@ const strategyAuth_1 = require("../auth/strategyAuth");
 const firebaseType_1 = require("../utility/firebaseType");
 const apiKeyManager_1 = require("../services/apiKeyManager");
 const errorType_1 = require("../utility/errorType");
+const validationModel_1 = require("../validation/validationModel");
+const server_1 = require("../server/server");
+const routes_1 = require("../routes");
+const app_1 = require("../app");
 class ContainerAdapter {
     constructor(container) {
         this.container = container;
@@ -50,16 +54,25 @@ function IoCSetup(iocContainer, options = {
         .toDynamicValue(() => (0, setAuth_1.initializeFirebaseAdmin)(needAdminPrivileges))
         .inSingletonScope();
     iocContainer
+        .bind(apiKeyManager_1.ApiKeyManager)
+        .toSelf()
+        .inSingletonScope();
+    const apiKeyManager = iocContainer.get(apiKeyManager_1.ApiKeyManager);
+    iocContainer
         .bind(firebaseType_1.registry.FirebaseJwtAuthStrategy)
         .toDynamicValue(() => {
         const firebaseAdmin = iocContainer.get(firebaseType_1.registry.FirebaseAdmin);
         return new strategyAuth_1.FirebaseJwtAuthStrategy(firebaseAdmin, logger);
     })
         .inSingletonScope();
-    const apiKeyManager = new apiKeyManager_1.ApikeyManager();
     iocContainer
         .bind(firebaseType_1.registry.ApiKeyAuthStrategy)
-        .toDynamicValue(() => new strategyAuth_1.ApiKeyAuthstrategy(apiKeyManager, logger));
+        .toDynamicValue(() => new strategyAuth_1.ApiKeyAuthstrategy(apiKeyManager, logger))
+        .inSingletonScope();
+    iocContainer.bind(validationModel_1.ModelManager).toSelf().inSingletonScope();
+    iocContainer.bind(server_1.Server).toSelf().inSingletonScope();
+    iocContainer.bind(routes_1.ApiApp).toSelf().inSingletonScope();
+    iocContainer.bind(app_1.App).toSelf().inSingletonScope();
     return {
         apiKeyManager
     };

@@ -5,7 +5,7 @@ import {
 import { CustomLogger } from "../utility/loggerType";
 import { plainToClass } from 'class-transformer';
 import { CustomError } from "../utility/errorType";
-import { injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 
 
 export declare type ClassType<T> = {
@@ -14,7 +14,9 @@ export declare type ClassType<T> = {
 
 @injectable()
 export class ModelManager {
-    constructor(private logger: CustomLogger) {}
+    constructor(
+        @inject(CustomLogger) private logger: CustomLogger
+    ) {}
 
     private _validateOptions(customOptions?: Partial<ValidatorOptions>): ValidatorOptions {
         return {

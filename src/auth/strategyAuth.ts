@@ -1,4 +1,4 @@
-import { Container } from 'inversify';
+import { Container, inject, injectable } from 'inversify';
 import { 
     ApiKeyMetadata, 
     DecodedFirebaseToken, 
@@ -12,12 +12,17 @@ import { CustomLogger } from '../utility/loggerType';
 import express from 'express';
 import { AuthenticatedUser } from './userAuth';
 import * as admin from 'firebase-admin';
-import { ApikeyManager } from '../services/apiKeyManager';
+import { ApiKeyManager } from '../services/apiKeyManager';
 import { IocContainer } from 'tsoa';
 import { ContainerAdapter } from '../ioc/iocConfig';
+import { iocContainer } from '../ioc';
 
+@injectable()
 export class AuthStrategyFactory {
-    constructor(private container: ContainerAdapter) {}
+    constructor(
+        @inject(CustomLogger) private logger: CustomLogger,
+        
+    ) {}
 
     getStrategy(name: StrategyName): IAuthStrategy {
         if(!name) {
@@ -40,7 +45,7 @@ export class AuthStrategyFactory {
         }
 
         try {
-            return this.container.get<IAuthStrategy>(strategySymbol);
+            return iocContainer.get<IAuthStrategy>(strategySymbol);
         } catch (error) {
             throw CustomError.create(
                 'Failed to initialize authentication strategy',
@@ -249,11 +254,11 @@ export class FirebaseJwtAuthStrategy extends BaseAthStrategy {
 
 
 export class ApiKeyAuthstrategy extends BaseAthStrategy {
-    private apiKeyManager: ApikeyManager;
+    private apiKeyManager: ApiKeyManager;
     
 
     constructor(
-        apiKeyManager: ApikeyManager,
+        apiKeyManager: ApiKeyManager,
         logger?: CustomLogger
     ) {
         super(logger);

@@ -1,7 +1,7 @@
 import { ApiApp } from "../routes";
 import { CustomLogger } from "../utility/loggerType";
 import { Server } from "./server";
-import { ApikeyManager } from '../services/apiKeyManager';
+import { ApiKeyManager } from '../services/apiKeyManager';
 import express from 'express';
 import { SecurityScopes } from "../utility/firebaseType";
 import { injectable } from "inversify";
@@ -11,13 +11,13 @@ export class ServerInitializer {
     private logger: CustomLogger;
     private server: Server;
     private apiApp: ApiApp;
-    private apiKeyManager: ApikeyManager;
+    private apiKeyManager: ApiKeyManager;
 
     constructor(
         logger: CustomLogger,
         server: Server,
         apiApp: ApiApp,
-        apiKeyManager: ApikeyManager
+        apiKeyManager: ApiKeyManager
     ) {
         this.logger = logger;
         this.server = server;

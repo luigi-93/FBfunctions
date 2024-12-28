@@ -6,9 +6,13 @@ import { ApiKeyAuthstrategy,
         FirebaseJwtAuthStrategy } 
         from '../auth/strategyAuth';
 import { registry, SecurityScopes } from '../utility/firebaseType';
-import { ApikeyManager } from '../services/apiKeyManager';
+import { ApiKeyManager } from '../services/apiKeyManager';
 import { IocContainer } from '@tsoa/runtime';
 import { CustomError } from '../utility/errorType';
+import { ModelManager } from '../validation/validationModel';
+import { Server } from '../server/server';
+import { ApiApp } from '../routes';
+import { App } from '../app';
 
 
 export class ContainerAdapter implements IocContainer {
@@ -59,7 +63,7 @@ export function IoCSetup(
     ) {
 
     //Destructure options at the beginning
-    const { apiKeys = [], needAdminPrivileges = false } = options
+    const { apiKeys = [], needAdminPrivileges = false } = options;
 
     iocContainer
         .bind(CustomLogger)
@@ -74,7 +78,13 @@ export function IoCSetup(
     .toDynamicValue(() => initializeFirebaseAdmin(needAdminPrivileges))
     .inSingletonScope();
 
+    iocContainer
+        .bind(ApiKeyManager)
+        .toSelf()
+        .inSingletonScope();
 
+    const apiKeyManager = iocContainer.get(ApiKeyManager);
+    
     // Bind Firebase JWT
     iocContainer
         .bind(registry.FirebaseJwtAuthStrategy)
@@ -85,20 +95,18 @@ export function IoCSetup(
         .inSingletonScope();
 
     // API key Management setup
-    const apiKeyManager = new ApikeyManager();
-
-    // Dynamic API key registration
-    // const registeredApikey = options.apiKeys?.map(keyConfig => {
-    //     apiKeyManager.create(keyConfig.name, {
-    //         scopes: keyConfig.scopes || [SecurityScopes.User],
-    //         expiresAt: keyConfig.expiresAt
-    //     });
-    // });
+    
 
     // Bind API Key Auth Strategy
     iocContainer
-    .bind(registry.ApiKeyAuthStrategy)
-    .toDynamicValue(() => new ApiKeyAuthstrategy(apiKeyManager, logger));
+        .bind(registry.ApiKeyAuthStrategy)
+        .toDynamicValue(() => new ApiKeyAuthstrategy(apiKeyManager, logger))
+        .inSingletonScope();
+
+    iocContainer.bind(ModelManager).toSelf().inSingletonScope();
+    iocContainer.bind(Server).toSelf().inSingletonScope();
+    iocContainer.bind(ApiApp).toSelf().inSingletonScope();
+    iocContainer.bind(App).toSelf().inSingletonScope();
 
     //an optional return with API registered if could be essential somewehre else
     return {

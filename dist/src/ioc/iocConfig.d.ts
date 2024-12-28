@@ -1,6 +1,6 @@
 import { Container } from 'inversify';
 import { SecurityScopes } from '../utility/firebaseType';
-import { ApikeyManager } from '../services/apiKeyManager';
+import { ApiKeyManager } from '../services/apiKeyManager';
 import { IocContainer } from '@tsoa/runtime';
 export declare class ContainerAdapter implements IocContainer {
     private container;
@@ -18,5 +18,5 @@ export declare function IoCSetup(iocContainer: Container, options?: {
     }[];
     needAdminPrivileges?: boolean;
 }): {
-    apiKeyManager: ApikeyManager;
+    apiKeyManager: ApiKeyManager;
 };

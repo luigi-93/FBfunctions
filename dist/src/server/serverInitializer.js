@@ -51,6 +51,6 @@ exports.ServerInitializer = ServerInitializer = __decorate([
     __metadata("design:paramtypes", [loggerType_1.CustomLogger,
         server_1.Server,
         routes_1.ApiApp,
-        apiKeyManager_1.ApikeyManager])
+        apiKeyManager_1.ApiKeyManager])
 ], ServerInitializer);
 //# sourceMappingURL=serverInitializer.js.map

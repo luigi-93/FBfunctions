@@ -3,11 +3,10 @@ import { CustomLogger } from '../utility/loggerType';
 import express from 'express';
 import { AuthenticatedUser } from './userAuth';
 import * as admin from 'firebase-admin';
-import { ApikeyManager } from '../services/apiKeyManager';
-import { ContainerAdapter } from '../ioc/iocConfig';
+import { ApiKeyManager } from '../services/apiKeyManager';
 export declare class AuthStrategyFactory {
-    private container;
-    constructor(container: ContainerAdapter);
+    private logger;
+    constructor(logger: CustomLogger);
     getStrategy(name: StrategyName): IAuthStrategy;
 }
 export declare abstract class BaseAthStrategy implements IAuthStrategy {
@@ -28,7 +27,7 @@ export declare class FirebaseJwtAuthStrategy extends BaseAthStrategy {
 }
 export declare class ApiKeyAuthstrategy extends BaseAthStrategy {
     private apiKeyManager;
-    constructor(apiKeyManager: ApikeyManager, logger?: CustomLogger);
+    constructor(apiKeyManager: ApiKeyManager, logger?: CustomLogger);
     authenticate(request: express.Request, securityName: string, scopes?: string[]): Promise<AuthenticatedUser>;
     private extractApiKey;
     private validateApiKey;

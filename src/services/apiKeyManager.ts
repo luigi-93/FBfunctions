@@ -1,3 +1,4 @@
+import { inject, injectable } from "inversify";
 import { CustomError } from "../utility/errorType";
 import { 
     ApiKeyMetadata, 
@@ -12,15 +13,16 @@ import { InMemoryStorageAdapter } from "./apiKeyStorage";
 import * as crypto from 'crypto';
 
 
-export class ApikeyManager {
+@injectable()
+export class ApiKeyManager {
     private storageAdapter: ApiKeyStorageAdapter;
     private validator: ApiKeyValidator;
-    private logger: CustomLogger;
     private keyRotationInterval = 30 * 24 * 60 * 60; // 30 days
 
     constructor(
+        @inject(CustomLogger) private logger: CustomLogger,
         storageAdapter?: ApiKeyStorageAdapter,
-        logger?: CustomLogger
+        
     ) {
         this.storageAdapter = storageAdapter || new InMemoryStorageAdapter();
         this.validator = new ApiKeyValidator(logger);
@@ -71,7 +73,7 @@ export class ApikeyManager {
         } catch (error) {
             this.logger.error(
                 'Failed to create API key',
-                'ApikeyManager',
+                'ApiKeyManager',
                 {
                     error,
                     name
@@ -96,7 +98,7 @@ export class ApikeyManager {
             if (!metadata) {
                 this.logger.warn(
                     'API key not found',
-                    'ApiKeymanager',
+                    'ApiKeyManager',
                     {
                         keyId: apiKey.slice(0, 4) + '****'
                     });
@@ -106,7 +108,7 @@ export class ApikeyManager {
             if (!this.validator.validate(metadata)) {
                 this.logger.warn(
                     'API key validation failed',
-                    'ApikeyManagere',
+                    'ApiKeyManagere',
                     {
                         keyId: apiKey.slice(0, 4) + '****'
                     });
@@ -118,7 +120,7 @@ export class ApikeyManager {
         } catch (error) {
             this.logger.error(
                 'Error retrieving API key',
-                'ApikeyManager',
+                'ApiKeyManager',
                 {
                     error,
                     keyId: apiKey.slice(0,4) + '****'
@@ -220,7 +222,7 @@ export class ApikeyManager {
         } catch (error) {
             this.logger.error(
                 'Key rotation failed',
-                'ApikeyManager',
+                'ApiKeyManager',
                 { error }
             )
             throw CustomError.create(
@@ -238,12 +240,12 @@ export class ApikeyManager {
             await this.storageAdapter.prune();
             this.logger.info(
                 'Expired API keys pruned',
-                'ApikeyManager'
+                'ApiKeyManager'
             );
         } catch (error) {
             this.logger.error(
                 'Failed to prune expired kets',
-                'ApiKEyManager',
+                'ApiKeyManager',
                 { error });
             throw CustomError.create(
                 'Failed to prune expired keys',
@@ -297,4 +299,3 @@ export class ApikeyManager {
     }
 }
 
-export const ApiKeyManagerInstance = new ApikeyManager()

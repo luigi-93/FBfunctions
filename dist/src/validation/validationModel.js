@@ -8,6 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ModelManager = void 0;
 const class_validator_1 = require("class-validator");
@@ -85,6 +88,7 @@ let ModelManager = class ModelManager {
 exports.ModelManager = ModelManager;
 exports.ModelManager = ModelManager = __decorate([
     (0, inversify_1.injectable)(),
+    __param(0, (0, inversify_1.inject)(loggerType_1.CustomLogger)),
     __metadata("design:paramtypes", [loggerType_1.CustomLogger])
 ], ModelManager);
 //# sourceMappingURL=validationModel.js.map

@@ -1,11 +1,11 @@
 import { ApiKeyMetadata, ApiKeyStorageAdapter, CustomClaims, DecodedFirebaseToken, FirebaseAuthProvider, SecurityScopes } from "../utility/firebaseType";
 import { CustomLogger } from '../utility/loggerType';
-export declare class ApikeyManager {
+export declare class ApiKeyManager {
+    private logger;
     private storageAdapter;
     private validator;
-    private logger;
     private keyRotationInterval;
-    constructor(storageAdapter?: ApiKeyStorageAdapter, logger?: CustomLogger);
+    constructor(logger: CustomLogger, storageAdapter?: ApiKeyStorageAdapter);
     create(name: string, options?: {
         scopes?: SecurityScopes[];
         provider?: FirebaseAuthProvider;
@@ -28,4 +28,3 @@ export declare class ApikeyManager {
     generateMockToken(apiKey: string, metadata: ApiKeyMetadata): DecodedFirebaseToken;
     private generateSecureApiKey;
 }
-export declare const ApiKeyManagerInstance: ApikeyManager;

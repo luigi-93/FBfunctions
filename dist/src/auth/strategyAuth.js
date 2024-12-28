@@ -1,13 +1,27 @@
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ApiKeyAuthstrategy = exports.FirebaseJwtAuthStrategy = exports.BaseAthStrategy = exports.AuthStrategyFactory = void 0;
+const inversify_1 = require("inversify");
 const firebaseType_1 = require("../utility/firebaseType");
 const errorType_1 = require("../utility/errorType");
 const loggerType_1 = require("../utility/loggerType");
 const userAuth_1 = require("./userAuth");
-class AuthStrategyFactory {
-    constructor(container) {
-        this.container = container;
+const ioc_1 = require("../ioc");
+let AuthStrategyFactory = class AuthStrategyFactory {
+    constructor(logger) {
+        this.logger = logger;
     }
     getStrategy(name) {
         if (!name) {
@@ -21,7 +35,7 @@ class AuthStrategyFactory {
             });
         }
         try {
-            return this.container.get(strategySymbol);
+            return ioc_1.iocContainer.get(strategySymbol);
         }
         catch (error) {
             throw errorType_1.CustomError.create('Failed to initialize authentication strategy', 500, {
@@ -32,8 +46,13 @@ class AuthStrategyFactory {
             });
         }
     }
-}
+};
 exports.AuthStrategyFactory = AuthStrategyFactory;
+exports.AuthStrategyFactory = AuthStrategyFactory = __decorate([
+    (0, inversify_1.injectable)(),
+    __param(0, (0, inversify_1.inject)(loggerType_1.CustomLogger)),
+    __metadata("design:paramtypes", [loggerType_1.CustomLogger])
+], AuthStrategyFactory);
 class BaseAthStrategy {
     constructor(logger) {
         this.logger = logger || new loggerType_1.CustomLogger();
