@@ -1,4 +1,4 @@
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
 import { CustomLogger } from "../utility/loggerType";
 import express, 
     { Express, 
@@ -15,11 +15,13 @@ import { CustomError } from "../utility/errorType";
 @injectable()
 export abstract class ServerConfig {
     protected readonly app: Express;
-    protected logger: CustomLogger;
+   
 
-    constructor(logger?: CustomLogger) {
+    constructor(
+        @inject(CustomLogger) protected readonly logger: CustomLogger
+    ) {
         this.app = express();
-        this.logger = logger || new CustomLogger();    
+        this.initialized();  
     }
 
     private initialized(): void {

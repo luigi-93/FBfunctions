@@ -1,14 +1,21 @@
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
 import { ServerConfig } from "../config/servConfig";
 import { RegisterRoutes } from "../../build/api/routes";
 import express, 
         { Response } 
         from 'express';
 import { setErrorHandler } from "../error/apiHandlerError";
+import { CustomLogger } from "../utility/loggerType";
 
 
 @injectable()
 export class ApiApp extends ServerConfig {
+
+    constructor(
+        @inject(CustomLogger) logger: CustomLogger
+    ) {
+        super(logger);
+    }
     protected setRoutes() {
         RegisterRoutes(this.app);
     }

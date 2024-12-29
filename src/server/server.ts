@@ -10,8 +10,7 @@ export class Server {
     private httpServer?: http.Server | null = null;
 
     constructor(
-        @inject(CustomLogger)
-        private logger: CustomLogger
+        @inject(CustomLogger) private logger: CustomLogger
     ) {}
 
 

@@ -20,6 +20,7 @@ exports.iocContainer = new iocConfig_1.ContainerAdapter(exports.container);
 function setupIoC() {
     try {
         exports.container.bind(loggerType_1.CustomLogger).toSelf().inSingletonScope();
+        const logger = exports.container.get(loggerType_1.CustomLogger);
         (0, iocConfig_1.IoCSetup)(exports.container, {
             apiKeys: [],
             needAdminPrivileges: false
@@ -32,6 +33,7 @@ function setupIoC() {
         exports.container.bind(routes_1.ApiApp).toSelf();
         exports.container.bind(app_1.App).toSelf();
         exports.container.load((0, inversify_binding_decorators_1.buildProviderModule)());
+        logger.info('IoC container setup completed');
     }
     catch (error) {
         console.error('Ioc setup error:', error);

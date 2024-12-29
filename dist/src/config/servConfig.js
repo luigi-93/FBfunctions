@@ -8,6 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -19,8 +22,9 @@ const express_1 = __importDefault(require("express"));
 const errorType_1 = require("../utility/errorType");
 let ServerConfig = class ServerConfig {
     constructor(logger) {
+        this.logger = logger;
         this.app = (0, express_1.default)();
-        this.logger = logger || new loggerType_1.CustomLogger();
+        this.initialized();
     }
     initialized() {
         this.setTrustProxy();
@@ -83,6 +87,7 @@ let ServerConfig = class ServerConfig {
 exports.ServerConfig = ServerConfig;
 exports.ServerConfig = ServerConfig = __decorate([
     (0, inversify_1.injectable)(),
+    __param(0, (0, inversify_1.inject)(loggerType_1.CustomLogger)),
     __metadata("design:paramtypes", [loggerType_1.CustomLogger])
 ], ServerConfig);
 //# sourceMappingURL=servConfig.js.map

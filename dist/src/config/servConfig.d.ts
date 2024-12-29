@@ -1,9 +1,9 @@
 import { CustomLogger } from "../utility/loggerType";
 import { Express, Response } from 'express';
 export declare abstract class ServerConfig {
+    protected readonly logger: CustomLogger;
     protected readonly app: Express;
-    protected logger: CustomLogger;
-    constructor(logger?: CustomLogger);
+    constructor(logger: CustomLogger);
     private initialized;
     build(): Express;
     protected abstract setRoutes(): void;
