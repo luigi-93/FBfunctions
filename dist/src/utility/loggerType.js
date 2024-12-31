@@ -40,7 +40,8 @@ const Sentry = __importStar(require("@sentry/node"));
 let CustomLogger = CustomLogger_1 = class CustomLogger {
     constructor(options = {}) {
         this.sentryInitialized = false;
-        const { logLevel, additionalTransports = [], sentryDsn, contextId } = options;
+        const { logLevel, additionalTransports = [], sentryDsn, contextId = 'default' } = options;
+        this.defaultContext = contextId;
         const environment = process.env.NODE_ENV || 'development';
         const defaultLogLevels = {
             development: 'debug',
@@ -48,63 +49,52 @@ let CustomLogger = CustomLogger_1 = class CustomLogger {
             test: 'info'
         };
         const effectiveLogLevel = logLevel || defaultLogLevels[environment] || 'info';
-        if (sentryDsn) {
-            this.initializeSentry(sentryDsn);
-        }
+        const customFormat = winston_1.format.printf(({ timestamp, level, message, context = this.defaultContext, ...meta }) => {
+            const contextString = context ? `[${context}]` : '';
+            const metaString = Object.keys(meta).length ? ` - ${JSON.stringify(meta)}` : '';
+            return `${timestamp} ${contextString} [${level.toUpperCase()}]: ${message} ${metaString}`;
+        });
         this.logger = winston_1.default.createLogger({
             level: effectiveLogLevel,
-            format: winston_1.format.combine(winston_1.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }), winston_1.format.printf(({ timestamp, level, message, ...meta }) => {
-                const contextString = context
-                    ? `[${context}]`
-                    : '';
-                const metaString = Object.keys(meta).length
-                    ? ` - ${JSON.stringify(meta)}`
-                    : '';
-                return `${timestamp} ${contextString} [${level.toUpperCase()}]: ${message} ${metaString}`;
-            })),
+            format: winston_1.format.combine(winston_1.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }), customFormat),
             transports: [
                 new winston_1.transports.Console({
-                    format: winston_1.format.combine(winston_1.format.colorize({ all: true }), winston_1.format.printf(({ timestamp, level, message, ...meta }) => {
-                        const contextString = context
-                            ? `[${context}]`
-                            : '';
-                        const metaString = Object.keys(meta).length
-                            ? ` - ${JSON.stringify(meta)}`
-                            : '';
-                        return `${timestamp} ${contextString} [${level.toUpperCase()}]: ${message}${metaString}`;
-                    }))
+                    format: winston_1.format.combine(winston_1.format.colorize({ all: true }), customFormat)
                 }),
                 ...additionalTransports
             ]
         });
+        if (sentryDsn) {
+            this.initializeSentry(sentryDsn);
+        }
     }
     initializeSentry(sentryDsn) {
-        if (!this.sentryInitialized) {
-            try {
-                Sentry.init({
-                    dsn: sentryDsn,
-                    environment: process.env.NODE_ENV || 'development',
-                    tracesSampleRate: this.getTracesSampleRate(),
-                    beforeSend: (event) => {
-                        if (event.user) {
-                            delete event.user.email;
-                            delete event.user.ip_address;
-                        }
-                        return event;
+        if (this.sentryInitialized)
+            return;
+        try {
+            Sentry.init({
+                dsn: sentryDsn,
+                environment: process.env.NODE_ENV || 'development',
+                tracesSampleRate: this.getTracesSampleRate(),
+                beforeSend: (event) => {
+                    if (event.user) {
+                        delete event.user.email;
+                        delete event.user.ip_address;
                     }
-                });
-                this.sentryInitialized = true;
-                this.logger.info('Sentry initialized successfully');
-            }
-            catch (initError) {
-                this.logger.error('Failed to initialize Sentry', 'Sentry-init', {
-                    error: initError
-                });
-            }
+                    return event;
+                }
+            });
+            this.sentryInitialized = true;
+            this.info('Sentry initialized successfully');
+        }
+        catch (error) {
+            this.error('Failed to initialize Sentry', 'Sentry-init', {
+                error
+            });
         }
     }
     getTracesSampleRate() {
-        const environment = process.env.NODE_ENV || 'development';
+        const environment = process.env.NODE_ENV;
         const sampleRates = {
             development: 1.0,
             production: 0.1,
@@ -112,52 +102,51 @@ let CustomLogger = CustomLogger_1 = class CustomLogger {
         };
         return sampleRates[environment] || 0.5;
     }
-    log(level, message, context, ...meta) {
+    log(level, message, context, metadata = {}) {
         this.logger.log({
             level,
             message,
-            context,
-            ...meta
+            context: context || this.defaultContext,
+            ...metadata
         });
     }
-    info(message, context, ...meta) {
-        this.logger.info({ message, context, ...meta });
+    info(message, context, metadata = {}) {
+        this.log('info', message, context, metadata);
     }
-    warn(message, context, ...meta) {
-        this.logger.warn({ message, context, ...meta });
+    warn(message, context, metadata = {}) {
+        this.log('warn', message, context, metadata);
     }
-    error(message, context, ...meta) {
-        const contextString = context || 'general';
-        this.logger.error({ message, context, ...meta });
+    error(message, context, metadata = {}) {
+        this.log('error', message, context, metadata);
         if (this.sentryInitialized) {
             try {
                 const error = new Error(message);
                 const sentryResult = Sentry.captureException(error, {
                     tags: {
-                        context,
+                        context: context || this.defaultContext,
                         environment: process.env.NODE_ENV
                     },
                     extra: {
-                        metadata: meta.length > 0 ? meta : undefined,
+                        metadata,
                         timestamp: new Date().toISOString()
                     }
                 });
                 if (sentryResult) {
-                    this.logger.debug('Error reported to Sentry', 'sentry-tracking', {
+                    this.debug('Error reported to Sentry', 'sentry-tracking', {
                         sentryEventId: sentryResult
                     });
                 }
             }
-            catch (captureError) {
-                this.logger.warn('Failed to capture error in Sentry', 'sentry-error', {
+            catch (error) {
+                this.warn('Failed to capture error in Sentry', 'sentry-error', {
                     originalError: message,
-                    captureError
+                    error
                 });
             }
         }
     }
-    debug(message, context, ...meta) {
-        this.logger.debug({ message, context, ...meta });
+    debug(message, context, metadata = {}) {
+        this.log('debug', message, context, metadata);
     }
     addTransport(transport) {
         this.logger.add(transport);
