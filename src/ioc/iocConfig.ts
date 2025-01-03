@@ -83,6 +83,14 @@ export function IoCSetup(
 
     const apiKeyManager = iocContainer.get(ApiKeyManager);
 
+    logger.debug(
+        'Successfully created ApiKeyManager instance',
+        'IoC-Config',
+        {
+            apiKeyManager
+        }
+    )
+
     // Auth strategies binding
     logger.debug('Binding Auth Strategies', 'IoC-Config');
     try {
