@@ -1,11 +1,12 @@
 import { ApiKeyMetadata, ApiKeyStorageAdapter, CustomClaims, DecodedFirebaseToken, FirebaseAuthProvider, SecurityScopes } from "../utility/firebaseType";
 import { CustomLogger } from '../utility/loggerType';
+import { ApiKeyValidator } from "../validation/validationApiKey";
 export declare class ApiKeyManager {
     private logger;
     private storageAdapter;
     private validator;
     private keyRotationInterval;
-    constructor(logger: CustomLogger, storageAdapter?: ApiKeyStorageAdapter);
+    constructor(logger: CustomLogger, storageAdapter: ApiKeyStorageAdapter, validator: ApiKeyValidator);
     create(name: string, options?: {
         scopes?: SecurityScopes[];
         provider?: FirebaseAuthProvider;

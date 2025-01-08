@@ -1,19 +1,11 @@
 import { Container, interfaces } from 'inversify';
-import * as admin from 'firebase-admin';
-import { initializeFirebaseAdmin } from '../auth/setAuth';
 import { CustomLogger } from '../utility/loggerType';
-import { ApiKeyAuthstrategy, 
-        FirebaseJwtAuthStrategy } 
-        from '../auth/strategyAuth';
-import { registry, SecurityScopes } from '../utility/firebaseType';
+import { SecurityScopes, SYMBOLS } from '../utility/firebaseType';
 import { ApiKeyManager } from '../services/apiKeyManager';
 import { IocContainer } from '@tsoa/runtime';
 import { CustomError } from '../utility/errorType';
-import { ModelManager } from '../validation/validationModel';
-import { Server } from '../server/server';
-import { ApiApp } from '../routes';
-import { App } from '../app';
-import { log } from 'console';
+import { ApiKeyValidator } from '../validation/validationApiKey';
+import { InMemoryStorageAdapter } from '../services/apiKeyStorage';
 
 
 export class ContainerAdapter implements IocContainer {
@@ -41,10 +33,9 @@ export class ContainerAdapter implements IocContainer {
     }
 }
 
-interface IoCSetupeResult {
+interface IoCSetupResult {
     apiKeyManager: ApiKeyManager;
 }
-
 
 export function IoCSetup(
     iocContainer: Container, 
@@ -60,73 +51,61 @@ export function IoCSetup(
          needAdminPrivileges: false
     },
     logger: CustomLogger
-): IoCSetupeResult {
-    const { apiKeys = [], needAdminPrivileges = false } = options;
+): IoCSetupResult {
+    const { 
+        apiKeys = [],
+        needAdminPrivileges = false 
+    } = options;
     
-    logger.debug('Starting IoCSetup', 'IoC-Config');
+    logger.debug('Binding ApiKeyManager dependencies', 'IoC-Config');
 
-    //Bind Firebase Admin
-    logger.debug('Binding Firebase Admin', 'IoC-Config', {
-        needAdminPrivileges
-    });
-    iocContainer
-        .bind(registry.FirebaseAdmin)
-        .toDynamicValue(() => initializeFirebaseAdmin(needAdminPrivileges))
-        .inSingletonScope();
+    if (!iocContainer.isBound(SYMBOLS.API_KEY_VALIDATOR)){
+        iocContainer.bind(SYMBOLS.API_KEY_VALIDATOR).to(ApiKeyValidator).inSingletonScope();
+    }
 
-    // Bind ApiKeyManager
-    logger.debug('Binding ApiKeyManager', 'IoC-Config');
-    iocContainer
-        .bind(ApiKeyManager)
-        .toSelf()
-        .inSingletonScope();
-
-    const apiKeyManager = iocContainer.get(ApiKeyManager);
-
-    logger.debug(
-        'Successfully created ApiKeyManager instance',
-        'IoC-Config',
-        {
-            apiKeyManager
-        }
-    )
-
-    // Auth strategies binding
-    logger.debug('Binding Auth Strategies', 'IoC-Config');
+    if (!iocContainer.isBound(SYMBOLS.STORAGE_ADAPTER)){
+        iocContainer.bind(SYMBOLS.STORAGE_ADAPTER).to(InMemoryStorageAdapter).inSingletonScope();
+    }
+   
     try {
-        iocContainer
-            .bind(registry.FirebaseJwtAuthStrategy)
-            .toDynamicValue(() => {
-                const firebaseAdmin = iocContainer.get<typeof admin>(registry.FirebaseAdmin);
-                return new FirebaseJwtAuthStrategy(firebaseAdmin, logger);
-            })
-            .inSingletonScope();
+        logger.debug('Binding ApiKeyManager', 'IoC-Config');
 
+        if (!iocContainer.isBound(SYMBOLS.API_KEY_MANAGER)) {
         iocContainer
-            .bind(registry.ApiKeyAuthStrategy)
-            .toDynamicValue(() => new ApiKeyAuthstrategy(apiKeyManager, logger))
+            .bind(SYMBOLS.API_KEY_MANAGER)
+            .to(ApiKeyManager)
             .inSingletonScope();
-    } catch (error) {
-        logger.error(
-            'Failed to bind Auth Strategies',
+        }
+
+        const manager = iocContainer.get<ApiKeyManager>(SYMBOLS.API_KEY_MANAGER);
+    
+        logger.debug(
+            'Successfully created ApiKeyManager instance',
             'IoC-Config',
             {
-                error: error instanceof Error 
-                    ? error.message
-                    : 'Unknown error',
+                apiKeyManager: manager
             }
         );
-        throw error;
+        return { apiKeyManager: manager };
+
+    } catch (error) {  
+        logger.error(
+            'Failed to create ApiKeyManager',
+            'IoC-Config',
+            { errorDetails: error instanceof Error
+                ? {
+                    errorMessage: error.message,
+                    errorName: error.name
+                }
+                : 'Unknown error',                
+            }
+        );
+        throw CustomError.create(
+            'Failed to create ApiKeyManager',
+            500,
+            { error }
+        );
     }
+
     
-    // Bind core services
-    logger.debug('Binding core services', 'IoC-Config');
-    iocContainer.bind(ModelManager).toSelf().inSingletonScope();
-    iocContainer.bind(Server).toSelf().inSingletonScope();
-    iocContainer.bind(ApiApp).toSelf().inSingletonScope();
-    iocContainer.bind(App).toSelf().inSingletonScope();
-
-    logger.info('IoCSetup completed successfully', 'IoC-Config');
-
-    return { apiKeyManager };
 }

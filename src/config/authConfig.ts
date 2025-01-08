@@ -19,7 +19,9 @@ export class FirebaseConfigurationManager {
     private static instance: FirebaseConfigurationManager;
     private config: ServiceConfig | null = null;
 
-    private constructor() {}
+    private constructor(
+        //@inject(SYMBOLS.CUSTOM_LOGGER) private logger: CustomLogger
+    ) {}
 
     static getInstance(): FirebaseConfigurationManager {
         if(!this.instance) {
@@ -42,6 +44,11 @@ export class FirebaseConfigurationManager {
                 400,
                 { missingFields: validationResult.missingFields }
             )}
+
+        this.config = {
+            firebaseConfig,
+            serviceAccountPath
+        }
     }
 
     /**

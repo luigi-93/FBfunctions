@@ -32,11 +32,7 @@ export async function expressAuthentication(
             return await strategy.authenticate(request, securityName, scopes);
         } catch (error) {
 
-            if(error instanceof CustomError) {
-                throw error;
-            }
-
-            throw CustomError.create(
+                 throw CustomError.create(
                 'AUthentication failed',
                 401,
                 { 

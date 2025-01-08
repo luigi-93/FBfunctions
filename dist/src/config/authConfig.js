@@ -17,6 +17,10 @@ class FirebaseConfigurationManager {
         if (!validationResult.isValid) {
             throw errorType_1.CustomError.create(`Invalid Firebase configuration. Missing fields: ${validationResult.missingFields.join(', ')}`, 400, { missingFields: validationResult.missingFields });
         }
+        this.config = {
+            firebaseConfig,
+            serviceAccountPath
+        };
     }
     getConfig() {
         return this.config;

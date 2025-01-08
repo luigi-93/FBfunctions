@@ -9,7 +9,8 @@ export function initializeFirebaseAdmin(needAdminPrivileges: boolean): typeof ad
   const logger = new CustomLogger();
   const config = firebaseConfigManager.getConfig()
   
-  let firebaseConfig: string | FirebaseConfig | undefined = config?.firebaseConfig || process.env.FIREBASE_CONFIG;
+  let firebaseConfig: string | FirebaseConfig | undefined = 
+  config?.firebaseConfig || process.env.FIREBASE_CONFIG;
 
   if (needAdminPrivileges && !config?.serviceAccountPath) {
     logger.error(

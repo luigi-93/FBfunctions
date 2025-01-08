@@ -8,6 +8,7 @@ import { iocContainer, loadProviderModule } from './ioc';
     import { ServerInitializer } from './server/serverInitializer';
     import { CustomLogger } from './utility/loggerType';
     import { inject, injectable } from 'inversify';
+import { SYMBOLS } from './utility/firebaseType';
 
 
     //Load environment varibles 
@@ -17,10 +18,10 @@ import { iocContainer, loadProviderModule } from './ioc';
     @injectable()
     export class App {
         constructor(
-            @inject(CustomLogger) private readonly logger: CustomLogger,
-            @inject(Server) private readonly server: Server,
-            @inject(ApiApp) private readonly apiApp: ApiApp,
-            @inject(ApiKeyManager) private readonly apikeyManager: ApiKeyManager
+            @inject(SYMBOLS.CUSTOM_LOGGER) private readonly logger: CustomLogger,
+            @inject(SYMBOLS.SERVER) private readonly server: Server,
+            @inject(SYMBOLS.API_APP) private readonly apiApp: ApiApp,
+            @inject(SYMBOLS.API_KEY_MANAGER) private readonly apikeyManager: ApiKeyManager
         ) {}
 
         async initialize(): Promise<express.Express> {
@@ -70,7 +71,7 @@ import { iocContainer, loadProviderModule } from './ioc';
 
     // Export a function that creates and initializes the app
     export async function createApp(): Promise<express.Express> {
-        const application = iocContainer.get(App);
+        const application = iocContainer.get<App>(SYMBOLS.APP);
         return application.initialize();
     }
 

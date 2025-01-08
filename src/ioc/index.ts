@@ -5,18 +5,18 @@ import {
     named} from "inversify";
 import { Controller } from "tsoa";
 import { ContainerAdapter, IoCSetup } from "./iocConfig";
-import { ApiApp } from "../routes";
 import { buildProviderModule } from "inversify-binding-decorators";
-import { ModelManager } from "../validation/validationModel";
-import { Server } from "../server/server";
-import { ApiKeyManager } from "../services/apiKeyManager";
 import { CustomError } from "../utility/errorType";
-import { App } from "../app";
 import { CustomLogger } from '../utility/loggerType';
 import { AuthStrategyFactory } from "../auth/strategyAuth";
+import { Server } from "../server/server";
+import { ApiApp } from "../routes";
+import { App } from "../app";
+import { SYMBOLS } from "../utility/firebaseType";
+
 
 // Create container instance
-export const container = new Container();
+export const container = new Container({ defaultScope: 'Singleton' });
 // Create ContainerAdapter instance
 export const iocContainer = new ContainerAdapter(container);
 
@@ -29,12 +29,10 @@ function setupIoC() {
         const logger = new CustomLogger({
             logLevel: 'debug'
         });
-
-        if (!container.isBound(CustomLogger)) {
-            container.bind(CustomLogger).toConstantValue(logger);
+        if (!container.isBound(SYMBOLS.CUSTOM_LOGGER)) {
+            container.bind(SYMBOLS.CUSTOM_LOGGER).toConstantValue(logger);
         }
 
-        
         logger.debug('Starting IoC container setup', 'IoC-Setup');
 
         //bing Firebase-related dependencies with logging
@@ -44,58 +42,41 @@ function setupIoC() {
             needAdminPrivileges: false
         }, logger);
 
-        // Bind Auth-related dependencies
-        logger.debug('Binding AuthStrategyFactory', 'IoC-Setup');
-        if (!container.isBound(AuthStrategyFactory)) {
-        container.bind(AuthStrategyFactory).toSelf().inSingletonScope();;
-        }
-        // Bind core services
-        logger.debug('Binding core services', 'IoC-Setup', {
-            services: ['ModelManager', 'ApiKeyManager', 'Server']
-        });
-
-        if (!container.isBound(ModelManager)) {
-            container.bind(ModelManager).toSelf();
-        }
-        if (!container.isBound(ApiKeyManager)) {
-            container.bind(ApiKeyManager).toSelf();
-        }
-        if (!container.isBound(Server)) {
-            container.bind(Server).toSelf();
-        }
-       
-
-        // 6. Bind API and App components
-        logger.debug('Binding API and App components', 'IoC-Setup');
-        logger.debug('Binding API and App components', 'IoC-Setup');
-        if (!container.isBound(ApiApp)) {
-            container.bind(ApiApp).toSelf();
-        }
-        if (!container.isBound(App)) {
-            container.bind(App).toSelf();
+        const bindings = [
+            { symbol: SYMBOLS.AUTH_STRATEGY_FACTORY, constructor: AuthStrategyFactory},
+            { symbol: SYMBOLS.SERVER, constructor: Server},
+            { symbol: SYMBOLS.API_APP, constructor: ApiApp},
+            { symbol: SYMBOLS.APP, constructor: App}
+        ];
+        for (const binding of bindings) {
+            if (!container.isBound(binding.symbol)) {
+                logger.debug(`Binding ${binding.symbol.toString()}`, 'IoC-Setup');
+                container.bind(binding.symbol).to(binding.constructor).inSingletonScope();
+            }
         }
 
+        
         // 7. Load any additional providers
         logger.debug('Loading provider module', 'IoC-Setup');
         container.load(buildProviderModule());
 
         logger.info('IoC container setup completed successfully', 'IoC-Setup');
         
+
     } catch (error) {
-        const logger = container.isBound(CustomLogger)
-            ? container.get(CustomLogger)
-            : new CustomLogger({ logLevel: 'error' });
+        const logger = container.isBound(SYMBOLS.CUSTOM_LOGGER)
+            ? container.get<CustomLogger>(SYMBOLS.CUSTOM_LOGGER)
+            : new CustomLogger({ logLevel: 'debug' });
 
         logger.error(
             'Failed to setup IoC container',
             'IoC-Setup-Error',
             {
-                error: error instanceof Error
+                errorDetails: error instanceof Error
                 ? {
+                    name: error.name,
                     message: error.message, 
-                    stack: error.stack,
-                    name: error.name
-                }: error
+                }: 'Unknown error'
             }
         );
 

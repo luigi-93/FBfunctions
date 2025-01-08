@@ -27,6 +27,7 @@ const firebaseConfig_1 = require("./config/firebaseConfig");
 const serverInitializer_1 = require("./server/serverInitializer");
 const loggerType_1 = require("./utility/loggerType");
 const inversify_1 = require("inversify");
+const firebaseType_1 = require("./utility/firebaseType");
 dotenv_1.default.config();
 let App = class App {
     constructor(logger, server, apiApp, apikeyManager) {
@@ -55,10 +56,10 @@ let App = class App {
 exports.App = App;
 exports.App = App = __decorate([
     (0, inversify_1.injectable)(),
-    __param(0, (0, inversify_1.inject)(loggerType_1.CustomLogger)),
-    __param(1, (0, inversify_1.inject)(server_1.Server)),
-    __param(2, (0, inversify_1.inject)(routes_1.ApiApp)),
-    __param(3, (0, inversify_1.inject)(apiKeyManager_1.ApiKeyManager)),
+    __param(0, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)),
+    __param(1, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.SERVER)),
+    __param(2, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.API_APP)),
+    __param(3, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.API_KEY_MANAGER)),
     __metadata("design:paramtypes", [loggerType_1.CustomLogger,
         server_1.Server,
         routes_1.ApiApp,
@@ -66,7 +67,7 @@ exports.App = App = __decorate([
 ], App);
 (0, ioc_1.loadProviderModule)();
 async function createApp() {
-    const application = ioc_1.iocContainer.get(App);
+    const application = ioc_1.iocContainer.get(firebaseType_1.SYMBOLS.APP);
     return application.initialize();
 }
 exports.app = createApp();

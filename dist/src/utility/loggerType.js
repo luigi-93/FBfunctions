@@ -51,7 +51,8 @@ let CustomLogger = CustomLogger_1 = class CustomLogger {
         const effectiveLogLevel = logLevel || defaultLogLevels[environment] || 'info';
         const customFormat = winston_1.format.printf(({ timestamp, level, message, context = this.defaultContext, ...meta }) => {
             const contextString = context ? `[${context}]` : '';
-            const metaString = Object.keys(meta).length ? ` - ${JSON.stringify(meta)}` : '';
+            const sanitizedMeta = CustomLogger_1.sanitizeMetadata(meta);
+            const metaString = Object.keys(sanitizedMeta).length ? ` - ${JSON.stringify(sanitizedMeta)}` : '';
             return `${timestamp} ${contextString} [${level.toUpperCase()}]: ${message} ${metaString}`;
         });
         this.logger = winston_1.default.createLogger({
@@ -67,6 +68,22 @@ let CustomLogger = CustomLogger_1 = class CustomLogger {
         if (sentryDsn) {
             this.initializeSentry(sentryDsn);
         }
+    }
+    static sanitizeMetadata(meta) {
+        const seen = new WeakSet();
+        const sanitize = (obj) => {
+            if (typeof obj !== 'object' || obj === null)
+                return obj;
+            if (seen.has(obj))
+                return '[Circular]';
+            seen.add(obj);
+            const result = Array.isArray(obj) ? [] : {};
+            for (const key in obj) {
+                result[key] = sanitize(obj[key]);
+            }
+            return result;
+        };
+        return sanitize(meta);
     }
     initializeSentry(sentryDsn) {
         if (this.sentryInitialized)

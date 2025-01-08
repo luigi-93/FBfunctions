@@ -41,15 +41,13 @@ const errorType_1 = require("../utility/errorType");
 const firebaseType_1 = require("../utility/firebaseType");
 const loggerType_1 = require("../utility/loggerType");
 const validationApiKey_1 = require("../validation/validationApiKey");
-const apiKeyStorage_1 = require("./apiKeyStorage");
 const crypto = __importStar(require("crypto"));
 let ApiKeyManager = class ApiKeyManager {
-    constructor(logger, storageAdapter) {
+    constructor(logger, storageAdapter, validator) {
         this.logger = logger;
+        this.storageAdapter = storageAdapter;
+        this.validator = validator;
         this.keyRotationInterval = 30 * 24 * 60 * 60;
-        this.storageAdapter = storageAdapter || new apiKeyStorage_1.InMemoryStorageAdapter();
-        this.validator = new validationApiKey_1.ApiKeyValidator(logger);
-        this.logger = logger || loggerType_1.CustomLogger.create();
     }
     async create(name, options = {}) {
         const apiKey = this.generateSecureApiKey();
@@ -74,8 +72,13 @@ let ApiKeyManager = class ApiKeyManager {
         }
         catch (error) {
             this.logger.error('Failed to create API key', 'ApiKeyManager', {
-                error,
-                name
+                errorDetails: error instanceof Error
+                    ? {
+                        name: error.name,
+                        message: error.message,
+                    }
+                    : 'Unknown error',
+                keyName: name
             });
             throw errorType_1.CustomError.create('Failed to create API key', 500, { error });
         }
@@ -87,13 +90,13 @@ let ApiKeyManager = class ApiKeyManager {
                 this.logger.warn('API key not found', 'ApiKeyManager', {
                     keyId: apiKey.slice(0, 4) + '****'
                 });
-                return undefined;
+                throw errorType_1.CustomError.create('API key not found', 404, { keyId: apiKey.slice(0, 4) + '****' });
             }
             if (!this.validator.validate(metadata)) {
-                this.logger.warn('API key validation failed', 'ApiKeyManagere', {
+                this.logger.warn('API key validation failed', 'ApiKeyManager', {
                     keyId: apiKey.slice(0, 4) + '****'
                 });
-                return undefined;
+                throw errorType_1.CustomError.create('API key validation failed', 401, { keyId: apiKey.slice(0, 4) + '****' });
             }
             return metadata;
         }
@@ -111,7 +114,7 @@ let ApiKeyManager = class ApiKeyManager {
             if (metadata) {
                 metadata.status = 'REVOKED';
                 await this.storageAdapter.save(apiKey, metadata);
-                this.logger.info('API key rovoked', 'ApiKeyManager', {
+                this.logger.info('API key revoked', 'ApiKeyManager', {
                     keyId: apiKey.slice(0, 4) + '****'
                 });
             }
@@ -160,7 +163,7 @@ let ApiKeyManager = class ApiKeyManager {
             this.logger.info('Expired API keys pruned', 'ApiKeyManager');
         }
         catch (error) {
-            this.logger.error('Failed to prune expired kets', 'ApiKeyManager', { error });
+            this.logger.error('Failed to prune expired keys', 'ApiKeyManager', { error });
             throw errorType_1.CustomError.create('Failed to prune expired keys', 500, { error });
         }
     }
@@ -194,7 +197,9 @@ let ApiKeyManager = class ApiKeyManager {
 exports.ApiKeyManager = ApiKeyManager;
 exports.ApiKeyManager = ApiKeyManager = __decorate([
     (0, inversify_1.injectable)(),
-    __param(0, (0, inversify_1.inject)(loggerType_1.CustomLogger)),
-    __metadata("design:paramtypes", [loggerType_1.CustomLogger, Object])
+    __param(0, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)),
+    __param(1, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.STORAGE_ADAPTER)),
+    __param(2, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.API_KEY_VALIDATOR)),
+    __metadata("design:paramtypes", [loggerType_1.CustomLogger, Object, validationApiKey_1.ApiKeyValidator])
 ], ApiKeyManager);
 //# sourceMappingURL=apiKeyManager.js.map

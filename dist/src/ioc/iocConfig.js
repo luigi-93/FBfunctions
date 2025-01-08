@@ -2,15 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContainerAdapter = void 0;
 exports.IoCSetup = IoCSetup;
-const setAuth_1 = require("../auth/setAuth");
-const strategyAuth_1 = require("../auth/strategyAuth");
 const firebaseType_1 = require("../utility/firebaseType");
 const apiKeyManager_1 = require("../services/apiKeyManager");
 const errorType_1 = require("../utility/errorType");
-const validationModel_1 = require("../validation/validationModel");
-const server_1 = require("../server/server");
-const routes_1 = require("../routes");
-const app_1 = require("../app");
+const validationApiKey_1 = require("../validation/validationApiKey");
+const apiKeyStorage_1 = require("../services/apiKeyStorage");
 class ContainerAdapter {
     constructor(container) {
         this.container = container;
@@ -36,48 +32,36 @@ function IoCSetup(iocContainer, options = {
     needAdminPrivileges: false
 }, logger) {
     const { apiKeys = [], needAdminPrivileges = false } = options;
-    logger.debug('Starting IoCSetup', 'IoC-Config');
-    logger.debug('Binding Firebase Admin', 'IoC-Config', {
-        needAdminPrivileges
-    });
-    iocContainer
-        .bind(firebaseType_1.registry.FirebaseAdmin)
-        .toDynamicValue(() => (0, setAuth_1.initializeFirebaseAdmin)(needAdminPrivileges))
-        .inSingletonScope();
-    logger.debug('Binding ApiKeyManager', 'IoC-Config');
-    iocContainer
-        .bind(apiKeyManager_1.ApiKeyManager)
-        .toSelf()
-        .inSingletonScope();
-    const apiKeyManager = iocContainer.get(apiKeyManager_1.ApiKeyManager);
-    logger.debug('Binding Auth Strategies', 'IoC-Config');
+    logger.debug('Binding ApiKeyManager dependencies', 'IoC-Config');
+    if (!iocContainer.isBound(firebaseType_1.SYMBOLS.API_KEY_VALIDATOR)) {
+        iocContainer.bind(firebaseType_1.SYMBOLS.API_KEY_VALIDATOR).to(validationApiKey_1.ApiKeyValidator).inSingletonScope();
+    }
+    if (!iocContainer.isBound(firebaseType_1.SYMBOLS.STORAGE_ADAPTER)) {
+        iocContainer.bind(firebaseType_1.SYMBOLS.STORAGE_ADAPTER).to(apiKeyStorage_1.InMemoryStorageAdapter).inSingletonScope();
+    }
     try {
-        iocContainer
-            .bind(firebaseType_1.registry.FirebaseJwtAuthStrategy)
-            .toDynamicValue(() => {
-            const firebaseAdmin = iocContainer.get(firebaseType_1.registry.FirebaseAdmin);
-            return new strategyAuth_1.FirebaseJwtAuthStrategy(firebaseAdmin, logger);
-        })
-            .inSingletonScope();
-        iocContainer
-            .bind(firebaseType_1.registry.ApiKeyAuthStrategy)
-            .toDynamicValue(() => new strategyAuth_1.ApiKeyAuthstrategy(apiKeyManager, logger))
-            .inSingletonScope();
+        logger.debug('Binding ApiKeyManager', 'IoC-Config');
+        if (!iocContainer.isBound(firebaseType_1.SYMBOLS.API_KEY_MANAGER)) {
+            iocContainer
+                .bind(firebaseType_1.SYMBOLS.API_KEY_MANAGER)
+                .to(apiKeyManager_1.ApiKeyManager)
+                .inSingletonScope();
+        }
+        const manager = iocContainer.get(firebaseType_1.SYMBOLS.API_KEY_MANAGER);
+        logger.debug('Successfully created ApiKeyManager instance', 'IoC-Config', {
+            apiKeyManager: manager
+        });
+        return { apiKeyManager: manager };
     }
     catch (error) {
-        logger.error('Failed to bind Auth Strategies', 'IoC-Config', {
-            error: error instanceof Error
-                ? error.message
+        logger.error('Failed to create ApiKeyManager', 'IoC-Config', { errorDetails: error instanceof Error
+                ? {
+                    errorMessage: error.message,
+                    errorName: error.name
+                }
                 : 'Unknown error',
         });
-        throw error;
+        throw errorType_1.CustomError.create('Failed to create ApiKeyManager', 500, { error });
     }
-    logger.debug('Binding core services', 'IoC-Config');
-    iocContainer.bind(validationModel_1.ModelManager).toSelf().inSingletonScope();
-    iocContainer.bind(server_1.Server).toSelf().inSingletonScope();
-    iocContainer.bind(routes_1.ApiApp).toSelf().inSingletonScope();
-    iocContainer.bind(app_1.App).toSelf().inSingletonScope();
-    logger.info('IoCSetup completed successfully', 'IoC-Config');
-    return { apiKeyManager };
 }
 //# sourceMappingURL=iocConfig.js.map

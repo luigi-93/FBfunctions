@@ -14,7 +14,7 @@ export declare class ContainerAdapter implements IocContainer {
     }): Promise<T>;
     get<T>(controller: interfaces.ServiceIdentifier<T>): T;
 }
-interface IoCSetupeResult {
+interface IoCSetupResult {
     apiKeyManager: ApiKeyManager;
 }
 export declare function IoCSetup(iocContainer: Container, options: {
@@ -24,5 +24,5 @@ export declare function IoCSetup(iocContainer: Container, options: {
         expiresAt?: number;
     }>;
     needAdminPrivileges?: boolean;
-} | undefined, logger: CustomLogger): IoCSetupeResult;
+} | undefined, logger: CustomLogger): IoCSetupResult;
 export {};

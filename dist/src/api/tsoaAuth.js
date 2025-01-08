@@ -20,9 +20,6 @@ async function expressAuthentication(request, securityName, scopes = []) {
         return await strategy.authenticate(request, securityName, scopes);
     }
     catch (error) {
-        if (error instanceof errorType_1.CustomError) {
-            throw error;
-        }
         throw errorType_1.CustomError.create('AUthentication failed', 401, {
             originalError: error instanceof Error ? error.message : 'Unknown error',
             securityName

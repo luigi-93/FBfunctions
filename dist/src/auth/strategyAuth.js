@@ -12,7 +12,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ApiKeyAuthstrategy = exports.FirebaseJwtAuthStrategy = exports.BaseAthStrategy = exports.AuthStrategyFactory = void 0;
+exports.ApiKeyAuthstrategy = exports.FirebaseJwtAuthStrategy = exports.BaseAuthStrategy = exports.AuthStrategyFactory = void 0;
 const inversify_1 = require("inversify");
 const firebaseType_1 = require("../utility/firebaseType");
 const errorType_1 = require("../utility/errorType");
@@ -50,10 +50,10 @@ let AuthStrategyFactory = class AuthStrategyFactory {
 exports.AuthStrategyFactory = AuthStrategyFactory;
 exports.AuthStrategyFactory = AuthStrategyFactory = __decorate([
     (0, inversify_1.injectable)(),
-    __param(0, (0, inversify_1.inject)(loggerType_1.CustomLogger)),
+    __param(0, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)),
     __metadata("design:paramtypes", [loggerType_1.CustomLogger])
 ], AuthStrategyFactory);
-class BaseAthStrategy {
+class BaseAuthStrategy {
     constructor(logger) {
         this.logger = logger || new loggerType_1.CustomLogger();
     }
@@ -70,8 +70,8 @@ class BaseAthStrategy {
         }
     }
 }
-exports.BaseAthStrategy = BaseAthStrategy;
-class FirebaseJwtAuthStrategy extends BaseAthStrategy {
+exports.BaseAuthStrategy = BaseAuthStrategy;
+class FirebaseJwtAuthStrategy extends BaseAuthStrategy {
     constructor(firebaseAdmin, logger) {
         super(logger);
         this.firebaseAdmin = firebaseAdmin;
@@ -125,7 +125,10 @@ class FirebaseJwtAuthStrategy extends BaseAthStrategy {
                     ? error.message
                     : 'Unknow error'
             });
-            throw error;
+            throw errorType_1.CustomError.create('Token verification failed', 403, {
+                reason: 'Invalid Firebase token',
+                error: error
+            });
         }
     }
     handleAuthenticationError(error) {
@@ -158,7 +161,7 @@ class FirebaseJwtAuthStrategy extends BaseAthStrategy {
     }
 }
 exports.FirebaseJwtAuthStrategy = FirebaseJwtAuthStrategy;
-class ApiKeyAuthstrategy extends BaseAthStrategy {
+class ApiKeyAuthstrategy extends BaseAuthStrategy {
     constructor(apiKeyManager, logger) {
         super(logger);
         this.apiKeyManager = apiKeyManager;

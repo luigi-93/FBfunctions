@@ -1,11 +1,12 @@
-import { Container, inject, injectable } from 'inversify';
+import { inject, injectable } from 'inversify';
 import { 
     ApiKeyMetadata, 
     DecodedFirebaseToken, 
     IAuthStrategy, 
     SecurityScopes, 
     StrategyName, 
-    StrategyRegistry } 
+    StrategyRegistry, 
+    SYMBOLS} 
     from '../utility/firebaseType';
 import { CustomError } from '../utility/errorType';
 import { CustomLogger } from '../utility/loggerType';
@@ -13,14 +14,12 @@ import express from 'express';
 import { AuthenticatedUser } from './userAuth';
 import * as admin from 'firebase-admin';
 import { ApiKeyManager } from '../services/apiKeyManager';
-import { IocContainer } from 'tsoa';
-import { ContainerAdapter } from '../ioc/iocConfig';
 import { iocContainer } from '../ioc';
 
 @injectable()
 export class AuthStrategyFactory {
     constructor(
-        @inject(CustomLogger) private logger: CustomLogger,
+        @inject(SYMBOLS.CUSTOM_LOGGER) private logger: CustomLogger,
         
     ) {}
 
@@ -62,9 +61,10 @@ export class AuthStrategyFactory {
 }
 
 
-export abstract class BaseAthStrategy implements IAuthStrategy {
+export abstract class BaseAuthStrategy implements IAuthStrategy {
     protected logger: CustomLogger;
-    constructor(logger?: CustomLogger) {
+    constructor(
+        logger?: CustomLogger) {
         this.logger = logger || new CustomLogger();
     }
 
@@ -94,7 +94,7 @@ export abstract class BaseAthStrategy implements IAuthStrategy {
 }
 
 
-export class FirebaseJwtAuthStrategy extends BaseAthStrategy {
+export class FirebaseJwtAuthStrategy extends BaseAuthStrategy {
     private firebaseAdmin: typeof admin;
 
     constructor(
@@ -190,7 +190,14 @@ export class FirebaseJwtAuthStrategy extends BaseAthStrategy {
                 }
             );
 
-            throw error
+            throw CustomError.create(
+                'Token verification failed',
+                403,
+                { 
+                    reason: 'Invalid Firebase token',
+                    error: error
+                }
+            )
         }
     }
 
@@ -253,7 +260,7 @@ export class FirebaseJwtAuthStrategy extends BaseAthStrategy {
 }
 
 
-export class ApiKeyAuthstrategy extends BaseAthStrategy {
+export class ApiKeyAuthstrategy extends BaseAuthStrategy {
     private apiKeyManager: ApiKeyManager;
     
 

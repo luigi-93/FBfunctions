@@ -121,3 +121,14 @@ export interface ValidationResult {
     missingFields: string[];
     config: FirebaseConfig | null;
 }
+
+export const SYMBOLS = {
+    AUTH_STRATEGY_FACTORY: Symbol.for('AuthStrategyFactory'),
+    CUSTOM_LOGGER: Symbol.for('CustomLogger'),
+    API_KEY_MANAGER: Symbol.for('ApiKeyManager'),
+    SERVER: Symbol.for('Server'),
+    API_APP: Symbol.for('ApiApp'),
+    APP: Symbol.for('App'),
+    STORAGE_ADAPTER: Symbol.for('StorageAdapter'),
+    API_KEY_VALIDATOR: Symbol.for('ApiKeyValidator'),
+}

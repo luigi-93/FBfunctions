@@ -53,7 +53,8 @@ export class CustomLogger {
 
         const customFormat = format.printf(({ timestamp, level, message, context = this.defaultContext, ...meta}) => {
             const contextString = context ? `[${context}]` : '';
-            const metaString = Object.keys(meta).length ? ` - ${JSON.stringify(meta)}` : '';
+            const sanitizedMeta = CustomLogger.sanitizeMetadata(meta)
+            const metaString = Object.keys(sanitizedMeta).length ? ` - ${JSON.stringify(sanitizedMeta)}` : '';
             return `${timestamp} ${contextString} [${level.toUpperCase()}]: ${message} ${metaString}`;
         });
 
@@ -83,6 +84,22 @@ export class CustomLogger {
         if(sentryDsn) {
             this.initializeSentry(sentryDsn);
         }
+    }
+
+    private static sanitizeMetadata(meta: any) {
+        const seen = new WeakSet();
+        const sanitize = (obj: any): any => {
+            if (typeof obj !== 'object' || obj === null) return obj;
+            if (seen.has(obj)) return '[Circular]';
+            seen.add(obj);
+
+            const result: any = Array.isArray(obj) ? [] : {};
+            for (const key in obj) {
+                result[key] = sanitize(obj[key]);
+            }
+            return result
+        };
+        return sanitize(meta);
     }
 
     private initializeSentry(sentryDsn: string): void {

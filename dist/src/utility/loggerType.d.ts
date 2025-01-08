@@ -14,6 +14,7 @@ export declare class CustomLogger {
     private sentryInitialized;
     private defaultContext;
     constructor(options?: LoggerOptions);
+    private static sanitizeMetadata;
     private initializeSentry;
     private getTracesSampleRate;
     log(level: 'info' | 'warn' | 'error' | 'debug', message: string, context?: string, metadata?: LogMetadata): void;

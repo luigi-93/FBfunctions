@@ -6,7 +6,8 @@ import {
     CustomClaims, 
     DecodedFirebaseToken, 
     FirebaseAuthProvider, 
-    SecurityScopes } from "../utility/firebaseType";
+    SecurityScopes, 
+    SYMBOLS} from "../utility/firebaseType";
 import { CustomLogger } from '../utility/loggerType';
 import { ApiKeyValidator } from "../validation/validationApiKey";
 import { InMemoryStorageAdapter } from "./apiKeyStorage";
@@ -15,19 +16,14 @@ import * as crypto from 'crypto';
 
 @injectable()
 export class ApiKeyManager {
-    private storageAdapter: ApiKeyStorageAdapter;
-    private validator: ApiKeyValidator;
     private keyRotationInterval = 30 * 24 * 60 * 60; // 30 days
 
     constructor(
-        @inject(CustomLogger) private logger: CustomLogger,
-        storageAdapter?: ApiKeyStorageAdapter,
+        @inject(SYMBOLS.CUSTOM_LOGGER) private logger: CustomLogger,
+        @inject(SYMBOLS.STORAGE_ADAPTER) private storageAdapter: ApiKeyStorageAdapter,
+        @inject(SYMBOLS.API_KEY_VALIDATOR) private validator: ApiKeyValidator,
         
-    ) {
-        this.storageAdapter = storageAdapter || new InMemoryStorageAdapter();
-        this.validator = new ApiKeyValidator(logger);
-        this.logger = logger || CustomLogger.create();
-    }
+    ) {}
 
     /**
      * Create a new API key
@@ -75,8 +71,13 @@ export class ApiKeyManager {
                 'Failed to create API key',
                 'ApiKeyManager',
                 {
-                    error,
-                    name
+                    errorDetails: error instanceof Error
+                    ? {
+                        name: error.name,
+                        message: error.message,
+                    }
+                    : 'Unknown error',
+                    keyName: name
                 });
                 throw CustomError.create(
                     'Failed to create API key',
@@ -102,17 +103,23 @@ export class ApiKeyManager {
                     {
                         keyId: apiKey.slice(0, 4) + '****'
                     });
-                return undefined;
+                throw CustomError.create(
+                    'API key not found',
+                    404,
+                    { keyId: apiKey.slice(0, 4) + '****' });
             }
 
             if (!this.validator.validate(metadata)) {
                 this.logger.warn(
                     'API key validation failed',
-                    'ApiKeyManagere',
+                    'ApiKeyManager',
                     {
                         keyId: apiKey.slice(0, 4) + '****'
                     });
-                return undefined;
+                throw CustomError.create(
+                    'API key validation failed',
+                    401,
+                    { keyId: apiKey.slice(0, 4) + '****' });
             } 
 
             return metadata;
@@ -144,7 +151,7 @@ export class ApiKeyManager {
                 await this.storageAdapter.save(apiKey, metadata);
 
                 this.logger.info(
-                    'API key rovoked',
+                    'API key revoked',
                     'ApiKeyManager',
                     {
                         keyId: apiKey.slice(0, 4) + '****'
@@ -244,7 +251,7 @@ export class ApiKeyManager {
             );
         } catch (error) {
             this.logger.error(
-                'Failed to prune expired kets',
+                'Failed to prune expired keys',
                 'ApiKeyManager',
                 { error });
             throw CustomError.create(

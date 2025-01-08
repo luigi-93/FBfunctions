@@ -9,13 +9,13 @@ export declare class AuthStrategyFactory {
     constructor(logger: CustomLogger);
     getStrategy(name: StrategyName): IAuthStrategy;
 }
-export declare abstract class BaseAthStrategy implements IAuthStrategy {
+export declare abstract class BaseAuthStrategy implements IAuthStrategy {
     protected logger: CustomLogger;
     constructor(logger?: CustomLogger);
     abstract authenticate(request: express.Request, securityName: string, scopes: string[]): Promise<AuthenticatedUser>;
     protected validateScopes(user: AuthenticatedUser, request: express.Request, requiredScopes: string[]): void;
 }
-export declare class FirebaseJwtAuthStrategy extends BaseAthStrategy {
+export declare class FirebaseJwtAuthStrategy extends BaseAuthStrategy {
     private firebaseAdmin;
     constructor(firebaseAdmin: typeof admin, logger?: CustomLogger);
     authenticate(request: express.Request, securityName: string, scopes?: string[]): Promise<AuthenticatedUser>;
@@ -25,7 +25,7 @@ export declare class FirebaseJwtAuthStrategy extends BaseAthStrategy {
     private handleAuthenticationError;
     refreshToken(token: string): Promise<string>;
 }
-export declare class ApiKeyAuthstrategy extends BaseAthStrategy {
+export declare class ApiKeyAuthstrategy extends BaseAuthStrategy {
     private apiKeyManager;
     constructor(apiKeyManager: ApiKeyManager, logger?: CustomLogger);
     authenticate(request: express.Request, securityName: string, scopes?: string[]): Promise<AuthenticatedUser>;
