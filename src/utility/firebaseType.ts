@@ -62,6 +62,12 @@ export const registry = {
     ApiKeyAuthStrategy: Symbol.for('ApiKeyAuthStrategy'),
 }
 
+export const StrategyRegistry = {
+    FirebaseJwtAuthStrategy: registry.FirebaseJwtAuthStrategy,
+    ApiKeyStrategy: registry.ApiKeyAuthStrategy,
+} as const;
+
+
 export interface CustomClaims {
     acl?: SecurityScopes[];
     [key: string]: any;
@@ -87,10 +93,6 @@ export interface DecodedFirebaseToken {
     [key: string]: any;
 }
 
-export const StrategyRegistry = {
-    FirebaseJwtAuthStrategy: registry.FirebaseJwtAuthStrategy,
-    ApiKeyStrategy: registry.ApiKeyAuthStrategy,
-} as const;
 
 export type StrategyName = keyof typeof StrategyRegistry;
 
@@ -101,7 +103,7 @@ export interface ApiKeyMetadata {
     scopes: SecurityScopes[];
     provider?: FirebaseAuthProvider;
     createdAt: number;
-    expirestAt?: number;
+    expiresAt?: number;
     lastUsed?: number;
     usageCount?: number;
     additionalClaims?: CustomClaims;
@@ -131,4 +133,6 @@ export const SYMBOLS = {
     APP: Symbol.for('App'),
     STORAGE_ADAPTER: Symbol.for('StorageAdapter'),
     API_KEY_VALIDATOR: Symbol.for('ApiKeyValidator'),
+    SERVER_CONFIG: Symbol.for('ServerConfig'),
+    CONTAINER_ADAPTER: Symbol.for('ContainerAdapter')
 }

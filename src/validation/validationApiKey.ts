@@ -23,7 +23,7 @@ export class ApiKeyValidator {
     }
     private checkExpiration(metadata: ApiKeyMetadata): boolean {
         const now = Math.floor(Date.now() / 1000);
-        const isValid = !metadata.expirestAt || metadata.expirestAt > now;
+        const isValid = !metadata.expiresAt || metadata.expiresAt > now;
 
         if (!isValid) {
             this.logger.warn(
@@ -31,7 +31,7 @@ export class ApiKeyValidator {
                 'ApiKeyValidator',
                 {
                     keyId: metadata.id.slice(0,4) + '****',
-                    exipiresAt: metadata.expirestAt,
+                    exipiresAt: metadata.expiresAt,
                 });
         }
 

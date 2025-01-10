@@ -1,4 +1,4 @@
-import { inject, injectable } from 'inversify';
+import { inject, injectable, LazyServiceIdentifier } from 'inversify';
 import { 
     ApiKeyMetadata, 
     DecodedFirebaseToken, 
@@ -15,16 +15,22 @@ import { AuthenticatedUser } from './userAuth';
 import * as admin from 'firebase-admin';
 import { ApiKeyManager } from '../services/apiKeyManager';
 import { iocContainer } from '../ioc';
+import { ContainerAdapter } from '../ioc/iocConfig';
+
 
 @injectable()
 export class AuthStrategyFactory {
     constructor(
         @inject(SYMBOLS.CUSTOM_LOGGER) private logger: CustomLogger,
-        
+        @inject(new LazyServiceIdentifier(() => SYMBOLS.CONTAINER_ADAPTER)) private ioc: ContainerAdapter   
     ) {}
 
     getStrategy(name: StrategyName): IAuthStrategy {
         if(!name) {
+            this.logger.warn(
+                'Strategy name not provided',
+                'AuthStrategyFactory'
+            );
             throw CustomError.create(
                 'strategy name is reuired',
                 400,
@@ -33,6 +39,10 @@ export class AuthStrategyFactory {
 
         const strategySymbol = StrategyRegistry[name];
         if (!strategySymbol) {
+            this.logger.warn(
+               `Strategy ${name} not found in registry`,
+               'AuthStrategyFactory' 
+            );
             throw CustomError.create(
                 `Authentication strategy ${name} not found`,
                 403,
@@ -44,8 +54,25 @@ export class AuthStrategyFactory {
         }
 
         try {
-            return iocContainer.get<IAuthStrategy>(strategySymbol);
+            const strategy = this.ioc.get<IAuthStrategy>(strategySymbol);
+
+            this.logger.info(
+                `Successfully resolved strategy: ${name}`,
+                'AuthStrategyFactory',
+                { strategyName: name }
+            );
+
+            return strategy
         } catch (error) {
+            this.logger.error(
+                `Failed to resolve strategy: ${name}`,
+                'AuthStrategyFactory',
+                {
+                    errorDetails: error instanceof Error 
+                    ? error.message 
+                    : 'Unknown error',
+                }
+            );
             throw CustomError.create(
                 'Failed to initialize authentication strategy',
                 500,
@@ -58,8 +85,8 @@ export class AuthStrategyFactory {
             )
         }
     }
-}
 
+}
 
 export abstract class BaseAuthStrategy implements IAuthStrategy {
     protected logger: CustomLogger;
@@ -93,7 +120,7 @@ export abstract class BaseAuthStrategy implements IAuthStrategy {
     }
 }
 
-
+@injectable()
 export class FirebaseJwtAuthStrategy extends BaseAuthStrategy {
     private firebaseAdmin: typeof admin;
 
@@ -259,7 +286,7 @@ export class FirebaseJwtAuthStrategy extends BaseAuthStrategy {
     }
 }
 
-
+@injectable()
 export class ApiKeyAuthstrategy extends BaseAuthStrategy {
     private apiKeyManager: ApiKeyManager;
     
@@ -339,12 +366,12 @@ export class ApiKeyAuthstrategy extends BaseAuthStrategy {
 
         const currentTimestamp = Math.floor(Date.now() / 1000);
         // Optional: Add Additional validation (e.g., expiration check)
-        if (keyMetadata.expirestAt && currentTimestamp > keyMetadata.expirestAt) {
+        if (keyMetadata.expiresAt && currentTimestamp > keyMetadata.expiresAt) {
             this.logger.warn(
                 'Expired API key',
                 'ApiKeyAuth', {
                     keyId: this.maskApiKey(apiKey),
-                    expirationTime: keyMetadata.expirestAt
+                    expirationTime: keyMetadata.expiresAt
                 });
                 throw CustomError.create(
                     'Authentication failed',

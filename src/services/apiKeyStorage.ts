@@ -110,7 +110,7 @@ export class InMemoryStorageAdapter implements ApiKeyStorageAdapter {
             const now = Math.floor(Date.now() / 1000);
             const keysToDelete = Object.keys(this.apiKeys).filter(key => {
                 const metadata = this.apiKeys[key];
-                return metadata.expirestAt && metadata.expirestAt < now;
+                return metadata.expiresAt && metadata.expiresAt < now;
             });
 
             keysToDelete.forEach(key => {

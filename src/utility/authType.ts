@@ -40,7 +40,7 @@ export class ApikeyTokenGenerator {
         };
 
         const now = Math.floor(Date.now() / 1000);
-        const expiresAt = mergedMetadata.expirestAt || (now + (24 * 60 * 60));
+        const expiresAt = mergedMetadata.expiresAt || (now + (24 * 60 * 60));
 
 
         try {
@@ -112,7 +112,7 @@ export class ApikeyTokenGenerator {
                     scopes: options.scopes || [SecurityScopes.User],
                     provider: options.provider || FirebaseAuthProvider.EMAIL_PASSWORD,
                     createdAt: Math.floor(Date.now() / 1000),
-                    expirestAt: options.expiresAt,
+                    expiresAt: options.expiresAt,
                     additionalClaims: options.additionalClaims
                 };
 

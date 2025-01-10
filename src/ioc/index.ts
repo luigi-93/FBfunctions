@@ -35,15 +35,16 @@ function setupIoC() {
 
         logger.debug('Starting IoC container setup', 'IoC-Setup');
 
-        //bing Firebase-related dependencies with logging
-        logger.debug('Setting up Firebase dependencies', 'IoC-Setup');
+        //bing dependencies with logging
+        logger.debug('Setting dependencies', 'IoC-Setup');
         IoCSetup(container, {
             apiKeys: [],
             needAdminPrivileges: false
         }, logger);
 
         const bindings = [
-            { symbol: SYMBOLS.AUTH_STRATEGY_FACTORY, constructor: AuthStrategyFactory},
+            //una volta risolto il bug provare a riaggiungere AuthStrategyFactory
+            //{ symbol: SYMBOLS.AUTH_STRATEGY_FACTORY, constructor: AuthStrategyFactory},
             { symbol: SYMBOLS.SERVER, constructor: Server},
             { symbol: SYMBOLS.API_APP, constructor: ApiApp},
             { symbol: SYMBOLS.APP, constructor: App}

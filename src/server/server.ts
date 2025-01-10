@@ -3,6 +3,7 @@ import { Express } from 'express';
 import http from 'http';
 import { CustomLogger } from "../utility/loggerType";
 import { ApiApp } from "../routes";
+import { SYMBOLS } from "../utility/firebaseType";
 
 
 @injectable()
@@ -10,7 +11,7 @@ export class Server {
     private httpServer?: http.Server | null = null;
 
     constructor(
-        @inject(CustomLogger) private logger: CustomLogger
+        @inject(SYMBOLS.CUSTOM_LOGGER) private logger: CustomLogger
     ) {}
 
 

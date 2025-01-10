@@ -49,7 +49,7 @@ export class ApiKeyManager {
             scopes: options.scopes || [SecurityScopes.User],
             provider: options.provider || FirebaseAuthProvider.EMAIL_PASSWORD,
             createdAt: now,
-            expirestAt: options.expiresAt || (now + this.keyRotationInterval),
+            expiresAt: options.expiresAt || (now + this.keyRotationInterval),
             status: 'ACTIVE',
             additionalClaims: options.additionalClaims
         };
@@ -274,7 +274,7 @@ export class ApiKeyManager {
         metadata: ApiKeyMetadata
     ): DecodedFirebaseToken {
         const now = Math.floor(Date.now() / 1000);
-        const expiresAt = metadata.expirestAt || (now + (24 * 60 * 60));
+        const expiresAt = metadata.expiresAt || (now + (24 * 60 * 60));
 
         return {
             aud: process.env.FIREBASE_PROJECT_ID || 'default-project-id',

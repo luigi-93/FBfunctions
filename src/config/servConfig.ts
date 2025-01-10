@@ -6,6 +6,7 @@ import express,
     Response, 
     NextFunction }  from 'express';
 import { CustomError } from "../utility/errorType";
+import { SYMBOLS } from "../utility/firebaseType";
 
 /**
  * This class is base framework for setting up an express application.
@@ -15,10 +16,9 @@ import { CustomError } from "../utility/errorType";
 @injectable()
 export abstract class ServerConfig {
     protected readonly app: Express;
-   
 
     constructor(
-        @inject(CustomLogger) protected readonly logger: CustomLogger
+        @inject(SYMBOLS.CUSTOM_LOGGER) protected readonly logger: CustomLogger
     ) {
         this.app = express();
         this.initialized();  

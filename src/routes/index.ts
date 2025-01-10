@@ -6,13 +6,14 @@ import express,
         from 'express';
 import { setErrorHandler } from "../error/apiHandlerError";
 import { CustomLogger } from "../utility/loggerType";
+import { SYMBOLS } from "../utility/firebaseType";
 
 
 @injectable()
 export class ApiApp extends ServerConfig {
 
     constructor(
-        @inject(CustomLogger) logger: CustomLogger
+        @inject(SYMBOLS.CUSTOM_LOGGER) logger: CustomLogger
     ) {
         super(logger);
     }
