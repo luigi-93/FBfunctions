@@ -38,5 +38,8 @@ exports.SYMBOLS = {
     APP: Symbol.for('App'),
     STORAGE_ADAPTER: Symbol.for('StorageAdapter'),
     API_KEY_VALIDATOR: Symbol.for('ApiKeyValidator'),
+    SERVER_CONFIG: Symbol.for('ServerConfig'),
+    CONTAINER_ADAPTER: Symbol.for('ContainerAdapter'),
+    SERVER_INITIALIZER: Symbol.for('ServerInitializer')
 };
 //# sourceMappingURL=firebaseType.js.map

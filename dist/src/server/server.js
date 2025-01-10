@@ -19,6 +19,7 @@ exports.Server = void 0;
 const inversify_1 = require("inversify");
 const http_1 = __importDefault(require("http"));
 const loggerType_1 = require("../utility/loggerType");
+const firebaseType_1 = require("../utility/firebaseType");
 let Server = class Server {
     constructor(logger) {
         this.logger = logger;
@@ -116,7 +117,7 @@ let Server = class Server {
 exports.Server = Server;
 exports.Server = Server = __decorate([
     (0, inversify_1.injectable)(),
-    __param(0, (0, inversify_1.inject)(loggerType_1.CustomLogger)),
+    __param(0, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)),
     __metadata("design:paramtypes", [loggerType_1.CustomLogger])
 ], Server);
 //# sourceMappingURL=server.js.map

@@ -18,7 +18,7 @@ class ApikeyTokenGenerator {
             ...metadata
         };
         const now = Math.floor(Date.now() / 1000);
-        const expiresAt = mergedMetadata.expirestAt || (now + (24 * 60 * 60));
+        const expiresAt = mergedMetadata.expiresAt || (now + (24 * 60 * 60));
         try {
             return {
                 aud: process.env.FIREBASE_PROJECT_ID || 'default-project-id',
@@ -60,7 +60,7 @@ class ApikeyTokenGenerator {
                     scopes: options.scopes || [firebaseType_1.SecurityScopes.User],
                     provider: options.provider || firebaseType_1.FirebaseAuthProvider.EMAIL_PASSWORD,
                     createdAt: Math.floor(Date.now() / 1000),
-                    expirestAt: options.expiresAt,
+                    expiresAt: options.expiresAt,
                     additionalClaims: options.additionalClaims
                 };
                 return { apiKey, metadata };

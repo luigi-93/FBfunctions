@@ -30,11 +30,12 @@ const inversify_1 = require("inversify");
 const firebaseType_1 = require("./utility/firebaseType");
 dotenv_1.default.config();
 let App = class App {
-    constructor(logger, server, apiApp, apikeyManager) {
+    constructor(logger, server, apiApp, apikeyManager, serverInitializer) {
         this.logger = logger;
         this.server = server;
         this.apiApp = apiApp;
         this.apikeyManager = apikeyManager;
+        this.serverInitializer = serverInitializer;
     }
     async initialize() {
         const app = (0, express_1.default)();
@@ -44,12 +45,11 @@ let App = class App {
             this.logger.error('Invalid Firebase configuration', 'App initilization');
             process.exit(1);
         }
-        const serverInitializer = new serverInitializer_1.ServerInitializer(this.logger, this.server, this.apiApp, this.apikeyManager);
         const PORT = Number(process.env.PORT || 3000);
         const cleanup = () => {
             this.logger.info('Performing cleanup before server shutdown...');
         };
-        await serverInitializer.initialize(app, PORT, cleanup);
+        await this.serverInitializer.initialize(app, PORT, cleanup);
         return app;
     }
 };
@@ -60,10 +60,12 @@ exports.App = App = __decorate([
     __param(1, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.SERVER)),
     __param(2, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.API_APP)),
     __param(3, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.API_KEY_MANAGER)),
+    __param(4, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.SERVER_INITIALIZER)),
     __metadata("design:paramtypes", [loggerType_1.CustomLogger,
         server_1.Server,
         routes_1.ApiApp,
-        apiKeyManager_1.ApiKeyManager])
+        apiKeyManager_1.ApiKeyManager,
+        serverInitializer_1.ServerInitializer])
 ], App);
 (0, ioc_1.loadProviderModule)();
 async function createApp() {

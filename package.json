@@ -25,6 +25,7 @@
     "test": "ts-mocha --project test/tsconfig.json --require tsconfig-paths/register 'test/**/*.spec.ts' --exit --timeout 35000",
     "test:watch": "ts-mocha --project test/tsconfig.json --require tsconfig-paths/register 'test/**/*.spec.ts' --exit --timeout 35000",
     "test:coverage": "nyc yarn test",
+    "test:container": "ts-node src/test/container-test.ts",
     "doc": "typedoc --out docs src",
     "doc:serve": "serve docs"
   },

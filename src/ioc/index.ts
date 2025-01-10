@@ -13,6 +13,8 @@ import { Server } from "../server/server";
 import { ApiApp } from "../routes";
 import { App } from "../app";
 import { SYMBOLS } from "../utility/firebaseType";
+import { symbol } from "joi";
+import { ServerInitializer } from "../server/serverInitializer";
 
 
 // Create container instance
@@ -29,6 +31,7 @@ function setupIoC() {
         const logger = new CustomLogger({
             logLevel: 'debug'
         });
+        logger.debug('Binding Custom Logger before everything')
         if (!container.isBound(SYMBOLS.CUSTOM_LOGGER)) {
             container.bind(SYMBOLS.CUSTOM_LOGGER).toConstantValue(logger);
         }
@@ -36,13 +39,13 @@ function setupIoC() {
         logger.debug('Starting IoC container setup', 'IoC-Setup');
 
         //bing dependencies with logging
-        logger.debug('Setting dependencies', 'IoC-Setup');
         IoCSetup(container, {
             apiKeys: [],
             needAdminPrivileges: false
         }, logger);
 
         const bindings = [
+            { symbol: SYMBOLS.SERVER_INITIALIZER, constructor: ServerInitializer},
             //una volta risolto il bug provare a riaggiungere AuthStrategyFactory
             //{ symbol: SYMBOLS.AUTH_STRATEGY_FACTORY, constructor: AuthStrategyFactory},
             { symbol: SYMBOLS.SERVER, constructor: Server},
@@ -94,8 +97,11 @@ setupIoC();
 
 export function loadProviderModule() {
         // Maybe do additional setup here if needed
-
     }
+
+export function get<T>(identifier: symbol): T {
+    return container.get<T>(identifier)
+}
 
 
 

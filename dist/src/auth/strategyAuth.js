@@ -18,26 +18,37 @@ const firebaseType_1 = require("../utility/firebaseType");
 const errorType_1 = require("../utility/errorType");
 const loggerType_1 = require("../utility/loggerType");
 const userAuth_1 = require("./userAuth");
-const ioc_1 = require("../ioc");
+const apiKeyManager_1 = require("../services/apiKeyManager");
+const iocConfig_1 = require("../ioc/iocConfig");
 let AuthStrategyFactory = class AuthStrategyFactory {
-    constructor(logger) {
+    constructor(logger, ioc) {
         this.logger = logger;
+        this.ioc = ioc;
     }
     getStrategy(name) {
         if (!name) {
+            this.logger.warn('Strategy name not provided', 'AuthStrategyFactory');
             throw errorType_1.CustomError.create('strategy name is reuired', 400, { details: 'The strategy name parameter was not provided.' });
         }
         const strategySymbol = firebaseType_1.StrategyRegistry[name];
         if (!strategySymbol) {
+            this.logger.warn(`Strategy ${name} not found in registry`, 'AuthStrategyFactory');
             throw errorType_1.CustomError.create(`Authentication strategy ${name} not found`, 403, {
                 name,
                 availableStrategies: Object.keys(firebaseType_1.StrategyRegistry),
             });
         }
         try {
-            return ioc_1.iocContainer.get(strategySymbol);
+            const strategy = this.ioc.get(strategySymbol);
+            this.logger.info(`Successfully resolved strategy: ${name}`, 'AuthStrategyFactory', { strategyName: name });
+            return strategy;
         }
         catch (error) {
+            this.logger.error(`Failed to resolve strategy: ${name}`, 'AuthStrategyFactory', {
+                errorDetails: error instanceof Error
+                    ? error.message
+                    : 'Unknown error',
+            });
             throw errorType_1.CustomError.create('Failed to initialize authentication strategy', 500, {
                 strategy: name,
                 error: error instanceof Error
@@ -51,7 +62,9 @@ exports.AuthStrategyFactory = AuthStrategyFactory;
 exports.AuthStrategyFactory = AuthStrategyFactory = __decorate([
     (0, inversify_1.injectable)(),
     __param(0, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)),
-    __metadata("design:paramtypes", [loggerType_1.CustomLogger])
+    __param(1, (0, inversify_1.inject)(new inversify_1.LazyServiceIdentifier(() => firebaseType_1.SYMBOLS.CONTAINER_ADAPTER))),
+    __metadata("design:paramtypes", [loggerType_1.CustomLogger,
+        iocConfig_1.ContainerAdapter])
 ], AuthStrategyFactory);
 class BaseAuthStrategy {
     constructor(logger) {
@@ -71,7 +84,7 @@ class BaseAuthStrategy {
     }
 }
 exports.BaseAuthStrategy = BaseAuthStrategy;
-class FirebaseJwtAuthStrategy extends BaseAuthStrategy {
+let FirebaseJwtAuthStrategy = class FirebaseJwtAuthStrategy extends BaseAuthStrategy {
     constructor(firebaseAdmin, logger) {
         super(logger);
         this.firebaseAdmin = firebaseAdmin;
@@ -159,9 +172,13 @@ class FirebaseJwtAuthStrategy extends BaseAuthStrategy {
             throw errorType_1.CustomError.create('Token refresh failed', 403, { reason: 'Unable to refresh token' });
         }
     }
-}
+};
 exports.FirebaseJwtAuthStrategy = FirebaseJwtAuthStrategy;
-class ApiKeyAuthstrategy extends BaseAuthStrategy {
+exports.FirebaseJwtAuthStrategy = FirebaseJwtAuthStrategy = __decorate([
+    (0, inversify_1.injectable)(),
+    __metadata("design:paramtypes", [Object, loggerType_1.CustomLogger])
+], FirebaseJwtAuthStrategy);
+let ApiKeyAuthstrategy = class ApiKeyAuthstrategy extends BaseAuthStrategy {
     constructor(apiKeyManager, logger) {
         super(logger);
         this.apiKeyManager = apiKeyManager;
@@ -197,10 +214,10 @@ class ApiKeyAuthstrategy extends BaseAuthStrategy {
             });
         }
         const currentTimestamp = Math.floor(Date.now() / 1000);
-        if (keyMetadata.expirestAt && currentTimestamp > keyMetadata.expirestAt) {
+        if (keyMetadata.expiresAt && currentTimestamp > keyMetadata.expiresAt) {
             this.logger.warn('Expired API key', 'ApiKeyAuth', {
                 keyId: this.maskApiKey(apiKey),
-                expirationTime: keyMetadata.expirestAt
+                expirationTime: keyMetadata.expiresAt
             });
             throw errorType_1.CustomError.create('Authentication failed', 403, {
                 reason: 'API key has expired',
@@ -225,6 +242,11 @@ class ApiKeyAuthstrategy extends BaseAuthStrategy {
     maskApiKey(apiKey) {
         return apiKey.slice(0, 4) + apiKey.slice(-4);
     }
-}
+};
 exports.ApiKeyAuthstrategy = ApiKeyAuthstrategy;
+exports.ApiKeyAuthstrategy = ApiKeyAuthstrategy = __decorate([
+    (0, inversify_1.injectable)(),
+    __metadata("design:paramtypes", [apiKeyManager_1.ApiKeyManager,
+        loggerType_1.CustomLogger])
+], ApiKeyAuthstrategy);
 //# sourceMappingURL=strategyAuth.js.map

@@ -48,6 +48,10 @@ export declare const registry: {
     FirebaseJwtAuthStrategy: symbol;
     ApiKeyAuthStrategy: symbol;
 };
+export declare const StrategyRegistry: {
+    readonly FirebaseJwtAuthStrategy: symbol;
+    readonly ApiKeyStrategy: symbol;
+};
 export interface CustomClaims {
     acl?: SecurityScopes[];
     [key: string]: any;
@@ -71,10 +75,6 @@ export interface DecodedFirebaseToken {
     };
     [key: string]: any;
 }
-export declare const StrategyRegistry: {
-    readonly FirebaseJwtAuthStrategy: symbol;
-    readonly ApiKeyStrategy: symbol;
-};
 export type StrategyName = keyof typeof StrategyRegistry;
 export interface ApiKeyMetadata {
     id: string;
@@ -83,7 +83,7 @@ export interface ApiKeyMetadata {
     scopes: SecurityScopes[];
     provider?: FirebaseAuthProvider;
     createdAt: number;
-    expirestAt?: number;
+    expiresAt?: number;
     lastUsed?: number;
     usageCount?: number;
     additionalClaims?: CustomClaims;
@@ -110,4 +110,7 @@ export declare const SYMBOLS: {
     APP: symbol;
     STORAGE_ADAPTER: symbol;
     API_KEY_VALIDATOR: symbol;
+    SERVER_CONFIG: symbol;
+    CONTAINER_ADAPTER: symbol;
+    SERVER_INITIALIZER: symbol;
 };

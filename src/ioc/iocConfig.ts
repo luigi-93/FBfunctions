@@ -200,7 +200,8 @@ export async function IoCSetup(
     if (!iocContainer.isBound(SYMBOLS.CONTAINER_ADAPTER)) {
         iocContainer
             .bind(SYMBOLS.CONTAINER_ADAPTER)
-            .toConstantValue(ContainerAdapter)
+            .to(ContainerAdapter)
+            .inSingletonScope();
     }
 
     try {

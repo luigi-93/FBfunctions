@@ -1,5 +1,5 @@
 import express from 'express';
-import { iocContainer, loadProviderModule } from './ioc';
+import { container, iocContainer, loadProviderModule } from './ioc';
     import dotenv from 'dotenv';
     import { Server } from './server/server';
     import { ApiApp } from './routes';
@@ -21,7 +21,8 @@ import { SYMBOLS } from './utility/firebaseType';
             @inject(SYMBOLS.CUSTOM_LOGGER) private readonly logger: CustomLogger,
             @inject(SYMBOLS.SERVER) private readonly server: Server,
             @inject(SYMBOLS.API_APP) private readonly apiApp: ApiApp,
-            @inject(SYMBOLS.API_KEY_MANAGER) private readonly apikeyManager: ApiKeyManager
+            @inject(SYMBOLS.API_KEY_MANAGER) private readonly apikeyManager: ApiKeyManager,
+            @inject(SYMBOLS.SERVER_INITIALIZER) private readonly serverInitializer: ServerInitializer
         ) {}
 
         async initialize(): Promise<express.Express> {
@@ -38,13 +39,6 @@ import { SYMBOLS } from './utility/firebaseType';
                 process.exit(1);
             }
         
-            const serverInitializer = new ServerInitializer(
-                this.logger,
-                this.server,
-                this.apiApp,
-                this.apikeyManager
-            );
-        
             const PORT = Number(process.env.PORT || 3000);
             
             const cleanup = () => {
@@ -57,7 +51,7 @@ import { SYMBOLS } from './utility/firebaseType';
                 //cache.clear();
             };
 
-            await serverInitializer.initialize(app, PORT, cleanup);
+            await this.serverInitializer.initialize(app, PORT, cleanup);
 
             return app;
 
@@ -71,7 +65,7 @@ import { SYMBOLS } from './utility/firebaseType';
 
     // Export a function that creates and initializes the app
     export async function createApp(): Promise<express.Express> {
-        const application = iocContainer.get<App>(SYMBOLS.APP);
+        const application = container.get<App>(SYMBOLS.APP);
         return application.initialize();
     }
 

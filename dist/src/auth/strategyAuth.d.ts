@@ -4,9 +4,11 @@ import express from 'express';
 import { AuthenticatedUser } from './userAuth';
 import * as admin from 'firebase-admin';
 import { ApiKeyManager } from '../services/apiKeyManager';
+import { ContainerAdapter } from '../ioc/iocConfig';
 export declare class AuthStrategyFactory {
     private logger;
-    constructor(logger: CustomLogger);
+    private ioc;
+    constructor(logger: CustomLogger, ioc: ContainerAdapter);
     getStrategy(name: StrategyName): IAuthStrategy;
 }
 export declare abstract class BaseAuthStrategy implements IAuthStrategy {

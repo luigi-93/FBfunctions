@@ -14,11 +14,11 @@ class ApiKeyValidator {
     }
     checkExpiration(metadata) {
         const now = Math.floor(Date.now() / 1000);
-        const isValid = !metadata.expirestAt || metadata.expirestAt > now;
+        const isValid = !metadata.expiresAt || metadata.expiresAt > now;
         if (!isValid) {
             this.logger.warn('API Key expired', 'ApiKeyValidator', {
                 keyId: metadata.id.slice(0, 4) + '****',
-                exipiresAt: metadata.expirestAt,
+                exipiresAt: metadata.expiresAt,
             });
         }
         return isValid;

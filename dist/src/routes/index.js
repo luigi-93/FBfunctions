@@ -18,6 +18,7 @@ const servConfig_1 = require("../config/servConfig");
 const routes_1 = require("../../build/api/routes");
 const apiHandlerError_1 = require("../error/apiHandlerError");
 const loggerType_1 = require("../utility/loggerType");
+const firebaseType_1 = require("../utility/firebaseType");
 let ApiApp = class ApiApp extends servConfig_1.ServerConfig {
     constructor(logger) {
         super(logger);
@@ -34,7 +35,7 @@ let ApiApp = class ApiApp extends servConfig_1.ServerConfig {
 exports.ApiApp = ApiApp;
 exports.ApiApp = ApiApp = __decorate([
     (0, inversify_1.injectable)(),
-    __param(0, (0, inversify_1.inject)(loggerType_1.CustomLogger)),
+    __param(0, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)),
     __metadata("design:paramtypes", [loggerType_1.CustomLogger])
 ], ApiApp);
 //# sourceMappingURL=index.js.map
