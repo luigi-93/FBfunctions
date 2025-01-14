@@ -1,19 +1,17 @@
 import { 
     Container, 
     decorate, 
-    injectable, 
-    named} from "inversify";
+    injectable
+} from "inversify";
 import { Controller } from "tsoa";
 import { ContainerAdapter, IoCSetup } from "./iocConfig";
 import { buildProviderModule } from "inversify-binding-decorators";
 import { CustomError } from "../utility/errorType";
 import { CustomLogger } from '../utility/loggerType';
-import { AuthStrategyFactory } from "../auth/strategyAuth";
 import { Server } from "../server/server";
 import { ApiApp } from "../routes";
 import { App } from "../app";
 import { SYMBOLS } from "../utility/firebaseType";
-import { symbol } from "joi";
 import { ServerInitializer } from "../server/serverInitializer";
 
 
@@ -31,14 +29,20 @@ function setupIoC() {
         const logger = new CustomLogger({
             logLevel: 'debug'
         });
-        logger.debug('Binding Custom Logger before everything')
-        if (!container.isBound(SYMBOLS.CUSTOM_LOGGER)) {
-            container.bind(SYMBOLS.CUSTOM_LOGGER).toConstantValue(logger);
+        logger.debug('First, bind the logger itself')
+        if (container.isBound(SYMBOLS.CUSTOM_LOGGER)) {
+            container.unbind(SYMBOLS.CUSTOM_LOGGER)
+        }
+        container.bind(SYMBOLS.CUSTOM_LOGGER).toConstantValue(logger);
+
+        logger.debug('Now bind CustomLogger class for future eventually instantiations')
+        if(!container.isBound(CustomLogger)) {
+            container.bind(CustomLogger).toSelf().inSingletonScope();
         }
 
         logger.debug('Starting IoC container setup', 'IoC-Setup');
 
-        //bing dependencies with logging
+        //Setup basic IoC first
         IoCSetup(container, {
             apiKeys: [],
             needAdminPrivileges: false
@@ -46,17 +50,17 @@ function setupIoC() {
 
         const bindings = [
             { symbol: SYMBOLS.SERVER_INITIALIZER, constructor: ServerInitializer},
-            //una volta risolto il bug provare a riaggiungere AuthStrategyFactory
-            //{ symbol: SYMBOLS.AUTH_STRATEGY_FACTORY, constructor: AuthStrategyFactory},
             { symbol: SYMBOLS.SERVER, constructor: Server},
             { symbol: SYMBOLS.API_APP, constructor: ApiApp},
             { symbol: SYMBOLS.APP, constructor: App}
         ];
+
         for (const binding of bindings) {
-            if (!container.isBound(binding.symbol)) {
-                logger.debug(`Binding ${binding.symbol.toString()}`, 'IoC-Setup');
-                container.bind(binding.symbol).to(binding.constructor).inSingletonScope();
+            if (container.isBound(binding.symbol)) {
+                container.unbind(binding.symbol);
             }
+            logger.debug(`Binding ${binding.symbol.toString()}`, 'IoC-Setup');
+                container.bind(binding.symbol).to(binding.constructor).inSingletonScope();
         }
 
         
@@ -66,6 +70,7 @@ function setupIoC() {
 
         logger.info('IoC container setup completed successfully', 'IoC-Setup');
         
+        return container;
 
     } catch (error) {
         const logger = container.isBound(SYMBOLS.CUSTOM_LOGGER)
@@ -92,15 +97,13 @@ function setupIoC() {
     }
 }
 
-
-setupIoC();
-
-export function loadProviderModule() {
-        // Maybe do additional setup here if needed
+export function initializeContainer() {
+    //In order to unsure an only logger instance
+    if(!container.isBound(SYMBOLS.CUSTOM_LOGGER)) {
+        return setupIoC();
     }
 
-export function get<T>(identifier: symbol): T {
-    return container.get<T>(identifier)
+    return container;
 }
 
 

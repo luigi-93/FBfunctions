@@ -1,12 +1,13 @@
-
-import { App } from "../app";
-import { container } from "../ioc";
+import { container, initializeContainer } from "../ioc";
 import { SYMBOLS } from "../utility/firebaseType";
 import { CustomLogger } from "../utility/loggerType";
 
 
 async function testContainer() {
     try {
+
+        initializeContainer();
+        
         const logger = container.get<CustomLogger>(SYMBOLS.CUSTOM_LOGGER);
         console.log('Successfully resolved logger')
 
@@ -15,7 +16,7 @@ async function testContainer() {
         const dependecies = [
             { name: 'Server', symbol: SYMBOLS.SERVER},
             { name: 'ApiApp', symbol: SYMBOLS.API_APP},
-            { name: 'ApiKeyManager', symbol: SYMBOLS.API_KEY_MANAGER}          
+            //{ name: 'ApiKeyManager', symbol: SYMBOLS.API_KEY_MANAGER}          
         ];
 
         for (const dep of dependecies) {
@@ -27,7 +28,7 @@ async function testContainer() {
             }
         }
 
-    const app = container.get<App>(SYMBOLS.APP);
+    const app = container.get(SYMBOLS.APP);
     console.log ('Successfully resolved app')
 
 

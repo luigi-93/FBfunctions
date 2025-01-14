@@ -15,7 +15,7 @@ export interface IAuthStrategy {
         request: express.Request,
         securityName: string,
         scopes?: string[]
-    ): Promise <AuthenticatedUser>;
+    ): Promise <AuthenticatedUser> ;
 }
 
 export interface AuthConfig {

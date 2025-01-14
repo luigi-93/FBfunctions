@@ -1,12 +1,26 @@
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InMemoryStorageAdapter = void 0;
+const inversify_1 = require("inversify");
 const errorType_1 = require("../utility/errorType");
+const firebaseType_1 = require("../utility/firebaseType");
 const loggerType_1 = require("../utility/loggerType");
-class InMemoryStorageAdapter {
+let InMemoryStorageAdapter = class InMemoryStorageAdapter {
     constructor(logger) {
+        this.logger = logger;
         this.apiKeys = {};
-        this.logger = logger || loggerType_1.CustomLogger.create();
     }
     async save(apiKey, metadata) {
         try {
@@ -82,6 +96,11 @@ class InMemoryStorageAdapter {
             throw errorType_1.CustomError.create('Error pruning API Keys', 500, {});
         }
     }
-}
+};
 exports.InMemoryStorageAdapter = InMemoryStorageAdapter;
+exports.InMemoryStorageAdapter = InMemoryStorageAdapter = __decorate([
+    (0, inversify_1.injectable)(),
+    __param(0, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)),
+    __metadata("design:paramtypes", [loggerType_1.CustomLogger])
+], InMemoryStorageAdapter);
 //# sourceMappingURL=apiKeyStorage.js.map

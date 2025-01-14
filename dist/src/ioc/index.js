@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.iocContainer = exports.container = void 0;
-exports.loadProviderModule = loadProviderModule;
+exports.initializeContainer = initializeContainer;
 const inversify_1 = require("inversify");
 const tsoa_1 = require("tsoa");
 const iocConfig_1 = require("./iocConfig");
@@ -21,11 +21,16 @@ function setupIoC() {
         const logger = new loggerType_1.CustomLogger({
             logLevel: 'debug'
         });
-        if (!exports.container.isBound(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)) {
-            exports.container.bind(firebaseType_1.SYMBOLS.CUSTOM_LOGGER).toConstantValue(logger);
+        logger.debug('First, bind the logger itself');
+        if (exports.container.isBound(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)) {
+            exports.container.unbind(firebaseType_1.SYMBOLS.CUSTOM_LOGGER);
+        }
+        exports.container.bind(firebaseType_1.SYMBOLS.CUSTOM_LOGGER).toConstantValue(logger);
+        logger.debug('Now bind CustomLogger class for future eventually instantiations');
+        if (!exports.container.isBound(loggerType_1.CustomLogger)) {
+            exports.container.bind(loggerType_1.CustomLogger).toSelf().inSingletonScope();
         }
         logger.debug('Starting IoC container setup', 'IoC-Setup');
-        logger.debug('Setting dependencies', 'IoC-Setup');
         (0, iocConfig_1.IoCSetup)(exports.container, {
             apiKeys: [],
             needAdminPrivileges: false
@@ -37,14 +42,16 @@ function setupIoC() {
             { symbol: firebaseType_1.SYMBOLS.APP, constructor: app_1.App }
         ];
         for (const binding of bindings) {
-            if (!exports.container.isBound(binding.symbol)) {
-                logger.debug(`Binding ${binding.symbol.toString()}`, 'IoC-Setup');
-                exports.container.bind(binding.symbol).to(binding.constructor).inSingletonScope();
+            if (exports.container.isBound(binding.symbol)) {
+                exports.container.unbind(binding.symbol);
             }
+            logger.debug(`Binding ${binding.symbol.toString()}`, 'IoC-Setup');
+            exports.container.bind(binding.symbol).to(binding.constructor).inSingletonScope();
         }
         logger.debug('Loading provider module', 'IoC-Setup');
         exports.container.load((0, inversify_binding_decorators_1.buildProviderModule)());
         logger.info('IoC container setup completed successfully', 'IoC-Setup');
+        return exports.container;
     }
     catch (error) {
         const logger = exports.container.isBound(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)
@@ -60,7 +67,10 @@ function setupIoC() {
         throw errorType_1.CustomError.create('Failed to setup IoC container', 500, { error });
     }
 }
-setupIoC();
-function loadProviderModule() {
+function initializeContainer() {
+    if (!exports.container.isBound(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)) {
+        return setupIoC();
+    }
+    return exports.container;
 }
 //# sourceMappingURL=index.js.map

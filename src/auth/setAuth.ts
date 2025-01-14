@@ -1,4 +1,5 @@
 import * as admin from 'firebase-admin';
+import * as fs from 'fs';
 import { FirebaseConfig } from '../utility/firebaseType';
 import { CustomLogger } from '../utility/loggerType';
 import { CustomError } from '../utility/errorType';
@@ -30,11 +31,15 @@ export function initializeFirebaseAdmin(needAdminPrivileges: boolean): typeof ad
       logger.error(
         'Failed to parse Firebase Configuration',
         'authenticationSetup',
-        { firebaseConfig });
+        { firebaseConfig,
+          error
+         });
       throw CustomError.create(
         'Invalid JSON in Firebase configuration',
         400,
-        { config: firebaseConfig });
+        { config: firebaseConfig,
+          error: error
+         });
     }
   }
 
@@ -56,13 +61,15 @@ export function initializeFirebaseAdmin(needAdminPrivileges: boolean): typeof ad
     logger.info(
       'Initializing Firebase Admin',
       'authenticationSetup');
+
+      const credentials = config?.serviceAccountPath
+        ? JSON.parse(fs.readFileSync(config.serviceAccountPath, 'utf-8'))
+        : firebaseConfig;
+
       admin.initializeApp({
-        credential: admin.credential.cert(
-          config?.serviceAccountPath
-          ? require(config.serviceAccountPath)
-          : firebaseConfig
-        ),
-      });
+        credential: admin.credential.cert(credentials)
+      })
+      
   }
 
   return admin;

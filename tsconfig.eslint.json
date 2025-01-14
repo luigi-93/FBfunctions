@@ -1,0 +1,18 @@
+{
+    "extends": "./tsconfig.base.json",
+    "include": [
+        "eslint.config.mjs",
+        "src/**/*.mjs",
+        "src/**/*.ts",
+        "src/**/*.cjs",
+        "src/**/*.js",
+        "build/**/*"
+    ],
+    "compilerOptions": {
+        "noEmit": true,
+        "baseUrl": ".",
+        "paths": {
+            "*": ["node_modules/*", "build/*"]
+        }
+    }
+}

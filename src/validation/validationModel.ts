@@ -6,6 +6,7 @@ import { CustomLogger } from "../utility/loggerType";
 import { plainToClass } from 'class-transformer';
 import { CustomError } from "../utility/errorType";
 import { inject, injectable } from 'inversify';
+import { SYMBOLS } from '../utility/firebaseType';
 
 
 export declare type ClassType<T> = {
@@ -15,7 +16,7 @@ export declare type ClassType<T> = {
 @injectable()
 export class ModelManager {
     constructor(
-        @inject(CustomLogger) private logger: CustomLogger
+        @inject(SYMBOLS.CUSTOM_LOGGER) private logger: CustomLogger
     ) {}
 
     private _validateOptions(customOptions?: Partial<ValidatorOptions>): ValidatorOptions {

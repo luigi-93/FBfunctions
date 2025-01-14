@@ -1,18 +1,15 @@
+import { inject, injectable } from "inversify";
 import { CustomError } from "../utility/errorType";
-import { ApiKeyMetadata, ApiKeyStorageAdapter } from "../utility/firebaseType";
+import { ApiKeyMetadata, ApiKeyStorageAdapter, SYMBOLS } from "../utility/firebaseType";
 import { CustomLogger } from "../utility/loggerType";
 
-
+@injectable()
 export class InMemoryStorageAdapter implements ApiKeyStorageAdapter {
-    
     private apiKeys: Record<string, ApiKeyMetadata> = {};
-    private logger: CustomLogger;
-
-    constructor(logger?: CustomLogger) {
-        this.logger = logger || CustomLogger.create();
-    }
-
-    
+   
+    constructor(
+        @inject(SYMBOLS.CUSTOM_LOGGER) private readonly logger: CustomLogger
+    ) {}
 
     async save(apiKey: string, metadata: ApiKeyMetadata): Promise<void> {
         try {

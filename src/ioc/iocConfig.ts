@@ -6,7 +6,6 @@ import { IocContainer } from '@tsoa/runtime';
 import { CustomError } from '../utility/errorType';
 import { ApiKeyValidator } from '../validation/validationApiKey';
 import { InMemoryStorageAdapter } from '../services/apiKeyStorage';
-import { ServerConfig } from '../config/servConfig';
 import { initializeFirebaseAdmin } from '../auth/setAuth';
 import { ApiKeyAuthstrategy, AuthStrategyFactory, FirebaseJwtAuthStrategy } from '../auth/strategyAuth';
 import * as admin from 'firebase-admin';
@@ -25,11 +24,9 @@ export class ContainerAdapter implements IocContainer {
             );
         }
     }
-
-    get<T>(controller: { prototype: T }): T;
-    get<T>(controller: { prototype: T }): Promise<T>;
-    get<T>(controller: interfaces.ServiceIdentifier<T>): T;
-    get<T>(controller: interfaces.ServiceIdentifier<T> | { prototype: T }): T | Promise<T> {
+    
+    get<T>(controller: interfaces.ServiceIdentifier<T> | { prototype: T }): T 
+    {
         try {
 
             if (!controller) {
@@ -41,12 +38,14 @@ export class ContainerAdapter implements IocContainer {
                     });
             }
 
-            if (typeof controller === 'symbol' || typeof controller === 'function') {
-                return this.container.get<T>(controller as interfaces.ServiceIdentifier<T>);
+            if (typeof controller === 'symbol' || 
+                typeof controller === 'string' || 
+                typeof controller === 'function') {
+                return this.container.get<T>(controller);
             }
             
             if (typeof controller === 'object' && 'prototype' in controller) {
-                const serviceIdentifier = (controller as { prototype: T }).constructor as interfaces.ServiceIdentifier<T>;
+                const serviceIdentifier = controller.constructor as interfaces.ServiceIdentifier<T>;
             
                 if (!serviceIdentifier) {
                     throw CustomError.create(
@@ -252,7 +251,14 @@ export async function IoCSetup(
                     logger.error(
                         'Failed to initialize API key Auth Strategy',
                         'IoC-Config',
-                        { error });
+                        { 
+                            errorDetails: error instanceof Error
+                            ? {
+                                name: error.name,
+                                message: error.message
+                            }
+                            : 'Unknow error'
+                         });
                     throw CustomError.create(
                         'Failed to initialize API key Auth Strategy',
                         500,

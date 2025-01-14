@@ -13,5 +13,4 @@ export declare class App {
     constructor(logger: CustomLogger, server: Server, apiApp: ApiApp, apikeyManager: ApiKeyManager, serverInitializer: ServerInitializer);
     initialize(): Promise<express.Express>;
 }
-export declare function createApp(): Promise<express.Express>;
 export declare const app: Promise<express.Express>;

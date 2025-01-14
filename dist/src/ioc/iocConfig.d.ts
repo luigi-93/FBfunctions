@@ -6,13 +6,9 @@ import { IocContainer } from '@tsoa/runtime';
 export declare class ContainerAdapter implements IocContainer {
     private readonly container;
     constructor(container: Container);
-    get<T>(controller: {
+    get<T>(controller: interfaces.ServiceIdentifier<T> | {
         prototype: T;
     }): T;
-    get<T>(controller: {
-        prototype: T;
-    }): Promise<T>;
-    get<T>(controller: interfaces.ServiceIdentifier<T>): T;
     private getControllerIdentifier;
 }
 interface ApiKeyResult {

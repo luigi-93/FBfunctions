@@ -16,9 +16,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.app = exports.App = void 0;
-exports.createApp = createApp;
 const express_1 = __importDefault(require("express"));
-const ioc_1 = require("./ioc");
+const index_1 = require("./ioc/index");
 const dotenv_1 = __importDefault(require("dotenv"));
 const server_1 = require("./server/server");
 const routes_1 = require("./routes");
@@ -28,6 +27,8 @@ const serverInitializer_1 = require("./server/serverInitializer");
 const loggerType_1 = require("./utility/loggerType");
 const inversify_1 = require("inversify");
 const firebaseType_1 = require("./utility/firebaseType");
+const errorType_1 = require("./utility/errorType");
+const console_1 = require("console");
 dotenv_1.default.config();
 let App = class App {
     constructor(logger, server, apiApp, apikeyManager, serverInitializer) {
@@ -67,10 +68,28 @@ exports.App = App = __decorate([
         apiKeyManager_1.ApiKeyManager,
         serverInitializer_1.ServerInitializer])
 ], App);
-(0, ioc_1.loadProviderModule)();
 async function createApp() {
-    const application = ioc_1.iocContainer.get(firebaseType_1.SYMBOLS.APP);
-    return application.initialize();
+    try {
+        const container = (0, index_1.initializeContainer)();
+        if (!container.isBound(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)) {
+            throw errorType_1.CustomError.create('CustomLogger binding not found', 500, {
+                error: 'The instance of logger itslef is needed'
+            });
+        }
+        if (!container.isBound(firebaseType_1.SYMBOLS.APP)) {
+            throw errorType_1.CustomError.create('App binding not found', 500, {
+                error: console_1.error instanceof Error
+                    ? console_1.error
+                    : 'Unknow error',
+                message: 'Bind the App class before to create it instance'
+            });
+        }
+        const application = container.get(firebaseType_1.SYMBOLS.APP);
+        return application.initialize();
+    }
+    catch (error) {
+        throw errorType_1.CustomError.create('Failed to create application', 500, { error });
+    }
 }
 exports.app = createApp();
 //# sourceMappingURL=app.js.map

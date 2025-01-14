@@ -19,9 +19,7 @@ export class FirebaseConfigurationManager {
     private static instance: FirebaseConfigurationManager;
     private config: ServiceConfig | null = null;
 
-    private constructor(
-        //@inject(SYMBOLS.CUSTOM_LOGGER) private logger: CustomLogger
-    ) {}
+    private constructor() {}
 
     static getInstance(): FirebaseConfigurationManager {
         if(!this.instance) {

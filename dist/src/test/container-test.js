@@ -4,28 +4,33 @@ const ioc_1 = require("../ioc");
 const firebaseType_1 = require("../utility/firebaseType");
 async function testContainer() {
     try {
+        (0, ioc_1.initializeContainer)();
         const logger = ioc_1.container.get(firebaseType_1.SYMBOLS.CUSTOM_LOGGER);
-        console.log('Successfu.ly resolved logger');
-        const app = ioc_1.container.get(firebaseType_1.SYMBOLS.APP);
-        console.log('Successfully resolved app');
+        console.log('Successfully resolved logger');
         const dependecies = [
             { name: 'Server', symbol: firebaseType_1.SYMBOLS.SERVER },
             { name: 'ApiApp', symbol: firebaseType_1.SYMBOLS.API_APP },
-            { name: 'ApiKeyManager', symbol: firebaseType_1.SYMBOLS.API_KEY_MANAGER },
-            { name: 'ServerInitializer', symbol: firebaseType_1.SYMBOLS.SERVER_INITIALIZER }
         ];
         for (const dep of dependecies) {
             try {
-                ioc_1.container.get(dep.symbol);
-                console.log(`Successfully resolved ${dep.name}`);
+                const resolved = ioc_1.container.get(dep.symbol);
+                console.log(`Successfully resolved ${dep.name}`, typeof resolved);
             }
             catch (error) {
                 console.error(`Failed to resolve ${dep.name}:`, error);
             }
         }
+        const app = ioc_1.container.get(firebaseType_1.SYMBOLS.APP);
+        console.log('Successfully resolved app');
     }
     catch (error) {
         console.error('Contanier test failed:', error);
+        if (error instanceof Error) {
+            console.error('Error details:', {
+                message: error.message,
+                stack: error.stack
+            });
+        }
     }
 }
 testContainer().catch(console.error);

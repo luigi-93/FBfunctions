@@ -18,6 +18,7 @@ const loggerType_1 = require("../utility/loggerType");
 const class_transformer_1 = require("class-transformer");
 const errorType_1 = require("../utility/errorType");
 const inversify_1 = require("inversify");
+const firebaseType_1 = require("../utility/firebaseType");
 let ModelManager = class ModelManager {
     constructor(logger) {
         this.logger = logger;
@@ -88,7 +89,7 @@ let ModelManager = class ModelManager {
 exports.ModelManager = ModelManager;
 exports.ModelManager = ModelManager = __decorate([
     (0, inversify_1.injectable)(),
-    __param(0, (0, inversify_1.inject)(loggerType_1.CustomLogger)),
+    __param(0, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)),
     __metadata("design:paramtypes", [loggerType_1.CustomLogger])
 ], ModelManager);
 //# sourceMappingURL=validationModel.js.map

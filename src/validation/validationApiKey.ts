@@ -1,6 +1,8 @@
+import { inject } from "inversify";
 import { 
     ApiKeyMetadata, 
-    SecurityScopes } 
+    SecurityScopes, 
+    SYMBOLS} 
     from "../utility/firebaseType";
 import { CustomLogger } from "../utility/loggerType";
 
@@ -8,11 +10,11 @@ import { CustomLogger } from "../utility/loggerType";
 
 
 export class ApiKeyValidator {
-    private logger: CustomLogger;
+    
 
-    constructor(logger?: CustomLogger) {
-        this.logger = logger || CustomLogger.create();
-    }
+    constructor(
+        @inject(SYMBOLS.CUSTOM_LOGGER) private readonly logger: CustomLogger
+    ) {}
 
     validate(metadata: ApiKeyMetadata): boolean {
         return (

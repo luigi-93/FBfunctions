@@ -35,7 +35,9 @@ let ContainerAdapter = class ContainerAdapter {
                     message: 'Constroller was not provided'
                 });
             }
-            if (typeof controller === 'symbol' || typeof controller === 'function') {
+            if (typeof controller === 'symbol' ||
+                typeof controller === 'string' ||
+                typeof controller === 'function') {
                 return this.container.get(controller);
             }
             if (typeof controller === 'object' && 'prototype' in controller) {
@@ -169,7 +171,14 @@ async function IoCSetup(iocContainer, options = {
                 return new strategyAuth_1.ApiKeyAuthstrategy(manager, strategyLogger);
             }
             catch (error) {
-                logger.error('Failed to initialize API key Auth Strategy', 'IoC-Config', { error });
+                logger.error('Failed to initialize API key Auth Strategy', 'IoC-Config', {
+                    errorDetails: error instanceof Error
+                        ? {
+                            name: error.name,
+                            message: error.message
+                        }
+                        : 'Unknow error'
+                });
                 throw errorType_1.CustomError.create('Failed to initialize API key Auth Strategy', 500, { error });
             }
         })

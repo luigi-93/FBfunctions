@@ -14,7 +14,6 @@ import express from 'express';
 import { AuthenticatedUser } from './userAuth';
 import * as admin from 'firebase-admin';
 import { ApiKeyManager } from '../services/apiKeyManager';
-import { iocContainer } from '../ioc';
 import { ContainerAdapter } from '../ioc/iocConfig';
 
 
@@ -61,8 +60,8 @@ export class AuthStrategyFactory {
                 'AuthStrategyFactory',
                 { strategyName: name }
             );
-
-            return strategy
+            return strategy;
+            
         } catch (error) {
             this.logger.error(
                 `Failed to resolve strategy: ${name}`,
@@ -90,8 +89,7 @@ export class AuthStrategyFactory {
 
 export abstract class BaseAuthStrategy implements IAuthStrategy {
     protected logger: CustomLogger;
-    constructor(
-        logger?: CustomLogger) {
+    constructor(logger?: CustomLogger) {
         this.logger = logger || new CustomLogger();
     }
 
@@ -106,17 +104,38 @@ export abstract class BaseAuthStrategy implements IAuthStrategy {
         requiredScopes: string[],
     ): void {
         // Enhanced scope validation
-        if (requiredScopes.length === 0) return;
-        
-        try {
-            const isAllowed = user.isAllowedTo(
-                request,
+        if (requiredScopes.length === 0) {
+            this.logger.debug(
+                'No scope validation required',
+                'BaseAuthStrategy.validateScopes',
                 {
-                    requiredScopes: requiredScopes as SecurityScopes[]
-                });
-        } catch (error) {
-            throw error;
-        }
+                    userId: user.getCustomClaim('uid')
+                }
+            );
+            return;
+        } 
+        
+        this.logger.debug(
+            'Starting scope validation',
+            'BaseAuthStrategy.validateScoopes',
+            {
+                requiredScopes,
+                userId: user.getCustomClaim('uid')
+            }
+        );
+
+        user.isAllowedTo(request, {
+            requiredScopes: requiredScopes as SecurityScopes[]
+        });
+
+        this.logger.debug(
+            'Scope validation successful',
+            'BaseAuthStrategy.validateScopes',
+            {
+                requiredScopes,
+                userId: user.getCustomClaim('uid')
+            }
+        );
     }
 }
 

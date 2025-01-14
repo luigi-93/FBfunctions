@@ -71,16 +71,23 @@ class BaseAuthStrategy {
         this.logger = logger || new loggerType_1.CustomLogger();
     }
     validateScopes(user, request, requiredScopes) {
-        if (requiredScopes.length === 0)
-            return;
-        try {
-            const isAllowed = user.isAllowedTo(request, {
-                requiredScopes: requiredScopes
+        if (requiredScopes.length === 0) {
+            this.logger.debug('No scope validation required', 'BaseAuthStrategy.validateScopes', {
+                userId: user.getCustomClaim('uid')
             });
+            return;
         }
-        catch (error) {
-            throw error;
-        }
+        this.logger.debug('Starting scope validation', 'BaseAuthStrategy.validateScoopes', {
+            requiredScopes,
+            userId: user.getCustomClaim('uid')
+        });
+        user.isAllowedTo(request, {
+            requiredScopes: requiredScopes
+        });
+        this.logger.debug('Scope validation successful', 'BaseAuthStrategy.validateScopes', {
+            requiredScopes,
+            userId: user.getCustomClaim('uid')
+        });
     }
 }
 exports.BaseAuthStrategy = BaseAuthStrategy;

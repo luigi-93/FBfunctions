@@ -3,27 +3,18 @@ import { CustomLogger } from "../utility/loggerType";
 import { Server } from "./server";
 import { ApiKeyManager } from '../services/apiKeyManager';
 import express from 'express';
-import { SecurityScopes } from "../utility/firebaseType";
-import { injectable } from "inversify";
+import { SecurityScopes, SYMBOLS } from '../utility/firebaseType';
+import { inject, injectable } from "inversify";
 
 @injectable()
 export class ServerInitializer {
-    private logger: CustomLogger;
-    private server: Server;
-    private apiApp: ApiApp;
-    private apiKeyManager: ApiKeyManager;
 
     constructor(
-        logger: CustomLogger,
-        server: Server,
-        apiApp: ApiApp,
-        apiKeyManager: ApiKeyManager
-    ) {
-        this.logger = logger;
-        this.server = server;
-        this.apiApp = apiApp;
-        this.apiKeyManager = apiKeyManager;
-    }
+        @inject(SYMBOLS.CUSTOM_LOGGER) private readonly logger: CustomLogger,
+        @inject(SYMBOLS.SERVER) private readonly server: Server,
+        @inject(SYMBOLS.API_APP) private readonly apiApp: ApiApp,
+        @inject(SYMBOLS.API_KEY_MANAGER) private readonly apiKeyManager: ApiKeyManager
+    ) {}
 
     async initialize (
         app: express.Express,

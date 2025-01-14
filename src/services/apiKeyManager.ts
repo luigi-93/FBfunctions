@@ -10,7 +10,6 @@ import {
     SYMBOLS} from "../utility/firebaseType";
 import { CustomLogger } from '../utility/loggerType';
 import { ApiKeyValidator } from "../validation/validationApiKey";
-import { InMemoryStorageAdapter } from "./apiKeyStorage";
 import * as crypto from 'crypto';
 
 
