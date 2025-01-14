@@ -1,7 +1,9 @@
 import { container, initializeContainer } from "../ioc";
+import dotenv from 'dotenv';
 import { SYMBOLS } from "../utility/firebaseType";
 import { CustomLogger } from "../utility/loggerType";
 
+dotenv.config();
 
 async function testContainer() {
     try {

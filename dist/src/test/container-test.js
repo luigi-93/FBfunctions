@@ -1,7 +1,12 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const ioc_1 = require("../ioc");
+const dotenv_1 = __importDefault(require("dotenv"));
 const firebaseType_1 = require("../utility/firebaseType");
+dotenv_1.default.config();
 async function testContainer() {
     try {
         (0, ioc_1.initializeContainer)();
