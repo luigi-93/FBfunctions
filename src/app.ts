@@ -13,13 +13,8 @@
         import { inject, injectable } from 'inversify';
     import { SYMBOLS } from './utility/firebaseType';
     import { CustomError } from './utility/errorType';
-import { error } from 'console';
 
-
-
-    //Load environment varibles 
     dotenv.config();
-
 
     @injectable()
     export class App {
@@ -67,37 +62,56 @@ import { error } from 'console';
 
     
     async function createApp(): Promise<express.Express> {
+        const logger = new CustomLogger({ logLevel: 'debug'})
         try {
+            logger.debug('Starting application creation', 'App-Init')
             // Initialize container first
-            const container = initializeContainer();
+            const initializedContainer = await initializeContainer();
 
             // Verify essential bindings
-            if (!container.isBound(SYMBOLS.CUSTOM_LOGGER)) {
-                throw CustomError.create(
-                    'CustomLogger binding not found',
-                    500,
-                    {
-                        error: 'The instance of logger itslef is needed'
-                    }
-                )
-            }
+            const requiredBindngs = [
+                { symbol: SYMBOLS.CUSTOM_LOGGER, name: 'CustomLogger'},
+                { symbol: SYMBOLS.APP, name: 'App'}
+            ];
 
-            if (!container.isBound(SYMBOLS.APP)) {
-                throw  CustomError.create(
-                    'App binding not found',
-                    500,
-                    {
-                        error: error instanceof Error
-                        ? error
-                        : 'Unknow error',
-                        message: 'Bind the App class before to create it instance'
-                    }
-                )
+            for (const binding of requiredBindngs) {
+                if (!initializedContainer.isBound(binding.symbol)) {
+                    logger.error(
+                        `Missing required binding: ${binding.name}`, 
+                        'App-Init'
+                    )
+                    throw CustomError.create(
+                        `${binding.name} binding not found`,
+                        500, {
+                            error: `Required binding ${binding.name} is missing`,
+                            symbol: binding.symbol.toString(),
+                        }
+                    )
+                }
             }
+            
+            const application = initializedContainer.get<App>(SYMBOLS.APP);
+            const result = await application.initialize();
 
-            const application = container.get<App>(SYMBOLS.APP);
-            return application.initialize();
+            logger.info(
+                'Application created successfully',
+                'App-Init'
+            )
+            return result;
         } catch (error) {
+            logger.error(
+                'Failed to create application',
+                'App-Init',
+                {
+                    error: error instanceof Error
+                    ? {
+                        message: error.message,
+                        stack: error.stack,
+                        name: error.name
+                    }
+                    : 'Unknow error'
+                }
+            )
             throw CustomError.create(
                 'Failed to create application',
                 500,
@@ -106,4 +120,6 @@ import { error } from 'console';
         }
     }
 
-    export const app = createApp() ;
+
+
+export { createApp as app };

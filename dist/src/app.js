@@ -28,7 +28,6 @@ const loggerType_1 = require("./utility/loggerType");
 const inversify_1 = require("inversify");
 const firebaseType_1 = require("./utility/firebaseType");
 const errorType_1 = require("./utility/errorType");
-const console_1 = require("console");
 dotenv_1.default.config();
 let App = class App {
     constructor(logger, server, apiApp, apikeyManager, serverInitializer) {
@@ -69,25 +68,38 @@ exports.App = App = __decorate([
         serverInitializer_1.ServerInitializer])
 ], App);
 async function createApp() {
+    const logger = new loggerType_1.CustomLogger({ logLevel: 'debug' });
     try {
-        const container = (0, index_1.initializeContainer)();
-        if (!container.isBound(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)) {
-            throw errorType_1.CustomError.create('CustomLogger binding not found', 500, {
-                error: 'The instance of logger itslef is needed'
-            });
+        logger.debug('Starting application creation', 'App-Init');
+        const initializedContainer = await (0, index_1.initializeContainer)();
+        const requiredBindngs = [
+            { symbol: firebaseType_1.SYMBOLS.CUSTOM_LOGGER, name: 'CustomLogger' },
+            { symbol: firebaseType_1.SYMBOLS.APP, name: 'App' }
+        ];
+        for (const binding of requiredBindngs) {
+            if (!initializedContainer.isBound(binding.symbol)) {
+                logger.error(`Missing required binding: ${binding.name}`, 'App-Init');
+                throw errorType_1.CustomError.create(`${binding.name} binding not found`, 500, {
+                    error: `Required binding ${binding.name} is missing`,
+                    symbol: binding.symbol.toString(),
+                });
+            }
         }
-        if (!container.isBound(firebaseType_1.SYMBOLS.APP)) {
-            throw errorType_1.CustomError.create('App binding not found', 500, {
-                error: console_1.error instanceof Error
-                    ? console_1.error
-                    : 'Unknow error',
-                message: 'Bind the App class before to create it instance'
-            });
-        }
-        const application = container.get(firebaseType_1.SYMBOLS.APP);
-        return application.initialize();
+        const application = initializedContainer.get(firebaseType_1.SYMBOLS.APP);
+        const result = await application.initialize();
+        logger.info('Application created successfully', 'App-Init');
+        return result;
     }
     catch (error) {
+        logger.error('Failed to create application', 'App-Init', {
+            error: error instanceof Error
+                ? {
+                    message: error.message,
+                    stack: error.stack,
+                    name: error.name
+                }
+                : 'Unknow error'
+        });
         throw errorType_1.CustomError.create('Failed to create application', 500, { error });
     }
 }

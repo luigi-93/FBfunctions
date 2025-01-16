@@ -1,6 +1,6 @@
 import { Container, injectable, interfaces } from 'inversify';
 import { CustomLogger } from '../utility/loggerType';
-import { registry, SecurityScopes, SYMBOLS } from '../utility/firebaseType';
+import { ApiKeyResult, IoCSetupResult, registry, SecurityScopes, SYMBOLS } from '../utility/firebaseType';
 import { ApiKeyManager } from '../services/apiKeyManager';
 import { IocContainer } from '@tsoa/runtime';
 import { CustomError } from '../utility/errorType';
@@ -9,7 +9,6 @@ import { InMemoryStorageAdapter } from '../services/apiKeyStorage';
 import { initializeFirebaseAdmin } from '../auth/setAuth';
 import { ApiKeyAuthstrategy, AuthStrategyFactory, FirebaseJwtAuthStrategy } from '../auth/strategyAuth';
 import * as admin from 'firebase-admin';
-
 
 @injectable()
 export class ContainerAdapter implements IocContainer {
@@ -95,18 +94,6 @@ export class ContainerAdapter implements IocContainer {
 
         return 'Unknow Controller Type'
     }
-}
-
-interface ApiKeyResult {
-    name: string;
-    key: string;
-    scopes: SecurityScopes[];
-    expiresAt?: number;
-}
-
-interface IoCSetupResult {
-    apiKeyManager: ApiKeyManager;
-    generatedKeys: ApiKeyResult[];
 }
 
 export async function IoCSetup(

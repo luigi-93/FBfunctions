@@ -13,37 +13,45 @@ import { ApiApp } from "../routes";
 import { App } from "../app";
 import { SYMBOLS } from "../utility/firebaseType";
 import { ServerInitializer } from "../server/serverInitializer";
+import { error } from "console";
 
-
-// Create container instance
 export const container = new Container({ defaultScope: 'Singleton' });
-// Create ContainerAdapter instance
 export const iocContainer = new ContainerAdapter(container);
-
-// Decoraate ContainerAdapter instance
 decorate(injectable(), Controller);
 
-function setupIoC() {
+async function setupIoC(existingContainer: Container) {
     try {
+
+        if(!existingContainer) {
+            throw new Error('Container instance is undefined')
+        }
 
         const logger = new CustomLogger({
             logLevel: 'debug'
         });
+
+        logger.debug('Container state before setup:', 'IoC-Setup',
+            {
+                bindings: Object.keys(SYMBOLS).filter(key =>
+                    existingContainer.isBound(SYMBOLS[key as keyof typeof SYMBOLS])
+                ) 
+            });
+
         logger.debug('First, bind the logger itself')
-        if (container.isBound(SYMBOLS.CUSTOM_LOGGER)) {
-            container.unbind(SYMBOLS.CUSTOM_LOGGER)
+        if (existingContainer.isBound(SYMBOLS.CUSTOM_LOGGER)) {
+            existingContainer.unbind(SYMBOLS.CUSTOM_LOGGER)
         }
-        container.bind(SYMBOLS.CUSTOM_LOGGER).toConstantValue(logger);
+        existingContainer.bind(SYMBOLS.CUSTOM_LOGGER).toConstantValue(logger);
 
         logger.debug('Now bind CustomLogger class for future eventually instantiations')
-        if(!container.isBound(CustomLogger)) {
-            container.bind(CustomLogger).toSelf().inSingletonScope();
+        if(!existingContainer.isBound(CustomLogger)) {
+            existingContainer.bind(CustomLogger).toSelf().inSingletonScope();
         }
 
         logger.debug('Starting IoC container setup', 'IoC-Setup');
 
         //Setup basic IoC first
-        IoCSetup(container, {
+        await IoCSetup(existingContainer, {
             apiKeys: [],
             needAdminPrivileges: false
         }, logger);
@@ -56,21 +64,52 @@ function setupIoC() {
         ];
 
         for (const binding of bindings) {
-            if (container.isBound(binding.symbol)) {
-                container.unbind(binding.symbol);
+            if (existingContainer.isBound(binding.symbol)) {
+                existingContainer.unbind(binding.symbol);
             }
             logger.debug(`Binding ${binding.symbol.toString()}`, 'IoC-Setup');
-                container.bind(binding.symbol).to(binding.constructor).inSingletonScope();
+            existingContainer.bind(binding.symbol).to(binding.constructor).inSingletonScope();
         }
 
         
         // 7. Load any additional providers
         logger.debug('Loading provider module', 'IoC-Setup');
-        container.load(buildProviderModule());
+        existingContainer.load(buildProviderModule());
+
+        const requiredBindings = [
+            SYMBOLS.CUSTOM_LOGGER,
+            SYMBOLS.SERVER_INITIALIZER,
+            SYMBOLS.SERVER,
+            SYMBOLS.API_APP,
+            SYMBOLS.APP
+        ];
+        const missingBindings = requiredBindings.filter(
+            symbol => !existingContainer.isBound(symbol)
+        );
+
+        if (missingBindings.length > 0) {
+            logger.error(
+                'Missing required bindings',
+                'IoC-Setup',
+                {
+                    missingBindings: missingBindings.map(symbol =>
+                        Object.entries(SYMBOLS)
+                        .find(([key, value]) => value === symbol)?.[0] || 'Unknow'
+                    )
+            });
+            
+            throw new Error(
+                `Missing required binding: ${
+                    missingBindings.map(symbol =>
+                        Object.entries(SYMBOLS)
+                            .find(([key, value]) => value === symbol)?.[0] || 'Unknow'
+                    ).join(', ')
+                }`
+            )
+        }
 
         logger.info('IoC container setup completed successfully', 'IoC-Setup');
-        
-        return container;
+        return existingContainer;
 
     } catch (error) {
         const logger = container.isBound(SYMBOLS.CUSTOM_LOGGER)
@@ -97,13 +136,44 @@ function setupIoC() {
     }
 }
 
-export function initializeContainer() {
-    //In order to unsure an only logger instance
-    if(!container.isBound(SYMBOLS.CUSTOM_LOGGER)) {
-        return setupIoC();
-    }
+export async function initializeContainer(): Promise<Container> {
+    try {
+        const initializedContainer  = await setupIoC(container);
+        if (!initializedContainer) {
+            throw CustomError.create(
+                'setupIoc returned undefined or null container',
+                500,
+                {
+                    error
+                });
+        }
+        return initializedContainer;
+    } catch (error) {
+        const tempLogger = new CustomLogger({ logLevel:'debug'});
 
-    return container;
+        tempLogger.error(
+            'Container initialization failed',
+            'IoC-Init',
+            {
+                error: error instanceof Error
+                ? {
+                    name: error.name,
+                    message: error.message,
+                    stack: error.stack
+                }
+                : 'Uknown error'
+            }
+        )
+        throw CustomError.create(
+            'InintilizeContainer does not return',
+            401,
+            {
+                error: error instanceof Error 
+                ? error
+                : 'Unknow error',
+                phase: 'contaner initialization'
+            });
+    }
 }
 
 

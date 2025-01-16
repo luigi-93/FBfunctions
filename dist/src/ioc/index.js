@@ -13,13 +13,17 @@ const routes_1 = require("../routes");
 const app_1 = require("../app");
 const firebaseType_1 = require("../utility/firebaseType");
 const serverInitializer_1 = require("../server/serverInitializer");
+const console_1 = require("console");
 exports.container = new inversify_1.Container({ defaultScope: 'Singleton' });
 exports.iocContainer = new iocConfig_1.ContainerAdapter(exports.container);
 (0, inversify_1.decorate)((0, inversify_1.injectable)(), tsoa_1.Controller);
-function setupIoC() {
+async function setupIoC(existingContainer) {
     try {
         const logger = new loggerType_1.CustomLogger({
             logLevel: 'debug'
+        });
+        logger.debug('Container state before setup:', 'IoC-Setup', {
+            bindings: Object.keys(firebaseType_1.SYMBOLS).filter(key => existingContainer.isBound(firebaseType_1.SYMBOLS[key]))
         });
         logger.debug('First, bind the logger itself');
         if (exports.container.isBound(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)) {
@@ -31,7 +35,7 @@ function setupIoC() {
             exports.container.bind(loggerType_1.CustomLogger).toSelf().inSingletonScope();
         }
         logger.debug('Starting IoC container setup', 'IoC-Setup');
-        (0, iocConfig_1.IoCSetup)(exports.container, {
+        await (0, iocConfig_1.IoCSetup)(exports.container, {
             apiKeys: [],
             needAdminPrivileges: false
         }, logger);
@@ -51,7 +55,7 @@ function setupIoC() {
         logger.debug('Loading provider module', 'IoC-Setup');
         exports.container.load((0, inversify_binding_decorators_1.buildProviderModule)());
         logger.info('IoC container setup completed successfully', 'IoC-Setup');
-        return exports.container;
+        return existingContainer;
     }
     catch (error) {
         const logger = exports.container.isBound(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)
@@ -67,10 +71,33 @@ function setupIoC() {
         throw errorType_1.CustomError.create('Failed to setup IoC container', 500, { error });
     }
 }
-function initializeContainer() {
-    if (!exports.container.isBound(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)) {
-        return setupIoC();
+async function initializeContainer() {
+    try {
+        const initializedContainer = await setupIoC(exports.container);
+        if (!initializedContainer) {
+            throw errorType_1.CustomError.create('setupIoc returned undefined or null container', 500, {
+                error: console_1.error
+            });
+        }
+        return initializedContainer;
     }
-    return exports.container;
+    catch (error) {
+        const tempLogger = new loggerType_1.CustomLogger({ logLevel: 'debug' });
+        tempLogger.error('Container initialization failed', 'IoC-Init', {
+            error: error instanceof Error
+                ? {
+                    name: error.name,
+                    message: error.message,
+                    stack: error.stack
+                }
+                : 'Uknown error'
+        });
+        throw errorType_1.CustomError.create('InintilizeContainer does not return', 401, {
+            error: error instanceof Error
+                ? error
+                : 'Unknow error',
+            phase: 'contaner initialization'
+        });
+    }
 }
 //# sourceMappingURL=index.js.map

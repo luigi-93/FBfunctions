@@ -1,14 +1,15 @@
-import { container, initializeContainer } from "../ioc";
+import { initializeContainer } from "../ioc";
 import dotenv from 'dotenv';
 import { SYMBOLS } from "../utility/firebaseType";
 import { CustomLogger } from "../utility/loggerType";
+
 
 dotenv.config();
 
 async function testContainer() {
     try {
 
-        initializeContainer();
+        const container = await initializeContainer();
         
         const logger = container.get<CustomLogger>(SYMBOLS.CUSTOM_LOGGER);
         console.log('Successfully resolved logger')
@@ -23,12 +24,20 @@ async function testContainer() {
 
         for (const dep of dependecies) {
             try {
+                if (!container.isBound(dep.symbol)) {
+                    console.error(`No binding found for ${dep.name}`);
+                    continue;
+                }
                 const resolved = container.get(dep.symbol);
                 console.log(`Successfully resolved ${dep.name}`, typeof resolved)
             } catch (error) {
                 console.error(`Failed to resolve ${dep.name}:`, error)
             }
         }
+
+    if(!container.isBound(SYMBOLS.APP)) {
+        throw new Error('App binding not found in the container')
+    }
 
     const app = container.get(SYMBOLS.APP);
     console.log ('Successfully resolved app')
@@ -46,4 +55,10 @@ async function testContainer() {
     
 }
 
-testContainer().catch(console.error)
+(async () => {
+    try {
+        await testContainer();
+    } catch (error) {
+        console.error('Test execution failed:', error)
+    }
+})();
