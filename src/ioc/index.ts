@@ -76,38 +76,6 @@ async function setupIoC(existingContainer: Container) {
         logger.debug('Loading provider module', 'IoC-Setup');
         existingContainer.load(buildProviderModule());
 
-        const requiredBindings = [
-            SYMBOLS.CUSTOM_LOGGER,
-            SYMBOLS.SERVER_INITIALIZER,
-            SYMBOLS.SERVER,
-            SYMBOLS.API_APP,
-            SYMBOLS.APP
-        ];
-        const missingBindings = requiredBindings.filter(
-            symbol => !existingContainer.isBound(symbol)
-        );
-
-        if (missingBindings.length > 0) {
-            logger.error(
-                'Missing required bindings',
-                'IoC-Setup',
-                {
-                    missingBindings: missingBindings.map(symbol =>
-                        Object.entries(SYMBOLS)
-                        .find(([key, value]) => value === symbol)?.[0] || 'Unknow'
-                    )
-            });
-            
-            throw new Error(
-                `Missing required binding: ${
-                    missingBindings.map(symbol =>
-                        Object.entries(SYMBOLS)
-                            .find(([key, value]) => value === symbol)?.[0] || 'Unknow'
-                    ).join(', ')
-                }`
-            )
-        }
-
         logger.info('IoC container setup completed successfully', 'IoC-Setup');
         return existingContainer;
 

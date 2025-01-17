@@ -1,5 +1,6 @@
 import express from 'express';
 import { AuthenticatedUser } from '../auth/userAuth';
+import { ApiKeyManager } from '../services/apiKeyManager';
 export declare enum FirebaseAuthProvider {
     EMAIL_PASSWORD = "email_pass",
     GOOGLE = "Google",
@@ -114,3 +115,13 @@ export declare const SYMBOLS: {
     CONTAINER_ADAPTER: symbol;
     SERVER_INITIALIZER: symbol;
 };
+export interface ApiKeyResult {
+    name: string;
+    key: string;
+    scopes: SecurityScopes[];
+    expiresAt?: number;
+}
+export interface IoCSetupResult {
+    apiKeyManager: ApiKeyManager;
+    generatedKeys: ApiKeyResult[];
+}

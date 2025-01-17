@@ -6,7 +6,7 @@ const app_1 = require("./app");
 exports.apiV2 = (0, https_1.onRequest)({
     region: 'us-central1'
 }, async (req, res) => {
-    const expressApp = await app_1.app;
+    const expressApp = await (0, app_1.app)();
     expressApp(req, res);
 });
 //# sourceMappingURL=firebase.js.map

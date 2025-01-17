@@ -11,7 +11,7 @@
         import { ServerInitializer } from './server/serverInitializer';
         import { CustomLogger } from './utility/loggerType';
         import { inject, injectable } from 'inversify';
-    import { SYMBOLS } from './utility/firebaseType';
+    import { requiredBindngs, SYMBOLS } from './utility/firebaseType';
     import { CustomError } from './utility/errorType';
 
     dotenv.config();
@@ -26,6 +26,16 @@
             @inject(SYMBOLS.SERVER_INITIALIZER) private readonly serverInitializer: ServerInitializer
         ) {}
 
+        private async cleanup(): Promise<void> {
+            this.logger.info(
+                'Performing cleanup before server shutdown...'
+            )
+            //await dbConnection.close();
+            //jobScheduler.stopAll();
+            //logger.flush();
+            //cache.clear();
+        };
+
         async initialize(): Promise<express.Express> {
             const app: express.Express = express();
                 
@@ -39,20 +49,8 @@
                 );
                 process.exit(1);
             }
-            
             const PORT = Number(process.env.PORT || 3000);
-                
-            const cleanup = () => {
-                this.logger.info(
-                    'Performing cleanup before server shutdown...'
-                )
-                //await dbConnection.close();
-                //jobScheduler.stopAll();
-                //logger.flush();
-                //cache.clear();
-            };
-
-            await this.serverInitializer.initialize(app, PORT, cleanup);
+            await this.serverInitializer.initialize(app, PORT, () => this.cleanup());
 
             return app;
 
@@ -65,14 +63,9 @@
         const logger = new CustomLogger({ logLevel: 'debug'})
         try {
             logger.debug('Starting application creation', 'App-Init')
-            // Initialize container first
             const initializedContainer = await initializeContainer();
 
-            // Verify essential bindings
-            const requiredBindngs = [
-                { symbol: SYMBOLS.CUSTOM_LOGGER, name: 'CustomLogger'},
-                { symbol: SYMBOLS.APP, name: 'App'}
-            ];
+            
 
             for (const binding of requiredBindngs) {
                 if (!initializedContainer.isBound(binding.symbol)) {
@@ -119,7 +112,5 @@
             );
         }
     }
-
-
 
 export { createApp as app };

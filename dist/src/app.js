@@ -15,7 +15,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.app = exports.App = void 0;
+exports.App = void 0;
+exports.app = createApp;
 const express_1 = __importDefault(require("express"));
 const index_1 = require("./ioc/index");
 const dotenv_1 = __importDefault(require("dotenv"));
@@ -103,5 +104,4 @@ async function createApp() {
         throw errorType_1.CustomError.create('Failed to create application', 500, { error });
     }
 }
-exports.app = createApp();
 //# sourceMappingURL=app.js.map

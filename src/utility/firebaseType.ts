@@ -151,3 +151,8 @@ export interface IoCSetupResult {
     apiKeyManager: ApiKeyManager;
     generatedKeys: ApiKeyResult[];
     }
+
+export const requiredBindngs = [
+        { symbol: SYMBOLS.CUSTOM_LOGGER, name: 'CustomLogger'},
+        { symbol: SYMBOLS.APP, name: 'App'}
+    ] as const;
