@@ -10,10 +10,11 @@ This allows flexibility based on whether the code is run on a server (backend) o
  */
 
 
+import { CustomLogger } from "../utility/loggerType";
 import { CustomError } from "../utility/errorType";
 import { ServiceConfig, ValidationResult, FirebaseConfig } from '../utility/firebaseType';
 
-
+const logger: CustomLogger = new CustomLogger({ logLevel: 'debug'})
 
 export class FirebaseConfigurationManager {
     private static instance: FirebaseConfigurationManager;
@@ -34,6 +35,14 @@ export class FirebaseConfigurationManager {
      * @param serviceAccountPath - Optional. Path to the service account JSON file(for server-side)
      */
     setConfig(firebaseConfig: FirebaseConfig, serviceAccountPath?: string): void {
+        
+        logger.debug(
+            'Credentials Path',
+            'setConfig',
+            {
+                credetial: process.env.GOOGLE_APPLICATION_CREDENTIALS
+            }
+        )
         const validationResult = this.validateConfig(firebaseConfig);
 
         if (!validationResult.isValid) {

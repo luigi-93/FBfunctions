@@ -7,9 +7,14 @@ import { CustomLogger } from "../utility/loggerType";
 dotenv.config();
 
 async function testContainer() {
+    const loggertest = new CustomLogger({ logLevel: 'debug'})
     try {
-
+        loggertest.debug('Starting container test')
         const container = await initializeContainer();
+
+        loggertest.debug(
+            'Container initialized', 
+            'testContainer')
         
         const logger = container.get<CustomLogger>(SYMBOLS.CUSTOM_LOGGER);
         console.log('Successfully resolved logger')
@@ -51,6 +56,7 @@ async function testContainer() {
                 stack: error.stack
             });
         }
+        process.exit(1);
     }
     
 }

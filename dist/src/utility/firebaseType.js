@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SYMBOLS = exports.StrategyRegistry = exports.registry = exports.SecurityScopes = exports.SecurityNameTypes = exports.FirebaseAuthProvider = void 0;
+exports.requiredBindngs = exports.SYMBOLS = exports.StrategyRegistry = exports.registry = exports.SecurityScopes = exports.SecurityNameTypes = exports.FirebaseAuthProvider = void 0;
 var FirebaseAuthProvider;
 (function (FirebaseAuthProvider) {
     FirebaseAuthProvider["EMAIL_PASSWORD"] = "email_pass";
@@ -42,4 +42,8 @@ exports.SYMBOLS = {
     CONTAINER_ADAPTER: Symbol.for('ContainerAdapter'),
     SERVER_INITIALIZER: Symbol.for('ServerInitializer')
 };
+exports.requiredBindngs = [
+    { symbol: exports.SYMBOLS.CUSTOM_LOGGER, name: 'CustomLogger' },
+    { symbol: exports.SYMBOLS.APP, name: 'App' }
+];
 //# sourceMappingURL=firebaseType.js.map

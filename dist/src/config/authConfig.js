@@ -1,7 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.firebaseConfigManager = exports.FirebaseConfigurationManager = void 0;
+const loggerType_1 = require("../utility/loggerType");
 const errorType_1 = require("../utility/errorType");
+const logger = new loggerType_1.CustomLogger({ logLevel: 'debug' });
 class FirebaseConfigurationManager {
     constructor() {
         this.config = null;
@@ -13,6 +15,9 @@ class FirebaseConfigurationManager {
         return this.instance;
     }
     setConfig(firebaseConfig, serviceAccountPath) {
+        logger.debug('Credentials Path', 'setConfig', {
+            credetial: process.env.GOOGLE_APPLICATION_CREDENTIALS
+        });
         const validationResult = this.validateConfig(firebaseConfig);
         if (!validationResult.isValid) {
             throw errorType_1.CustomError.create(`Invalid Firebase configuration. Missing fields: ${validationResult.missingFields.join(', ')}`, 400, { missingFields: validationResult.missingFields });

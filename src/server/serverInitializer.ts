@@ -24,13 +24,11 @@ export class ServerInitializer {
         try {
             await this.server
             .build(app, '/api', this.apiApp)
-            .setupProcessErrorHandler(cleanup)
-            .start(app, port);
-
-            this.logger.info(
-                `Server started on port ${port}`);
-
+            .setupProcessErrorHandler(cleanup);
+        
             this.registerDefaultApiKey();
+
+            this.logger.info('Server initialized successfully')
 
             return app;
         } catch (error) {
@@ -41,6 +39,16 @@ export class ServerInitializer {
             );
             process.exit(1);
         }
+    }
+
+    async start(app: express.Express, port: number): Promise<void> {
+        return new Promise((resolve) => {
+            app.listen(port, () => {
+                this.logger.info(
+                    `Server started on port ${port}`);
+                resolve();
+            });
+        });
     }
 
     private registerDefaultApiKey() {

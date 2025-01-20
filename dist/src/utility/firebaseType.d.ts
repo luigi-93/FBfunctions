@@ -125,3 +125,10 @@ export interface IoCSetupResult {
     apiKeyManager: ApiKeyManager;
     generatedKeys: ApiKeyResult[];
 }
+export declare const requiredBindngs: readonly [{
+    readonly symbol: symbol;
+    readonly name: "CustomLogger";
+}, {
+    readonly symbol: symbol;
+    readonly name: "App";
+}];

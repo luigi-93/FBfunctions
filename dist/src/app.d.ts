@@ -11,6 +11,7 @@ export declare class App {
     private readonly apikeyManager;
     private readonly serverInitializer;
     constructor(logger: CustomLogger, server: Server, apiApp: ApiApp, apikeyManager: ApiKeyManager, serverInitializer: ServerInitializer);
+    private cleanup;
     initialize(): Promise<express.Express>;
 }
 declare function createApp(): Promise<express.Express>;

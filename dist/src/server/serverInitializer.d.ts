@@ -10,5 +10,6 @@ export declare class ServerInitializer {
     private readonly apiKeyManager;
     constructor(logger: CustomLogger, server: Server, apiApp: ApiApp, apiKeyManager: ApiKeyManager);
     initialize(app: express.Express, port: number, cleanup?: () => void): Promise<express.Express>;
+    start(app: express.Express, port: number): Promise<void>;
     private registerDefaultApiKey;
 }

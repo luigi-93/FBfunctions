@@ -2,20 +2,29 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createFirebaseConfig = createFirebaseConfig;
 exports.configureFirebase = configureFirebase;
+const loggerType_1 = require("../utility/loggerType");
 const authConfig_1 = require("./authConfig");
+const logger = new loggerType_1.CustomLogger({ logLevel: 'debug' });
 function createFirebaseConfig() {
-    return {
-        apiKey: process.env.FIREBASSE_API_KEY?.trim() || '',
-        authDomain: process.env.FIRABASE_AUTH_DOMANI?.trim() || '',
+    const config = {
+        apiKey: process.env.FIREBASE_API_KEY?.trim() || '',
+        authDomain: process.env.FIREBASE_AUTH_DOMAIN?.trim() || '',
         projectId: process.env.FIREBASE_PROJECT_ID?.trim() || '',
         appId: process.env.FIREBASE_APP_ID?.trim() || '',
     };
+    logger.debug('FirebaseConfig', 'createFirebaseConfig', { config, context: 'createFirebaseConfig' });
+    return config;
 }
 function configureFirebase(config, credantialsPath) {
-    if (authConfig_1.firebaseConfigManager.validateConfig(config).isValid) {
+    logger.debug(' input FirebaseConfig', 'configureFirebase', { config, context: 'configureFirebase' });
+    const validationResult = authConfig_1.firebaseConfigManager.validateConfig(config);
+    logger.debug('FirebaseConfig validation result', 'configureFirebase', { validationResult });
+    if (validationResult.isValid) {
         authConfig_1.firebaseConfigManager.setConfig(config, credantialsPath);
+        logger.debug('Firebase configuration successfully set.');
         return true;
     }
+    logger.warn('Firebase configuration is invalid. Missing fields');
     return false;
 }
 //# sourceMappingURL=firebaseConfig.js.map

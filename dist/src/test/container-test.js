@@ -6,10 +6,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const ioc_1 = require("../ioc");
 const dotenv_1 = __importDefault(require("dotenv"));
 const firebaseType_1 = require("../utility/firebaseType");
+const loggerType_1 = require("../utility/loggerType");
 dotenv_1.default.config();
 async function testContainer() {
+    const loggertest = new loggerType_1.CustomLogger({ logLevel: 'debug' });
     try {
+        loggertest.debug('Starting container test');
         const container = await (0, ioc_1.initializeContainer)();
+        loggertest.debug('Container initialized', 'testContainer');
         const logger = container.get(firebaseType_1.SYMBOLS.CUSTOM_LOGGER);
         console.log('Successfully resolved logger');
         const dependecies = [
@@ -43,6 +47,7 @@ async function testContainer() {
                 stack: error.stack
             });
         }
+        process.exit(1);
     }
 }
 (async () => {

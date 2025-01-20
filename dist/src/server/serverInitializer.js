@@ -30,16 +30,23 @@ let ServerInitializer = class ServerInitializer {
         try {
             await this.server
                 .build(app, '/api', this.apiApp)
-                .setupProcessErrorHandler(cleanup)
-                .start(app, port);
-            this.logger.info(`Server started on port ${port}`);
+                .setupProcessErrorHandler(cleanup);
             this.registerDefaultApiKey();
+            this.logger.info('Server initialized successfully');
             return app;
         }
         catch (error) {
             this.logger.error('Failed to start server', 'App Initilization', { error });
             process.exit(1);
         }
+    }
+    async start(app, port) {
+        return new Promise((resolve) => {
+            app.listen(port, () => {
+                this.logger.info(`Server started on port ${port}`);
+                resolve();
+            });
+        });
     }
     registerDefaultApiKey() {
         this.apiKeyManager.create('default-service-key', {

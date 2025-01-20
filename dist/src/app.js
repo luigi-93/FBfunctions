@@ -38,6 +38,10 @@ let App = class App {
         this.apikeyManager = apikeyManager;
         this.serverInitializer = serverInitializer;
     }
+    async cleanup() {
+        this.logger.info('Performing cleanup before server shutdown...');
+    }
+    ;
     async initialize() {
         const app = (0, express_1.default)();
         this.logger.info('strarting app...');
@@ -47,10 +51,7 @@ let App = class App {
             process.exit(1);
         }
         const PORT = Number(process.env.PORT || 3000);
-        const cleanup = () => {
-            this.logger.info('Performing cleanup before server shutdown...');
-        };
-        await this.serverInitializer.initialize(app, PORT, cleanup);
+        await this.serverInitializer.initialize(app, PORT, () => this.cleanup());
         return app;
     }
 };
@@ -73,11 +74,10 @@ async function createApp() {
     try {
         logger.debug('Starting application creation', 'App-Init');
         const initializedContainer = await (0, index_1.initializeContainer)();
-        const requiredBindngs = [
-            { symbol: firebaseType_1.SYMBOLS.CUSTOM_LOGGER, name: 'CustomLogger' },
-            { symbol: firebaseType_1.SYMBOLS.APP, name: 'App' }
-        ];
-        for (const binding of requiredBindngs) {
+        if (!initializedContainer) {
+            throw errorType_1.CustomError.create('Container inialization', 401, {});
+        }
+        for (const binding of firebaseType_1.requiredBindngs) {
             if (!initializedContainer.isBound(binding.symbol)) {
                 logger.error(`Missing required binding: ${binding.name}`, 'App-Init');
                 throw errorType_1.CustomError.create(`${binding.name} binding not found`, 500, {
