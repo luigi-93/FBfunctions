@@ -14,7 +14,6 @@
     import { requiredBindngs, SYMBOLS } from './utility/firebaseType';
     import { CustomError } from './utility/errorType';
 
-
     dotenv.config();
 
     @injectable()
@@ -123,32 +122,3 @@
     }
 
 export { createApp as app };
-
-
-// if (process.env.NODE_ENV !== 'production') {
-//     const startupLogger = new CustomLogger({ logLevel: 'debug'})
-//     createApp()
-//         .then(app => {
-//             const PORT = Number(process.env.PORT || 3000);
-//             app.listen(PORT, () => {
-//                 startupLogger.info(`Server running on http://localhost:${PORT}`)       
-//                 })
-//             })
-//         .catch(error => {
-            
-//             startupLogger.error(
-//                 'Failed to start the server',
-//                 'App-Start-Error',
-//                 {
-//                     error: error instanceof Error 
-//                     ? {
-//                         name: error.name,
-//                         message: error.message,
-//                         stack: error.stack
-//                     }
-//                     : 'Uknown Error'
-//                 }
-//             );
-//             process.exit(1);
-//         });
-// }

@@ -15,6 +15,7 @@ import { SYMBOLS } from "../utility/firebaseType";
 import { ServerInitializer } from "../server/serverInitializer";
 import { error } from "console";
 
+
 export const container = new Container({ defaultScope: 'Singleton' });
 export const iocContainer = new ContainerAdapter(container);
 decorate(injectable(), Controller);
@@ -99,6 +100,7 @@ async function setupIoC(existingContainer: Container) {
             'IoC container setup completed successfully', 
             'IoC-Setup', 
             { result });
+
         return existingContainer;
 
     } catch (error) {

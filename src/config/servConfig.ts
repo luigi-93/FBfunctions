@@ -55,7 +55,8 @@ export abstract class ServerConfig {
 
     protected setLogger(): void {
         this.app.use((req: Request, _res: Response, next: NextFunction) => {
-            this.logger.info(`${req.method} ${req.path}`);
+            this.logger.info(`${req.method} ${req.path}`);  
+            
             next();
         });
     }
@@ -115,7 +116,6 @@ export abstract class ServerConfig {
     }
 
     protected setMiddlewares(): void {
-        //
         this.app.use(express.json());
     }
 

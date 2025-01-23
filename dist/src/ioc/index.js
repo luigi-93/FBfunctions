@@ -14,6 +14,7 @@ const app_1 = require("../app");
 const firebaseType_1 = require("../utility/firebaseType");
 const serverInitializer_1 = require("../server/serverInitializer");
 const console_1 = require("console");
+const mockController_1 = require("../api/controllers/mockController");
 exports.container = new inversify_1.Container({ defaultScope: 'Singleton' });
 exports.iocContainer = new iocConfig_1.ContainerAdapter(exports.container);
 (0, inversify_1.decorate)((0, inversify_1.injectable)(), tsoa_1.Controller);
@@ -64,6 +65,7 @@ async function setupIoC(existingContainer) {
         logger.debug('Loading provider module', 'IoC-Setup');
         existingContainer.load((0, inversify_binding_decorators_1.buildProviderModule)());
         logger.info('IoC container setup completed successfully', 'IoC-Setup', { result });
+        existingContainer.bind(mockController_1.MockController).toSelf();
         return existingContainer;
     }
     catch (error) {

@@ -5,16 +5,18 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "declaration": true,
-    "lib": ["es2021"],
+    "lib": ["ES2021", "DOM"],
     "module": "CommonJS",
     "noImplicitReturns": true,
     "outDir": "dist",
     "removeComments": true,
     "sourceMap": true,
     "strict": true,
-    "target": "es2021",
+    "target": "ES2021",
     "typeRoots": ["./types", "./node_modules/@types"],
-    "rootDir": "."
+    "rootDir": ".",
+    "moduleResolution": "node",
+    "types": ["node", "express"]
   }
 }
 

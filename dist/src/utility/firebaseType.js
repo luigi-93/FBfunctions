@@ -1,6 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.requiredBindngs = exports.SYMBOLS = exports.StrategyRegistry = exports.registry = exports.SecurityScopes = exports.SecurityNameTypes = exports.FirebaseAuthProvider = void 0;
+exports.provideSingleton = provideSingleton;
+const inversify_binding_decorators_1 = require("inversify-binding-decorators");
 var FirebaseAuthProvider;
 (function (FirebaseAuthProvider) {
     FirebaseAuthProvider["EMAIL_PASSWORD"] = "email_pass";
@@ -46,4 +48,7 @@ exports.requiredBindngs = [
     { symbol: exports.SYMBOLS.CUSTOM_LOGGER, name: 'CustomLogger' },
     { symbol: exports.SYMBOLS.APP, name: 'App' }
 ];
+function provideSingleton(indentifier) {
+    return (0, inversify_binding_decorators_1.fluentProvide)(indentifier).inSingletonScope().done();
+}
 //# sourceMappingURL=firebaseType.js.map

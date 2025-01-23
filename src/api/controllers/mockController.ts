@@ -3,9 +3,10 @@
  */
 
 import { Controller, Get, Route, Security } from "tsoa";
-import { SecurityScopes } from "../../utility/firebaseType";
+import { provideSingleton, SecurityScopes } from "../../utility/firebaseType";
 
 
+@provideSingleton(MockController)
 @Route("mock")
 export class MockController extends Controller {
     /**

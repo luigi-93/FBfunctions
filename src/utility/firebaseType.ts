@@ -1,6 +1,8 @@
 import express from 'express';
 import { AuthenticatedUser } from '../auth/userAuth';
 import { ApiKeyManager } from '../services/apiKeyManager';
+import { interfaces } from 'inversify';
+import { fluentProvide } from 'inversify-binding-decorators';
 
 export enum FirebaseAuthProvider {
     EMAIL_PASSWORD = 'email_pass',
@@ -156,3 +158,10 @@ export const requiredBindngs = [
         { symbol: SYMBOLS.CUSTOM_LOGGER, name: 'CustomLogger'},
         { symbol: SYMBOLS.APP, name: 'App'}
     ] as const;
+
+
+export function provideSingleton<T>(
+    indentifier: interfaces.ServiceIdentifier<T>
+    ) {
+    return fluentProvide(indentifier).inSingletonScope().done();
+    }

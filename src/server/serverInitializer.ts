@@ -5,6 +5,7 @@ import { ApiKeyManager } from '../services/apiKeyManager';
 import express from 'express';
 import { SecurityScopes, SYMBOLS } from '../utility/firebaseType';
 import { inject, injectable } from "inversify";
+import { RegisterRoutes } from "../../build/api/routes";
 
 @injectable()
 export class ServerInitializer {
@@ -22,6 +23,9 @@ export class ServerInitializer {
         cleanup?: () => void
     ) {
         try {
+
+            RegisterRoutes(app);
+
             await this.server
             .build(app, '/api', this.apiApp)
             .setupProcessErrorHandler(cleanup);

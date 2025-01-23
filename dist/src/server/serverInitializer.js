@@ -19,6 +19,7 @@ const server_1 = require("./server");
 const apiKeyManager_1 = require("../services/apiKeyManager");
 const firebaseType_1 = require("../utility/firebaseType");
 const inversify_1 = require("inversify");
+const routes_2 = require("../../build/api/routes");
 let ServerInitializer = class ServerInitializer {
     constructor(logger, server, apiApp, apiKeyManager) {
         this.logger = logger;
@@ -28,6 +29,7 @@ let ServerInitializer = class ServerInitializer {
     }
     async initialize(app, port, cleanup) {
         try {
+            (0, routes_2.RegisterRoutes)(app);
             await this.server
                 .build(app, '/api', this.apiApp)
                 .setupProcessErrorHandler(cleanup);
