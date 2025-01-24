@@ -1,11 +1,11 @@
 import { inject, injectable } from "inversify";
-import { CustomLogger } from "../logging/customLogger";
+import { CustomLogger } from "../logging/CustomLogger";
 import express, 
     { Express, 
     Request, 
     Response, 
     NextFunction }  from 'express';
-import { CustomError } from "../errors/customError";
+import { CustomError } from "../errors/CustomError";
 import { SYMBOLS } from "../utility/firebaseType";
 
 /**

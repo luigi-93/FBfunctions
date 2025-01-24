@@ -1,4 +1,4 @@
-import { CustomLogger } from "../logging/customLogger";
+import { CustomLogger } from "../logging/CustomLogger";
 import { FirebaseConfig } from "../utility/firebaseType";
 import { firebaseConfigManager } from "./authConfig";
 

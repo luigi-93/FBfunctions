@@ -9,10 +9,10 @@
         import { ApiKeyManager } from './services/apiKeyManager';
         import { configureFirebase, createFirebaseConfig } from './config/firebaseConfig';
         import { ServerInitializer } from './server/serverInitializer';
-        import { CustomLogger } from './logging/customLogger';
+        import { CustomLogger } from './logging/CustomLogger';
         import { inject, injectable } from 'inversify';
     import { requiredBindngs, SYMBOLS } from './utility/firebaseType';
-    import { CustomError } from './errors/customError';
+    import { CustomError } from './errors/CustomError';
 
     dotenv.config();
 

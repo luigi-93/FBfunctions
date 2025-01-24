@@ -1,7 +1,7 @@
 import { initializeContainer } from "../ioc";
 import dotenv from 'dotenv';
 import { SYMBOLS } from "../utility/firebaseType";
-import { CustomLogger } from "../logging/customLogger";
+import { CustomLogger } from "../logging/CustomLogger";
 
 
 dotenv.config();

@@ -2,13 +2,13 @@ import { Container, injectable, interfaces } from 'inversify';
 import { ApiKeyResult, IoCSetupResult, registry, SecurityScopes, SYMBOLS } from '../utility/firebaseType';
 import { ApiKeyManager } from '../services/apiKeyManager';
 import { IocContainer } from '@tsoa/runtime';
-import { CustomError } from '../errors/customError';
+import { CustomError } from '../errors/CustomError';
 import { ApiKeyValidator } from '../validation/validationApiKey';
 import { InMemoryStorageAdapter } from '../services/apiKeyStorage';
 import { initializeFirebaseAdmin } from '../auth/setAuth';
 import { AuthStrategyFactory } from '../strategies/authHelpers';
 import * as admin from 'firebase-admin';
-import { CustomLogger } from '../logging/customLogger';
+import { CustomLogger } from '../logging/CustomLogger';
 import { FirebaseJwtAuthStrategy } from '../strategies/FirebaseJwtAuthStrategy';
 import { FirebaseApiKeyAuthStrategy } from '../strategies/FirebaseApiKeyAuthStrategy';
 

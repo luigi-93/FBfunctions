@@ -5,7 +5,7 @@ import express,
         { Response } 
         from 'express';
 import { setErrorHandler } from "../errors/apiHandlerError";
-import { CustomLogger } from "../logging/customLogger";
+import { CustomLogger } from "../logging/CustomLogger";
 import { SYMBOLS } from "../utility/firebaseType";
 
 

@@ -1,5 +1,5 @@
 import { app } from "./app";
-import { CustomLogger } from "./logging/customLogger";
+import { CustomLogger } from "./logging/CustomLogger";
 
 
 
