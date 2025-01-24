@@ -1,7 +1,7 @@
 import { 
     IFieldErrorMessages, 
     CustomError } 
-    from "../utility/errorType";
+    from "../errors/customError";
 import { ValidationError as ClassValidatorError } from 'class-validator';
 
 export class ValidationError extends CustomError {

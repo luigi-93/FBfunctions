@@ -1,14 +1,17 @@
 import { Container, injectable, interfaces } from 'inversify';
-import { CustomLogger } from '../utility/loggerType';
 import { ApiKeyResult, IoCSetupResult, registry, SecurityScopes, SYMBOLS } from '../utility/firebaseType';
 import { ApiKeyManager } from '../services/apiKeyManager';
 import { IocContainer } from '@tsoa/runtime';
-import { CustomError } from '../utility/errorType';
+import { CustomError } from '../errors/customError';
 import { ApiKeyValidator } from '../validation/validationApiKey';
 import { InMemoryStorageAdapter } from '../services/apiKeyStorage';
 import { initializeFirebaseAdmin } from '../auth/setAuth';
-import { ApiKeyAuthstrategy, AuthStrategyFactory, FirebaseJwtAuthStrategy } from '../auth/strategyAuth';
+import { AuthStrategyFactory } from '../strategies/authHelpers';
 import * as admin from 'firebase-admin';
+import { CustomLogger } from '../logging/customLogger';
+import { FirebaseJwtAuthStrategy } from '../strategies/FirebaseJwtAuthStrategy';
+import { FirebaseApiKeyAuthStrategy } from '../strategies/FirebaseApiKeyAuthStrategy';
+
 
 @injectable()
 export class ContainerAdapter implements IocContainer {
@@ -229,11 +232,11 @@ export async function IoCSetup(
 
         logger.debug('Binding API key Auth Strategy', 'IoC-Config');
         iocContainer
-            .bind(registry.ApiKeyAuthStrategy)
+            .bind(registry.FirebaseApiKeyAuthStrategy)
             .toDynamicValue((context) => {
                 try {
                     const strategyLogger = context.container.get<CustomLogger>(SYMBOLS.CUSTOM_LOGGER);
-                    return new ApiKeyAuthstrategy(manager, strategyLogger);
+                    return new FirebaseApiKeyAuthStrategy(manager, strategyLogger);
                 } catch (error) {
                     logger.error(
                         'Failed to initialize API key Auth Strategy',

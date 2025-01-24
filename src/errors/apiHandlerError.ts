@@ -2,7 +2,7 @@ import { IJson } from "../utility/firebaseType";
 import { flatten } from 'lodash'
 import express from 'express';
 import { ValidateError } from "tsoa";
-import { CustomError } from "../utility/errorType";
+import { CustomError } from "./customError";
 import { ValidationError } from "../validation/validationError";
 
 

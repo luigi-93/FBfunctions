@@ -1,8 +1,8 @@
 import * as admin from 'firebase-admin';
 import * as fs from 'fs';
 import { FirebaseConfig } from '../utility/firebaseType';
-import { CustomLogger } from '../utility/loggerType';
-import { CustomError } from '../utility/errorType';
+import { CustomLogger } from '../logging/CustomLogger';
+import { CustomError } from '../errors/CustomError';
 import { firebaseConfigManager } from '../config/authConfig';
 
 

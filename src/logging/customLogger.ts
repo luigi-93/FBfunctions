@@ -7,19 +7,9 @@ import  winston,
         } 
         from 'winston';
 import * as Sentry from '@sentry/node';
+import { getTracesSampleRate, LoggerOptions, LogMetadata, sanitizeMetadata } from './loggerUtilits';
 
 
-interface LoggerOptions {
-    logLevel?: string;
-    additionalTransports?: winston.transport[];
-    sentryDsn?: string;
-    contextId?: string;
-}
-
-interface LogMetadata {
-    context?: string;
-    [key: string]: any;
-}
 
 @injectable()
 export class CustomLogger {
@@ -53,12 +43,11 @@ export class CustomLogger {
 
         const customFormat = format.printf(({ timestamp, level, message, context = this.defaultContext, ...meta}) => {
             const contextString = context ? `[${context}]` : '';
-            const sanitizedMeta = CustomLogger.sanitizeMetadata(meta)
+            const sanitizedMeta = sanitizeMetadata(meta)
             const metaString = Object.keys(sanitizedMeta).length ? ` - ${JSON.stringify(sanitizedMeta)}` : '';
             return `${timestamp} ${contextString} [${level.toUpperCase()}]: ${message} ${metaString}`;
         });
-
-    
+ 
         //set up logger with enhanced formatting
         this.logger = winston.createLogger({
             //controls the verbosity of the logger
@@ -85,23 +74,7 @@ export class CustomLogger {
             this.initializeSentry(sentryDsn);
         }
     }
-
-    private static sanitizeMetadata(meta: any) {
-        const seen = new WeakSet();
-        const sanitize = (obj: any): any => {
-            if (typeof obj !== 'object' || obj === null) return obj;
-            if (seen.has(obj)) return '[Circular]';
-            seen.add(obj);
-
-            const result: any = Array.isArray(obj) ? [] : {};
-            for (const key in obj) {
-                result[key] = sanitize(obj[key]);
-            }
-            return result
-        };
-        return sanitize(meta);
-    }
-
+ 
     private initializeSentry(sentryDsn: string): void {
         if(this.sentryInitialized) return;
         
@@ -109,7 +82,7 @@ export class CustomLogger {
                 Sentry.init({
                     dsn: sentryDsn,
                     environment: process.env.NODE_ENV || 'development',
-                    tracesSampleRate: this.getTracesSampleRate(),
+                    tracesSampleRate: getTracesSampleRate(),
                     // Additional Sentry configuration options
                     beforeSend: (event) =>  {
                         if(event.user) {
@@ -127,22 +100,9 @@ export class CustomLogger {
                     {
                         error
                     });
-            }
-           
-        
+            }       
     }
-    private getTracesSampleRate(): number  {
-        //Dinamically determine traces sample rate based on environment
-        const environment = process.env.NODE_ENV as 'development' | 'production' | 'test';
-        const sampleRates = {
-            development: 1.0, //full tracing in development
-            production: 0.1, //10% sampling in production
-            test: 0.0 //no tracing in test environment
-        } as const;
-        return sampleRates[environment] || 0.5; //Default to 50% if unknow
-    }
-
-
+    
     public log(level: 'info'| 'warn' | 'error' | 'debug', message: string, context?: string, metadata: LogMetadata = {}): void {
         this.logger.log({
             level, 

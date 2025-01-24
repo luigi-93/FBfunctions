@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
 import { Express } from 'express';
 import http from 'http';
-import { CustomLogger } from "../utility/loggerType";
+import { CustomLogger } from "../logging/CustomLogger";
 import { ApiApp } from "../routes";
 import { SYMBOLS } from "../utility/firebaseType";
 

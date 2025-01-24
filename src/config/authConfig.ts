@@ -10,8 +10,8 @@ This allows flexibility based on whether the code is run on a server (backend) o
  */
 
 
-import { CustomLogger } from "../utility/loggerType";
-import { CustomError } from "../utility/errorType";
+import { CustomLogger } from "../logging/customLogger";
+import { CustomError } from "../errors/customError";
 import { ServiceConfig, ValidationResult, FirebaseConfig } from '../utility/firebaseType';
 
 const logger: CustomLogger = new CustomLogger({ logLevel: 'debug'})

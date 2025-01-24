@@ -2,9 +2,9 @@ import {
     validate, 
     ValidatorOptions, 
     ValidationError as ClassValidatorError } from 'class-validator';
-import { CustomLogger } from "../utility/loggerType";
+import { CustomLogger } from "../logging/customLogger";
 import { plainToClass } from 'class-transformer';
-import { CustomError } from "../utility/errorType";
+import { CustomError } from "../errors/customError";
 import { inject, injectable } from 'inversify';
 import { SYMBOLS } from '../utility/firebaseType';
 

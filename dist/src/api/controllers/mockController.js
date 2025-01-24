@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MockController = void 0;
 const tsoa_1 = require("tsoa");
 const firebaseType_1 = require("../../utility/firebaseType");
-const inversify_1 = require("inversify");
 let MockController = class MockController extends tsoa_1.Controller {
     async getMockData() {
         return { status: "public ok" };
@@ -46,7 +45,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], MockController.prototype, "getSecurityApiKeyData", null);
 exports.MockController = MockController = __decorate([
-    (0, inversify_1.injectable)(),
+    (0, firebaseType_1.provideSingleton)(MockController),
     (0, tsoa_1.Route)("mock")
 ], MockController);
 //# sourceMappingURL=mockController.js.map

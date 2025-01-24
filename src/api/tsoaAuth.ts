@@ -1,8 +1,8 @@
-import { AuthStrategyFactory } from '../auth/strategyAuth';
+import { AuthStrategyFactory } from '../strategies/authHelpers';
 import { AuthenticatedUser } from '../auth/userAuth';
 import { iocContainer } from '../ioc';
 import express from 'express';
-import { CustomError } from '../utility/errorType';
+import { CustomError } from '../errors/customError';
 
 
 

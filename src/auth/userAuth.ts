@@ -1,11 +1,10 @@
 import { Request } from 'express';
-import { CustomError } from "../utility/errorType";
 import { 
     DecodedFirebaseToken, 
     SecurityScopes } 
     from "../utility/firebaseType";
-import { CustomLogger } from '../utility/loggerType';
-
+import { CustomLogger } from '../logging/CustomLogger';
+import { CustomError } from '../errors/CustomError';
 
 
 export class AuthenticatedUser {

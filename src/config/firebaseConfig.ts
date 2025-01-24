@@ -1,4 +1,4 @@
-import { CustomLogger } from "../utility/loggerType";
+import { CustomLogger } from "../logging/customLogger";
 import { FirebaseConfig } from "../utility/firebaseType";
 import { firebaseConfigManager } from "./authConfig";
 
@@ -19,7 +19,7 @@ export function configureFirebase(
     config: FirebaseConfig,
     credantialsPath?: string
 ) {
-    logger.debug(' input FirebaseConfig','configureFirebase',{ config, context: 'configureFirebase'})
+    logger.debug('Input FirebaseConfig','configureFirebase',{ config, context: 'configureFirebase'})
     
     const validationResult = firebaseConfigManager.validateConfig(config);
 

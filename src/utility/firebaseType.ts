@@ -62,12 +62,12 @@ export enum SecurityScopes {
 export const registry = {
     FirebaseAdmin: Symbol.for('FirebaseAdmin'),
     FirebaseJwtAuthStrategy: Symbol.for('FirebaseJwtAuthStrategy'),
-    ApiKeyAuthStrategy: Symbol.for('ApiKeyAuthStrategy'),
+    FirebaseApiKeyAuthStrategy: Symbol.for('FirebaseApiKeyAuthStrategy'),
 }
 
 export const StrategyRegistry = {
     FirebaseJwtAuthStrategy: registry.FirebaseJwtAuthStrategy,
-    ApiKeyStrategy: registry.ApiKeyAuthStrategy,
+    ApiKeyStrategy: registry.FirebaseApiKeyAuthStrategy,
 } as const;
 
 

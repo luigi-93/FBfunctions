@@ -9,10 +9,10 @@
         import { ApiKeyManager } from './services/apiKeyManager';
         import { configureFirebase, createFirebaseConfig } from './config/firebaseConfig';
         import { ServerInitializer } from './server/serverInitializer';
-        import { CustomLogger } from './utility/loggerType';
+        import { CustomLogger } from './logging/customLogger';
         import { inject, injectable } from 'inversify';
     import { requiredBindngs, SYMBOLS } from './utility/firebaseType';
-    import { CustomError } from './utility/errorType';
+    import { CustomError } from './errors/customError';
 
     dotenv.config();
 
@@ -45,7 +45,7 @@
             if (!configureFirebase(firebaseConfig, process.env.GOOGLE_APPLICATION_CREDENTIALS)) {
                 this.logger.error(
                     'Invalid Firebase configuration',
-                        'App initilization'
+                    'App initilization'
                 );
                 process.exit(1);
             }

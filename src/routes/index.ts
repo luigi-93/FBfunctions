@@ -4,8 +4,8 @@ import { RegisterRoutes } from "../../build/api/routes";
 import express, 
         { Response } 
         from 'express';
-import { setErrorHandler } from "../error/apiHandlerError";
-import { CustomLogger } from "../utility/loggerType";
+import { setErrorHandler } from "../errors/apiHandlerError";
+import { CustomLogger } from "../logging/customLogger";
 import { SYMBOLS } from "../utility/firebaseType";
 
 

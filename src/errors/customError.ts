@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import { IJson } from './firebaseType';
+import { IJson } from '../utility/firebaseType';
 
 export interface IFieldErrorMessages {
     [name: string]: string[];

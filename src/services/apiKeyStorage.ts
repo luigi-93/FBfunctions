@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify";
-import { CustomError } from "../utility/errorType";
+import { CustomError } from "../errors/CustomError";
 import { ApiKeyMetadata, ApiKeyStorageAdapter, SYMBOLS } from "../utility/firebaseType";
-import { CustomLogger } from "../utility/loggerType";
+import { CustomLogger } from "../logging/CustomLogger";
 
 @injectable()
 export class InMemoryStorageAdapter implements ApiKeyStorageAdapter {

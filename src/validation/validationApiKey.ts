@@ -4,7 +4,7 @@ import {
     SecurityScopes, 
     SYMBOLS} 
     from "../utility/firebaseType";
-import { CustomLogger } from "../utility/loggerType";
+import { CustomLogger } from "../logging/customLogger";
 
 
 

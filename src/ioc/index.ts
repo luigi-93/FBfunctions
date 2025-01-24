@@ -6,8 +6,8 @@ import {
 import { Controller } from "tsoa";
 import { ContainerAdapter, IoCSetup } from "./iocConfig";
 import { buildProviderModule } from "inversify-binding-decorators";
-import { CustomError } from "../utility/errorType";
-import { CustomLogger } from '../utility/loggerType';
+import { CustomError } from "../errors/customError";
+import { CustomLogger } from '../logging/customLogger';
 import { Server } from "../server/server";
 import { ApiApp } from "../routes";
 import { App } from "../app";
