@@ -2,9 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createFirebaseConfig = createFirebaseConfig;
 exports.configureFirebase = configureFirebase;
-const loggerType_1 = require("../utility/loggerType");
+const customLogger_1 = require("../logging/customLogger");
 const authConfig_1 = require("./authConfig");
-const logger = new loggerType_1.CustomLogger({ logLevel: 'debug' });
+const logger = new customLogger_1.CustomLogger({ logLevel: 'debug' });
 function createFirebaseConfig() {
     const config = {
         apiKey: process.env.FIREBASE_API_KEY?.trim() || '',
@@ -16,7 +16,7 @@ function createFirebaseConfig() {
     return config;
 }
 function configureFirebase(config, credantialsPath) {
-    logger.debug(' input FirebaseConfig', 'configureFirebase', { config, context: 'configureFirebase' });
+    logger.debug('Input FirebaseConfig', 'configureFirebase', { config, context: 'configureFirebase' });
     const validationResult = authConfig_1.firebaseConfigManager.validateConfig(config);
     logger.debug('FirebaseConfig validation result', 'configureFirebase', { validationResult });
     if (validationResult.isValid) {

@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ApiKeyValidator = void 0;
 const inversify_1 = require("inversify");
 const firebaseType_1 = require("../utility/firebaseType");
-const loggerType_1 = require("../utility/loggerType");
+const customLogger_1 = require("../logging/customLogger");
 let ApiKeyValidator = class ApiKeyValidator {
     constructor(logger) {
         this.logger = logger;
@@ -73,6 +73,6 @@ let ApiKeyValidator = class ApiKeyValidator {
 exports.ApiKeyValidator = ApiKeyValidator;
 exports.ApiKeyValidator = ApiKeyValidator = __decorate([
     __param(0, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)),
-    __metadata("design:paramtypes", [loggerType_1.CustomLogger])
+    __metadata("design:paramtypes", [customLogger_1.CustomLogger])
 ], ApiKeyValidator);
 //# sourceMappingURL=validationApiKey.js.map

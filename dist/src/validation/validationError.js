@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ValidationError = void 0;
-const errorType_1 = require("../utility/errorType");
-class ValidationError extends errorType_1.CustomError {
+const customError_1 = require("../errors/customError");
+class ValidationError extends customError_1.CustomError {
     constructor(validationErrors, message = 'Validattion failed') {
         super(message, 400);
         this.validationErrors = validationErrors;

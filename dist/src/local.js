@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = require("./app");
-const loggerType_1 = require("./utility/loggerType");
+const customLogger_1 = require("./logging/customLogger");
 async function startLocalServer() {
-    const logger = new loggerType_1.CustomLogger({ logLevel: 'debug' });
+    const logger = new customLogger_1.CustomLogger({ logLevel: 'debug' });
     try {
         const expressApp = await (0, app_1.app)();
         const PORT = Number(process.env.PORT || 3000);

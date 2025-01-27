@@ -1,15 +1,6 @@
-import { Container, interfaces } from 'inversify';
-import { CustomLogger } from '../utility/loggerType';
+import { Container } from 'inversify';
 import { IoCSetupResult, SecurityScopes } from '../utility/firebaseType';
-import { IocContainer } from '@tsoa/runtime';
-export declare class ContainerAdapter implements IocContainer {
-    private readonly container;
-    constructor(container: Container);
-    get<T>(controller: interfaces.ServiceIdentifier<T> | {
-        prototype: T;
-    }): T;
-    private getControllerIdentifier;
-}
+import { CustomLogger } from '../logging/customLogger';
 export declare function IoCSetup(iocContainer: Container, options: {
     apiKeys?: Array<{
         name: string;

@@ -4,23 +4,23 @@ import {
     injectable
 } from "inversify";
 import { Controller } from "tsoa";
-import { ContainerAdapter, IoCSetup } from "./iocConfig";
+import { IoCSetup } from "./iocConfig";
 import { buildProviderModule } from "inversify-binding-decorators";
-import { CustomError } from "../errors/CustomError";
-import { CustomLogger } from '../logging/CustomLogger';
+import { CustomError } from "../errors/customError";
+import { CustomLogger } from '../logging/customLogger';
 import { Server } from "../server/server";
 import { ApiApp } from "../routes";
 import { App } from "../app";
 import { SYMBOLS } from "../utility/firebaseType";
 import { ServerInitializer } from "../server/serverInitializer";
-import { error } from "console";
+import { ContainerAdapter } from "./iocHelpers";
 
 
 export const container = new Container({ defaultScope: 'Singleton' });
 export const iocContainer = new ContainerAdapter(container);
 decorate(injectable(), Controller);
 
-async function setupIoC(existingContainer: Container) {
+export async function setupIoC(existingContainer: Container) {
 
     if(!existingContainer || !(existingContainer instanceof Container)) {
         throw CustomError.create(
@@ -44,9 +44,6 @@ async function setupIoC(existingContainer: Container) {
         });
 
     try {
-
-        
-
         logger.debug('Container state before setup:', 'IoC-Setup',
             {
                 bindings: Object.keys(SYMBOLS).filter(key =>
@@ -90,9 +87,6 @@ async function setupIoC(existingContainer: Container) {
             logger.debug(`Binding ${binding.symbol.toString()}`, 'IoC-Setup');
             existingContainer.bind(binding.symbol).to(binding.constructor).inSingletonScope();
         }
-
-        
-        // 7. Load any additional providers
         logger.debug('Loading provider module', 'IoC-Setup');
         existingContainer.load(buildProviderModule());
 
@@ -125,51 +119,6 @@ async function setupIoC(existingContainer: Container) {
             500,
             { error }
         );
-    }
-}
-
-export async function initializeContainer(): Promise<Container> {
-    const tempLogger = new CustomLogger({ logLevel:'debug'});
-    try {
-        tempLogger.debug(
-            'Initializing container',
-            'IoC-Init',
-            {
-                containerExists: !!container,
-                containerType: typeof container
-            }
-        )
-        const initializedContainer  = await setupIoC(container);
-        if (!initializedContainer) {
-            throw CustomError.create(
-                'setupIoc returned undefined or null container',
-                500,
-                {
-                    error
-                });
-        }
-        return initializedContainer;
-    } catch (setupError) {
-        tempLogger.error(
-            'Container initialization failed',
-            'IoC-Init',
-            {
-                error: setupError instanceof Error
-                ? {
-                    name: setupError.name,
-                    message: setupError.message,
-                    stack: setupError.stack
-                }
-                : 'Uknown error'
-            }
-        )
-        throw CustomError.create(
-            'InintilizeContainer does not return',
-            401,
-            {
-                error: setupError,
-                phase: 'Container initilization'
-            });
     }
 }
 

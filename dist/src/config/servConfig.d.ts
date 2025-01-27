@@ -1,5 +1,5 @@
-import { CustomLogger } from "../utility/loggerType";
 import { Express, Response } from 'express';
+import { CustomLogger } from "../logging/customLogger";
 export declare abstract class ServerConfig {
     protected readonly logger: CustomLogger;
     protected readonly app: Express;

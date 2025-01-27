@@ -1,6 +1,6 @@
 import { Express } from 'express';
 import http from 'http';
-import { CustomLogger } from "../utility/loggerType";
+import { CustomLogger } from "../logging/customLogger";
 import { ApiApp } from "../routes";
 export declare class Server {
     private logger;

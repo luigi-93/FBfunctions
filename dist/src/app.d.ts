@@ -3,7 +3,7 @@ import { Server } from './server/server';
 import { ApiApp } from './routes';
 import { ApiKeyManager } from './services/apiKeyManager';
 import { ServerInitializer } from './server/serverInitializer';
-import { CustomLogger } from './utility/loggerType';
+import { CustomLogger } from './logging/customLogger';
 export declare class App {
     private readonly logger;
     private readonly server;

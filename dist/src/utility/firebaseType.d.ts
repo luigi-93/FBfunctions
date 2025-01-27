@@ -48,7 +48,7 @@ export declare enum SecurityScopes {
 export declare const registry: {
     FirebaseAdmin: symbol;
     FirebaseJwtAuthStrategy: symbol;
-    ApiKeyAuthStrategy: symbol;
+    FirebaseApiKeyAuthStrategy: symbol;
 };
 export declare const StrategyRegistry: {
     readonly FirebaseJwtAuthStrategy: symbol;

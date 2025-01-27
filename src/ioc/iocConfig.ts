@@ -1,103 +1,17 @@
-import { Container, injectable, interfaces } from 'inversify';
+import { Container } from 'inversify';
 import { ApiKeyResult, IoCSetupResult, registry, SecurityScopes, SYMBOLS } from '../utility/firebaseType';
 import { ApiKeyManager } from '../services/apiKeyManager';
-import { IocContainer } from '@tsoa/runtime';
-import { CustomError } from '../errors/CustomError';
+import { CustomError } from '../errors/customError';
 import { ApiKeyValidator } from '../validation/validationApiKey';
 import { InMemoryStorageAdapter } from '../services/apiKeyStorage';
 import { initializeFirebaseAdmin } from '../auth/setAuth';
-import { AuthStrategyFactory } from '../strategies/authHelpers';
+import { AuthStrategyFactory } from '../strategies/strategyHelpers';
 import * as admin from 'firebase-admin';
-import { CustomLogger } from '../logging/CustomLogger';
-import { FirebaseJwtAuthStrategy } from '../strategies/FirebaseJwtAuthStrategy';
-import { FirebaseApiKeyAuthStrategy } from '../strategies/FirebaseApiKeyAuthStrategy';
+import { CustomLogger } from '../logging/customLogger';
+import { FirebaseJwtAuthStrategy } from '../strategies/firebaseJwtAuthStrategy';
+import { FirebaseApiKeyAuthStrategy } from '../strategies/firebaseApiKeyAuthStrategy';
+import { ContainerAdapter } from './iocHelpers';
 
-
-@injectable()
-export class ContainerAdapter implements IocContainer {
-    constructor(private readonly container: Container) {
-        if (!container) {
-            throw CustomError.create(
-                'Container instance is required',
-                500,
-                {
-                    details: 'Container was not provided to ContainerAdapter'
-                }
-            );
-        }
-    }
-    
-    get<T>(controller: interfaces.ServiceIdentifier<T> | { prototype: T }): T 
-    {
-        try {
-
-            if (!controller) {
-                throw CustomError.create(
-                    'Controller parameter is requireds',
-                    500,
-                    {
-                        message: 'Constroller was not provided'
-                    });
-            }
-
-            if (typeof controller === 'symbol' || 
-                typeof controller === 'string' || 
-                typeof controller === 'function') {
-                return this.container.get<T>(controller);
-            }
-            
-            if (typeof controller === 'object' && 'prototype' in controller) {
-                const serviceIdentifier = controller.constructor as interfaces.ServiceIdentifier<T>;
-            
-                if (!serviceIdentifier) {
-                    throw CustomError.create(
-                        'Invalid controller constructor',
-                        500,
-                        {
-                            message: 'Provide the right controller constructor'
-                        });
-                }
-
-                return this.container.get<T>(serviceIdentifier)
-            }
-
-            throw CustomError.create(
-                'Unsupported controller type',
-                500,
-                {
-                    message: 'The type of controller is not supported'
-                }
-            )
-            
-        } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-            const errorDetails = {
-                controller: this.getControllerIdentifier(controller),
-                originalError: errorMessage
-            };
-
-            throw CustomError.create(
-                'Dependency resolution failed',
-                500,
-                errorDetails
-            );
-        }
-    }
-
-    private getControllerIdentifier(controller: any): string {
-        if (typeof controller === 'symbol') {
-            return controller.toString()
-        }
-        if (typeof controller === 'function') {
-            return controller.name || 'Anonymous Function';
-        }
-        if (controller?.constructor) {
-            return controller.constructor.name || 'Unknown Class';
-        }
-
-        return 'Unknow Controller Type'
-    }
-}
 
 export async function IoCSetup(
     iocContainer: Container, 
@@ -320,7 +234,6 @@ export async function IoCSetup(
             { error }
         );
     }
-   
 }
     
 

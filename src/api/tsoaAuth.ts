@@ -1,4 +1,4 @@
-import { AuthStrategyFactory } from '../strategies/authHelpers';
+import { AuthStrategyFactory } from '../strategies/strategyHelpers';
 import { AuthenticatedUser } from '../auth/userAuth';
 import { iocContainer } from '../ioc';
 import express from 'express';

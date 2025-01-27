@@ -1,5 +1,5 @@
 import { ValidatorOptions } from 'class-validator';
-import { CustomLogger } from "../utility/loggerType";
+import { CustomLogger } from "../logging/customLogger";
 export declare type ClassType<T> = {
     new (...args: any[]): T;
 };

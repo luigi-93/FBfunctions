@@ -1,8 +1,8 @@
-import { CustomError } from "../errors/CustomError";
-import { BaseAuthStrategy } from "./authHelpers";
+import { CustomError } from "../errors/customError";
+import { BaseAuthStrategy } from "./strategyHelpers";
 import { injectable } from "inversify";
 import * as admin from 'firebase-admin';
-import { CustomLogger } from "../logging/CustomLogger";
+import { CustomLogger } from "../logging/customLogger";
 import express from 'express';
 import { AuthenticatedUser } from "../auth/userAuth";
 import { DecodedFirebaseToken } from "../utility/firebaseType";

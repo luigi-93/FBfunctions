@@ -38,4 +38,4 @@ exports.CustomError = CustomError = CustomError_1 = __decorate([
     (0, inversify_1.injectable)(),
     __metadata("design:paramtypes", [String, Number, Object, String])
 ], CustomError);
-//# sourceMappingURL=errorType.js.map
+//# sourceMappingURL=customError.js.map

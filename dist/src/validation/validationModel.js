@@ -14,9 +14,9 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ModelManager = void 0;
 const class_validator_1 = require("class-validator");
-const loggerType_1 = require("../utility/loggerType");
+const customLogger_1 = require("../logging/customLogger");
 const class_transformer_1 = require("class-transformer");
-const errorType_1 = require("../utility/errorType");
+const customError_1 = require("../errors/customError");
 const inversify_1 = require("inversify");
 const firebaseType_1 = require("../utility/firebaseType");
 let ModelManager = class ModelManager {
@@ -39,7 +39,7 @@ let ModelManager = class ModelManager {
         if (errors.length > 0) {
             const formattedErrors = this._formatValidationErrors(errors);
             this.logger.error('Model validation failed', 'ModelManager', { model, formattedErrors });
-            throw new errorType_1.CustomError('Validation failed', 400, { fieldErrors: formattedErrors });
+            throw new customError_1.CustomError('Validation failed', 400, { fieldErrors: formattedErrors });
         }
     }
     _formatValidationErrors(errors) {
@@ -57,14 +57,14 @@ let ModelManager = class ModelManager {
     }
     async toClass(cls, data, toValidate = true) {
         if (data === null) {
-            throw new errorType_1.CustomError('Invalid or empty data privided', 400);
+            throw new customError_1.CustomError('Invalid or empty data privided', 400);
         }
         const isArray = Array.isArray(data);
         const normalizedData = isArray
             ? data.filter(item => item != null && typeof item === 'object')
             : data;
         if ((isArray && normalizedData.length === 0) || (!isArray && Object.keys(normalizedData).length === 0)) {
-            throw new errorType_1.CustomError(isArray
+            throw new customError_1.CustomError(isArray
                 ? 'Array is empty'
                 : 'Object is empty', 400);
         }
@@ -90,6 +90,6 @@ exports.ModelManager = ModelManager;
 exports.ModelManager = ModelManager = __decorate([
     (0, inversify_1.injectable)(),
     __param(0, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)),
-    __metadata("design:paramtypes", [loggerType_1.CustomLogger])
+    __metadata("design:paramtypes", [customLogger_1.CustomLogger])
 ], ModelManager);
 //# sourceMappingURL=validationModel.js.map

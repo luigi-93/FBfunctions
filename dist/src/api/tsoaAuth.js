@@ -1,14 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.expressAuthentication = expressAuthentication;
-const strategyAuth_1 = require("../auth/strategyAuth");
+const strategyHelpers_1 = require("../strategies/strategyHelpers");
 const ioc_1 = require("../ioc");
-const errorType_1 = require("../utility/errorType");
+const customError_1 = require("../errors/customError");
 async function expressAuthentication(request, securityName, scopes = []) {
     try {
-        const authStrategyFactory = ioc_1.iocContainer.get(strategyAuth_1.AuthStrategyFactory);
+        const authStrategyFactory = ioc_1.iocContainer.get(strategyHelpers_1.AuthStrategyFactory);
         if (!['jwt', 'apikey'].includes(securityName.toLowerCase())) {
-            throw errorType_1.CustomError.create('Invalid security scheme', 401, {
+            throw customError_1.CustomError.create('Invalid security scheme', 401, {
                 securityName,
                 supportedSchemes: ['jwt', 'apikey']
             });
@@ -20,7 +20,7 @@ async function expressAuthentication(request, securityName, scopes = []) {
         return await strategy.authenticate(request, securityName, scopes);
     }
     catch (error) {
-        throw errorType_1.CustomError.create('AUthentication failed', 401, {
+        throw customError_1.CustomError.create('AUthentication failed', 401, {
             originalError: error instanceof Error ? error.message : 'Unknown error',
             securityName
         });

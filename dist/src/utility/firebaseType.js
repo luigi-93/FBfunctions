@@ -25,11 +25,11 @@ var SecurityScopes;
 exports.registry = {
     FirebaseAdmin: Symbol.for('FirebaseAdmin'),
     FirebaseJwtAuthStrategy: Symbol.for('FirebaseJwtAuthStrategy'),
-    ApiKeyAuthStrategy: Symbol.for('ApiKeyAuthStrategy'),
+    FirebaseApiKeyAuthStrategy: Symbol.for('FirebaseApiKeyAuthStrategy'),
 };
 exports.StrategyRegistry = {
     FirebaseJwtAuthStrategy: exports.registry.FirebaseJwtAuthStrategy,
-    ApiKeyStrategy: exports.registry.ApiKeyAuthStrategy,
+    ApiKeyStrategy: exports.registry.FirebaseApiKeyAuthStrategy,
 };
 exports.SYMBOLS = {
     AUTH_STRATEGY_FACTORY: Symbol.for('AuthStrategyFactory'),

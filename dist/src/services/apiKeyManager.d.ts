@@ -1,5 +1,5 @@
 import { ApiKeyMetadata, ApiKeyStorageAdapter, CustomClaims, DecodedFirebaseToken, FirebaseAuthProvider, SecurityScopes } from "../utility/firebaseType";
-import { CustomLogger } from '../utility/loggerType';
+import { CustomLogger } from '../logging/customLogger';
 import { ApiKeyValidator } from "../validation/validationApiKey";
 export declare class ApiKeyManager {
     private logger;

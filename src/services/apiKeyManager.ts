@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import { CustomError } from "../errors/CustomError";
+import { CustomError } from "../errors/customError";
 import { 
     ApiKeyMetadata, 
     ApiKeyStorageAdapter, 
@@ -8,7 +8,7 @@ import {
     FirebaseAuthProvider, 
     SecurityScopes, 
     SYMBOLS} from "../utility/firebaseType";
-import { CustomLogger } from '../logging/CustomLogger';
+import { CustomLogger } from '../logging/customLogger';
 import { ApiKeyValidator } from "../validation/validationApiKey";
 import * as crypto from 'crypto';
 

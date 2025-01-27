@@ -1,5 +1,5 @@
 import { ApiKeyMetadata } from "../utility/firebaseType";
-import { CustomLogger } from "../utility/loggerType";
+import { CustomLogger } from "../logging/customLogger";
 export declare class ApiKeyValidator {
     private readonly logger;
     constructor(logger: CustomLogger);

@@ -3,8 +3,8 @@ import {
     DecodedFirebaseToken, 
     SecurityScopes } 
     from "../utility/firebaseType";
-import { CustomLogger } from '../logging/CustomLogger';
-import { CustomError } from '../errors/CustomError';
+import { CustomLogger } from '../logging/customLogger';
+import { CustomError } from '../errors/customError';
 
 
 export class AuthenticatedUser {

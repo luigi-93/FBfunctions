@@ -47,6 +47,7 @@ exports.CustomLogger = void 0;
 const inversify_1 = require("inversify");
 const winston_1 = __importStar(require("winston"));
 const Sentry = __importStar(require("@sentry/node"));
+const loggerUtilits_1 = require("./loggerUtilits");
 let CustomLogger = CustomLogger_1 = class CustomLogger {
     constructor(options = {}) {
         this.sentryInitialized = false;
@@ -61,7 +62,7 @@ let CustomLogger = CustomLogger_1 = class CustomLogger {
         const effectiveLogLevel = logLevel || defaultLogLevels[environment] || 'info';
         const customFormat = winston_1.format.printf(({ timestamp, level, message, context = this.defaultContext, ...meta }) => {
             const contextString = context ? `[${context}]` : '';
-            const sanitizedMeta = CustomLogger_1.sanitizeMetadata(meta);
+            const sanitizedMeta = (0, loggerUtilits_1.sanitizeMetadata)(meta);
             const metaString = Object.keys(sanitizedMeta).length ? ` - ${JSON.stringify(sanitizedMeta)}` : '';
             return `${timestamp} ${contextString} [${level.toUpperCase()}]: ${message} ${metaString}`;
         });
@@ -79,22 +80,6 @@ let CustomLogger = CustomLogger_1 = class CustomLogger {
             this.initializeSentry(sentryDsn);
         }
     }
-    static sanitizeMetadata(meta) {
-        const seen = new WeakSet();
-        const sanitize = (obj) => {
-            if (typeof obj !== 'object' || obj === null)
-                return obj;
-            if (seen.has(obj))
-                return '[Circular]';
-            seen.add(obj);
-            const result = Array.isArray(obj) ? [] : {};
-            for (const key in obj) {
-                result[key] = sanitize(obj[key]);
-            }
-            return result;
-        };
-        return sanitize(meta);
-    }
     initializeSentry(sentryDsn) {
         if (this.sentryInitialized)
             return;
@@ -102,7 +87,7 @@ let CustomLogger = CustomLogger_1 = class CustomLogger {
             Sentry.init({
                 dsn: sentryDsn,
                 environment: process.env.NODE_ENV || 'development',
-                tracesSampleRate: this.getTracesSampleRate(),
+                tracesSampleRate: (0, loggerUtilits_1.getTracesSampleRate)(),
                 beforeSend: (event) => {
                     if (event.user) {
                         delete event.user.email;
@@ -119,15 +104,6 @@ let CustomLogger = CustomLogger_1 = class CustomLogger {
                 error
             });
         }
-    }
-    getTracesSampleRate() {
-        const environment = process.env.NODE_ENV;
-        const sampleRates = {
-            development: 1.0,
-            production: 0.1,
-            test: 0.0
-        };
-        return sampleRates[environment] || 0.5;
     }
     log(level, message, context, metadata = {}) {
         this.logger.log({
@@ -187,4 +163,4 @@ exports.CustomLogger = CustomLogger = CustomLogger_1 = __decorate([
     (0, inversify_1.injectable)(),
     __metadata("design:paramtypes", [Object])
 ], CustomLogger);
-//# sourceMappingURL=loggerType.js.map
+//# sourceMappingURL=customLogger.js.map

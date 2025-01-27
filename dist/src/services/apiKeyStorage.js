@@ -14,9 +14,9 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.InMemoryStorageAdapter = void 0;
 const inversify_1 = require("inversify");
-const errorType_1 = require("../utility/errorType");
+const customError_1 = require("../errors/customError");
 const firebaseType_1 = require("../utility/firebaseType");
-const loggerType_1 = require("../utility/loggerType");
+const customLogger_1 = require("../logging/customLogger");
 let InMemoryStorageAdapter = class InMemoryStorageAdapter {
     constructor(logger) {
         this.logger = logger;
@@ -32,7 +32,7 @@ let InMemoryStorageAdapter = class InMemoryStorageAdapter {
                 apiKey,
                 error
             });
-            throw errorType_1.CustomError.create('Error saving API key', 500, { apiKey });
+            throw customError_1.CustomError.create('Error saving API key', 500, { apiKey });
         }
     }
     async get(apiKey) {
@@ -45,23 +45,23 @@ let InMemoryStorageAdapter = class InMemoryStorageAdapter {
         }
         catch (error) {
             this.logger.error('Failed to retrive API key', 'InMemoryStorageAdapter', { apiKey, error });
-            throw errorType_1.CustomError.create('Error retrieving API key', 500, { apiKey });
+            throw customError_1.CustomError.create('Error retrieving API key', 500, { apiKey });
         }
     }
     async revoke(apiKey) {
         try {
             if (!this.apiKeys[apiKey]) {
                 this.logger.warn('Attempted to revoke non-existent API key', 'InMemoryStorageAdapter', { apiKey });
-                throw errorType_1.CustomError.create('API Key not found for revocation', 404, { apiKey });
+                throw customError_1.CustomError.create('API Key not found for revocation', 404, { apiKey });
             }
             delete this.apiKeys[apiKey];
             this.logger.info('API Key revoked successfully', 'InMemoryStorageAdapter', { apiKey });
         }
         catch (error) {
             this.logger.error('Failed to revoke API key', 'InMemoryStorageAdapter', { apiKey, error });
-            throw error instanceof errorType_1.CustomError
+            throw error instanceof customError_1.CustomError
                 ? error
-                : errorType_1.CustomError.create('Error revoking API key', 500, { apiKey });
+                : customError_1.CustomError.create('Error revoking API key', 500, { apiKey });
         }
     }
     async listAll() {
@@ -71,7 +71,7 @@ let InMemoryStorageAdapter = class InMemoryStorageAdapter {
         }
         catch (error) {
             this.logger.error('Failed to list all API Keys', 'InMemoryStorageAdapter', { error });
-            throw errorType_1.CustomError.create('Error listing API Keys', 500, {});
+            throw customError_1.CustomError.create('Error listing API Keys', 500, {});
         }
     }
     async prune() {
@@ -93,7 +93,7 @@ let InMemoryStorageAdapter = class InMemoryStorageAdapter {
         }
         catch (error) {
             this.logger.error('Failed to prone expired API Keys', 'InMemoryStorageAdapter', { error });
-            throw errorType_1.CustomError.create('Error pruning API Keys', 500, {});
+            throw customError_1.CustomError.create('Error pruning API Keys', 500, {});
         }
     }
 };
@@ -101,6 +101,6 @@ exports.InMemoryStorageAdapter = InMemoryStorageAdapter;
 exports.InMemoryStorageAdapter = InMemoryStorageAdapter = __decorate([
     (0, inversify_1.injectable)(),
     __param(0, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)),
-    __metadata("design:paramtypes", [loggerType_1.CustomLogger])
+    __metadata("design:paramtypes", [customLogger_1.CustomLogger])
 ], InMemoryStorageAdapter);
 //# sourceMappingURL=apiKeyStorage.js.map

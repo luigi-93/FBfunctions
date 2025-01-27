@@ -6,11 +6,11 @@ import {
     StrategyRegistry, 
     SYMBOLS} 
     from '../utility/firebaseType';
-import { CustomError } from '../errors/CustomError';
-import { CustomLogger } from '../logging/CustomLogger';
+import { CustomError } from '../errors/customError';
+import { CustomLogger } from '../logging/customLogger';
 import express from 'express';
 import { AuthenticatedUser } from '../auth/userAuth';
-import { ContainerAdapter } from '../ioc/iocConfig';
+import { ContainerAdapter } from '../ioc/iocHelpers';
 
 
 @injectable()

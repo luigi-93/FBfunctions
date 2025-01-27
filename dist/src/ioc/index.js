@@ -1,29 +1,29 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.iocContainer = exports.container = void 0;
-exports.initializeContainer = initializeContainer;
+exports.setupIoC = setupIoC;
 const inversify_1 = require("inversify");
 const tsoa_1 = require("tsoa");
 const iocConfig_1 = require("./iocConfig");
 const inversify_binding_decorators_1 = require("inversify-binding-decorators");
-const errorType_1 = require("../utility/errorType");
-const loggerType_1 = require("../utility/loggerType");
+const customError_1 = require("../errors/customError");
+const customLogger_1 = require("../logging/customLogger");
 const server_1 = require("../server/server");
 const routes_1 = require("../routes");
 const app_1 = require("../app");
 const firebaseType_1 = require("../utility/firebaseType");
 const serverInitializer_1 = require("../server/serverInitializer");
-const console_1 = require("console");
+const iocHelpers_1 = require("./iocHelpers");
 exports.container = new inversify_1.Container({ defaultScope: 'Singleton' });
-exports.iocContainer = new iocConfig_1.ContainerAdapter(exports.container);
+exports.iocContainer = new iocHelpers_1.ContainerAdapter(exports.container);
 (0, inversify_1.decorate)((0, inversify_1.injectable)(), tsoa_1.Controller);
 async function setupIoC(existingContainer) {
     if (!existingContainer || !(existingContainer instanceof inversify_1.Container)) {
-        throw errorType_1.CustomError.create(`Invalid container instance. Got: ${typeof existingContainer}`, 400, {
+        throw customError_1.CustomError.create(`Invalid container instance. Got: ${typeof existingContainer}`, 400, {
             container: exports.container
         });
     }
-    const logger = new loggerType_1.CustomLogger({
+    const logger = new customLogger_1.CustomLogger({
         logLevel: 'debug'
     });
     logger.debug('Starting container setup with container instance', 'IoC-Setup', {
@@ -40,8 +40,8 @@ async function setupIoC(existingContainer) {
         }
         existingContainer.bind(firebaseType_1.SYMBOLS.CUSTOM_LOGGER).toConstantValue(logger);
         logger.debug('Now bind CustomLogger class for future eventually instantiations');
-        if (!existingContainer.isBound(loggerType_1.CustomLogger)) {
-            existingContainer.bind(loggerType_1.CustomLogger).toSelf().inSingletonScope();
+        if (!existingContainer.isBound(customLogger_1.CustomLogger)) {
+            existingContainer.bind(customLogger_1.CustomLogger).toSelf().inSingletonScope();
         }
         logger.debug('Starting IoC container setup', 'IoC-Setup');
         const result = await (0, iocConfig_1.IoCSetup)(existingContainer, {
@@ -69,7 +69,7 @@ async function setupIoC(existingContainer) {
     catch (error) {
         const logger = exports.container.isBound(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)
             ? exports.container.get(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)
-            : new loggerType_1.CustomLogger({ logLevel: 'debug' });
+            : new customLogger_1.CustomLogger({ logLevel: 'debug' });
         logger.error('Failed to setup IoC container', 'IoC-Setup-Error', {
             errorDetails: error instanceof Error
                 ? {
@@ -77,38 +77,7 @@ async function setupIoC(existingContainer) {
                     message: error.message,
                 } : 'Unknown error'
         });
-        throw errorType_1.CustomError.create('Failed to setup IoC container', 500, { error });
-    }
-}
-async function initializeContainer() {
-    const tempLogger = new loggerType_1.CustomLogger({ logLevel: 'debug' });
-    try {
-        tempLogger.debug('Initializing container', 'IoC-Init', {
-            containerExists: !!exports.container,
-            containerType: typeof exports.container
-        });
-        const initializedContainer = await setupIoC(exports.container);
-        if (!initializedContainer) {
-            throw errorType_1.CustomError.create('setupIoc returned undefined or null container', 500, {
-                error: console_1.error
-            });
-        }
-        return initializedContainer;
-    }
-    catch (setupError) {
-        tempLogger.error('Container initialization failed', 'IoC-Init', {
-            error: setupError instanceof Error
-                ? {
-                    name: setupError.name,
-                    message: setupError.message,
-                    stack: setupError.stack
-                }
-                : 'Uknown error'
-        });
-        throw errorType_1.CustomError.create('InintilizeContainer does not return', 401, {
-            error: setupError,
-            phase: 'Container initilization'
-        });
+        throw customError_1.CustomError.create('Failed to setup IoC container', 500, { error });
     }
 }
 //# sourceMappingURL=index.js.map

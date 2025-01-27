@@ -1,10 +1,10 @@
 import { ApiKeyManager } from "../services/apiKeyManager";
-import { CustomError } from "../errors/CustomError";
+import { CustomError } from "../errors/customError";
 import { DecodedFirebaseToken } from "../utility/firebaseType";
 import { ApiKeyMetadata } from "../utility/firebaseType";
-import { BaseAuthStrategy } from "./authHelpers";
+import { BaseAuthStrategy } from "./strategyHelpers";
 import { injectable } from "inversify";
-import { CustomLogger } from "../logging/CustomLogger";
+import { CustomLogger } from "../logging/customLogger";
 import express from 'express';
 import { AuthenticatedUser } from "../auth/userAuth";
 

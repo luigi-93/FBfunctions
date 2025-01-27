@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.firebaseConfigManager = exports.FirebaseConfigurationManager = void 0;
-const loggerType_1 = require("../utility/loggerType");
-const errorType_1 = require("../utility/errorType");
-const logger = new loggerType_1.CustomLogger({ logLevel: 'debug' });
+const customLogger_1 = require("../logging/customLogger");
+const customError_1 = require("../errors/customError");
+const logger = new customLogger_1.CustomLogger({ logLevel: 'debug' });
 class FirebaseConfigurationManager {
     constructor() {
         this.config = null;
@@ -20,7 +20,7 @@ class FirebaseConfigurationManager {
         });
         const validationResult = this.validateConfig(firebaseConfig);
         if (!validationResult.isValid) {
-            throw errorType_1.CustomError.create(`Invalid Firebase configuration. Missing fields: ${validationResult.missingFields.join(', ')}`, 400, { missingFields: validationResult.missingFields });
+            throw customError_1.CustomError.create(`Invalid Firebase configuration. Missing fields: ${validationResult.missingFields.join(', ')}`, 400, { missingFields: validationResult.missingFields });
         }
         this.config = {
             firebaseConfig,

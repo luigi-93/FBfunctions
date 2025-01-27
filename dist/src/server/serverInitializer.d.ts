@@ -1,5 +1,5 @@
 import { ApiApp } from "../routes";
-import { CustomLogger } from "../utility/loggerType";
+import { CustomLogger } from "../logging/customLogger";
 import { Server } from "./server";
 import { ApiKeyManager } from '../services/apiKeyManager';
 import express from 'express';

@@ -36,16 +36,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.initializeFirebaseAdmin = initializeFirebaseAdmin;
 const admin = __importStar(require("firebase-admin"));
 const fs = __importStar(require("fs"));
-const loggerType_1 = require("../utility/loggerType");
-const errorType_1 = require("../utility/errorType");
+const customLogger_1 = require("../logging/customLogger");
+const customError_1 = require("../errors/customError");
 const authConfig_1 = require("../config/authConfig");
 function initializeFirebaseAdmin(needAdminPrivileges) {
-    const logger = new loggerType_1.CustomLogger();
+    const logger = new customLogger_1.CustomLogger();
     const config = authConfig_1.firebaseConfigManager.getConfig();
     let firebaseConfig = config?.firebaseConfig || process.env.FIREBASE_CONFIG;
     if (needAdminPrivileges && !config?.serviceAccountPath) {
         logger.error('GOOGLE_APPLICATION_CREDENTIALS not set for admin privileges', 'authenticationSetup');
-        throw errorType_1.CustomError.create('GOOGLE_APPLICATION_CREDENTIALS not set for admin privileges', 500, { environment: process.env.NODE_ENV });
+        throw customError_1.CustomError.create('GOOGLE_APPLICATION_CREDENTIALS not set for admin privileges', 500, { environment: process.env.NODE_ENV });
     }
     if (typeof firebaseConfig === 'string') {
         try {
@@ -55,14 +55,14 @@ function initializeFirebaseAdmin(needAdminPrivileges) {
             logger.error('Failed to parse Firebase Configuration', 'authenticationSetup', { firebaseConfig,
                 error
             });
-            throw errorType_1.CustomError.create('Invalid JSON in Firebase configuration', 400, { config: firebaseConfig,
+            throw customError_1.CustomError.create('Invalid JSON in Firebase configuration', 400, { config: firebaseConfig,
                 error: error
             });
         }
     }
     if (!firebaseConfig) {
         logger.error('Firebase configuration is missing', 'authenticationSetup');
-        throw errorType_1.CustomError.create('Firebase configuration is missing', 400, { environment: process.env.NODE_ENV });
+        throw customError_1.CustomError.create('Firebase configuration is missing', 400, { environment: process.env.NODE_ENV });
     }
     if (admin.apps.length === 0) {
         logger.info('Initializing Firebase Admin', 'authenticationSetup');

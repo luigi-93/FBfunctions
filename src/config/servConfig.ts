@@ -1,12 +1,12 @@
 import { inject, injectable } from "inversify";
-import { CustomLogger } from "../logging/CustomLogger";
 import express, 
     { Express, 
     Request, 
     Response, 
     NextFunction }  from 'express';
-import { CustomError } from "../errors/CustomError";
+import { CustomError } from "../errors/customError";
 import { SYMBOLS } from "../utility/firebaseType";
+import { CustomLogger } from "../logging/customLogger";
 
 /**
  * This class is base framework for setting up an express application.

@@ -5,8 +5,6 @@ export interface IFieldErrorMessages {
     [name: string]: string[];
 }
 
-
-
 @injectable()
 export class CustomError extends Error {
     public name: string;

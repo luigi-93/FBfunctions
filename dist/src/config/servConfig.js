@@ -17,10 +17,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ServerConfig = void 0;
 const inversify_1 = require("inversify");
-const loggerType_1 = require("../utility/loggerType");
 const express_1 = __importDefault(require("express"));
-const errorType_1 = require("../utility/errorType");
+const customError_1 = require("../errors/customError");
 const firebaseType_1 = require("../utility/firebaseType");
+const customLogger_1 = require("../logging/customLogger");
 let ServerConfig = class ServerConfig {
     constructor(logger) {
         this.logger = logger;
@@ -54,7 +54,7 @@ let ServerConfig = class ServerConfig {
             name: err.name,
             stack: err.stack
         }), 'error-handler');
-        if (err instanceof errorType_1.CustomError) {
+        if (err instanceof customError_1.CustomError) {
             const statusCode = err.statusCode || 500;
             const errorResponse = {
                 message: err.message
@@ -89,6 +89,6 @@ exports.ServerConfig = ServerConfig;
 exports.ServerConfig = ServerConfig = __decorate([
     (0, inversify_1.injectable)(),
     __param(0, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)),
-    __metadata("design:paramtypes", [loggerType_1.CustomLogger])
+    __metadata("design:paramtypes", [customLogger_1.CustomLogger])
 ], ServerConfig);
 //# sourceMappingURL=servConfig.js.map

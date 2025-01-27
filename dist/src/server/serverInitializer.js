@@ -14,7 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ServerInitializer = void 0;
 const routes_1 = require("../routes");
-const loggerType_1 = require("../utility/loggerType");
+const customLogger_1 = require("../logging/customLogger");
 const server_1 = require("./server");
 const apiKeyManager_1 = require("../services/apiKeyManager");
 const firebaseType_1 = require("../utility/firebaseType");
@@ -64,7 +64,7 @@ exports.ServerInitializer = ServerInitializer = __decorate([
     __param(1, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.SERVER)),
     __param(2, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.API_APP)),
     __param(3, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.API_KEY_MANAGER)),
-    __metadata("design:paramtypes", [loggerType_1.CustomLogger,
+    __metadata("design:paramtypes", [customLogger_1.CustomLogger,
         server_1.Server,
         routes_1.ApiApp,
         apiKeyManager_1.ApiKeyManager])

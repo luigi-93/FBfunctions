@@ -4,7 +4,7 @@ exports.getFirstValidationMessage = getFirstValidationMessage;
 exports.setErrorHandler = setErrorHandler;
 const lodash_1 = require("lodash");
 const tsoa_1 = require("tsoa");
-const errorType_1 = require("../utility/errorType");
+const customError_1 = require("./customError");
 const validationError_1 = require("../validation/validationError");
 function deepFind(obj, key) {
     if (key in obj) {
@@ -27,14 +27,14 @@ function getFirstValidationMessage(fieldErrors, fieldNameToLookfor) {
 function setErrorHandler(originalError, res, generalErrorHandler) {
     let errorToThrow = originalError;
     if (originalError instanceof tsoa_1.ValidateError) {
-        errorToThrow = new errorType_1.CustomError(originalError.message || "Validation failer", 400, { fieldError: originalError.fields });
+        errorToThrow = new customError_1.CustomError(originalError.message || "Validation failer", 400, { fieldError: originalError.fields });
     }
     else if (originalError instanceof validationError_1.ValidationError) {
-        errorToThrow = new errorType_1.CustomError(originalError.message || "Validation Failed", 400, { fieldErrors: originalError.fieldErrors });
+        errorToThrow = new customError_1.CustomError(originalError.message || "Validation Failed", 400, { fieldErrors: originalError.fieldErrors });
     }
     try {
         if ((originalError instanceof tsoa_1.ValidateError || originalError instanceof validationError_1.ValidationError) &&
-            errorToThrow instanceof errorType_1.CustomError &&
+            errorToThrow instanceof customError_1.CustomError &&
             errorToThrow.payload?.fieldErrors) {
             const extraMessage = getFirstValidationMessage(errorToThrow.payload.fieldErrors, "constraints") ||
                 getFirstValidationMessage(errorToThrow.payload.fieldErrors, "message");
