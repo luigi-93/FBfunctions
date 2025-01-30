@@ -1,18 +1,27 @@
 import { AuthStrategyFactory } from '../strategies/strategyHelpers';
 import { AuthenticatedUser } from '../auth/userAuth';
-import { iocContainer } from '../ioc';
 import express from 'express';
 import { CustomError } from '../errors/customError';
 
 
 
 export async function expressAuthentication(
-    request:express.Request,
+    request: express.Request,
     securityName: string,
-    scopes: string[] = []): Promise<AuthenticatedUser> {
+    scopes: string[] = [],
+    strategyFactory?: AuthStrategyFactory
+): Promise<AuthenticatedUser> {
         try {
 
-            const authStrategyFactory = iocContainer.get(AuthStrategyFactory)
+            if (!strategyFactory) {
+                throw CustomError.create(
+                    'Strategy factory not provided',
+                    401,
+                    { securityName }
+                );
+            }
+
+            //const authStrategyFactory = iocContainer.get(AuthStrategyFactory)
             //Map security names from tsoa.json to your strategy registry
             if (!['jwt', 'apikey'].includes(securityName.toLowerCase())) {
                 throw CustomError.create(
@@ -28,7 +37,7 @@ export async function expressAuthentication(
                 ? 'FirebaseJwtAuthStrategy'
                 : 'ApiKeyStrategy';
 
-            const strategy = authStrategyFactory.getStrategy(strategyName);
+            const strategy = strategyFactory.getStrategy(strategyName);
             return await strategy.authenticate(request, securityName, scopes);
         } catch (error) {
 

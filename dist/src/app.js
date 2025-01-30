@@ -28,7 +28,7 @@ const customLogger_1 = require("./logging/customLogger");
 const inversify_1 = require("inversify");
 const firebaseType_1 = require("./utility/firebaseType");
 const customError_1 = require("./errors/customError");
-const iocHelpers_1 = require("./ioc/iocHelpers");
+const containerInit_1 = require("./ioc/containerInit");
 dotenv_1.default.config();
 let App = class App {
     constructor(logger, server, apiApp, apikeyManager, serverInitializer) {
@@ -73,7 +73,7 @@ async function createApp() {
     const logger = new customLogger_1.CustomLogger({ logLevel: 'debug' });
     try {
         logger.debug('Starting application creation', 'App-Init');
-        const initializedContainer = await (0, iocHelpers_1.initializeContainer)();
+        const initializedContainer = await (0, containerInit_1.initializeContainer)();
         if (!initializedContainer) {
             throw customError_1.CustomError.create('Container inialization', 401, {});
         }

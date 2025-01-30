@@ -10,12 +10,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ContainerAdapter = void 0;
-exports.initializeContainer = initializeContainer;
 const inversify_1 = require("inversify");
 const customError_1 = require("../errors/customError");
-const customLogger_1 = require("../logging/customLogger");
-const _1 = require(".");
-const console_1 = require("console");
 let ContainerAdapter = class ContainerAdapter {
     constructor(container) {
         this.container = container;
@@ -77,35 +73,4 @@ exports.ContainerAdapter = ContainerAdapter = __decorate([
     (0, inversify_1.injectable)(),
     __metadata("design:paramtypes", [inversify_1.Container])
 ], ContainerAdapter);
-async function initializeContainer() {
-    const tempLogger = new customLogger_1.CustomLogger({ logLevel: 'debug' });
-    try {
-        tempLogger.debug('Initializing container', 'IoC-Init', {
-            containerExists: !!_1.container,
-            containerType: typeof _1.container
-        });
-        const initializedContainer = await (0, _1.setupIoC)(_1.container);
-        if (!initializedContainer) {
-            throw customError_1.CustomError.create('setupIoc returned undefined or null container', 500, {
-                error: console_1.error
-            });
-        }
-        return initializedContainer;
-    }
-    catch (setupError) {
-        tempLogger.error('Container initialization failed', 'IoC-Init', {
-            error: setupError instanceof Error
-                ? {
-                    name: setupError.name,
-                    message: setupError.message,
-                    stack: setupError.stack
-                }
-                : 'Uknown error'
-        });
-        throw customError_1.CustomError.create('InintilizeContainer does not return', 401, {
-            error: setupError,
-            phase: 'Container initilization'
-        });
-    }
-}
 //# sourceMappingURL=iocHelpers.js.map

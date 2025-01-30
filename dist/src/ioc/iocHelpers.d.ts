@@ -8,4 +8,3 @@ export declare class ContainerAdapter implements IocContainer {
     }): T;
     private getControllerIdentifier;
 }
-export declare function initializeContainer(): Promise<Container>;

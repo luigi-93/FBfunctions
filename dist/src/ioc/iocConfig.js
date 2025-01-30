@@ -93,7 +93,7 @@ async function IoCSetup(iocContainer, options = {
             apiKeyManager: manager,
             generatedKeys: generatedKeys.length
         });
-        logger.debug('Binding API key Auth Strategy', 'IoC-Config');
+        logger.debug('Binding firebase API key Auth Strategy', 'IoC-Config');
         iocContainer
             .bind(firebaseType_1.registry.FirebaseApiKeyAuthStrategy)
             .toDynamicValue((context) => {
@@ -102,7 +102,7 @@ async function IoCSetup(iocContainer, options = {
                 return new firebaseApiKeyAuthStrategy_1.FirebaseApiKeyAuthStrategy(manager, strategyLogger);
             }
             catch (error) {
-                logger.error('Failed to initialize API key Auth Strategy', 'IoC-Config', {
+                logger.error('Failed to initialize firebase API key Auth Strategy', 'IoC-Config', {
                     errorDetails: error instanceof Error
                         ? {
                             name: error.name,
@@ -110,11 +110,11 @@ async function IoCSetup(iocContainer, options = {
                         }
                         : 'Unknow error'
                 });
-                throw customError_1.CustomError.create('Failed to initialize API key Auth Strategy', 500, { error });
+                throw customError_1.CustomError.create('Failed to initialize firebase API key Auth Strategy', 500, { error });
             }
         })
             .inSingletonScope();
-        logger.debug('Successfully binded API key Auth Strategy', 'IoC-Config');
+        logger.debug('Successfully binded firebase API key Auth Strategy', 'IoC-Config');
         try {
             logger.debug('Binding AuthStrategyFactory', 'IoC-Config');
             iocContainer

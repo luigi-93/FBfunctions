@@ -5,7 +5,11 @@ import { ApiKeyManager } from '../services/apiKeyManager';
 import express from 'express';
 import { SecurityScopes, SYMBOLS } from '../utility/firebaseType';
 import { inject, injectable } from "inversify";
-import { RegisterRoutes } from "../../build/api/routes";
+//import { RegisterRoutes } from "../../build/api/routes";
+import { AuthStrategyFactory } from "../strategies/strategyHelpers";
+//import { expressAuthentication } from "../api/tsoaAuth";
+import { resisterRoutesWithAuth } from "../routes/regitster-routes";
+
 
 @injectable()
 export class ServerInitializer {
@@ -14,7 +18,8 @@ export class ServerInitializer {
         @inject(SYMBOLS.CUSTOM_LOGGER) private readonly logger: CustomLogger,
         @inject(SYMBOLS.SERVER) private readonly server: Server,
         @inject(SYMBOLS.API_APP) private readonly apiApp: ApiApp,
-        @inject(SYMBOLS.API_KEY_MANAGER) private readonly apiKeyManager: ApiKeyManager
+        @inject(SYMBOLS.API_KEY_MANAGER) private readonly apiKeyManager: ApiKeyManager,
+        @inject(SYMBOLS.AUTH_STRATEGY_FACTORY) private strategyFactory: AuthStrategyFactory
     ) {}
 
     async initialize (
@@ -24,7 +29,7 @@ export class ServerInitializer {
     ) {
         try {
 
-            RegisterRoutes(app);
+            resisterRoutesWithAuth(app, this.strategyFactory)
 
             await this.server
             .build(app, '/api', this.apiApp)

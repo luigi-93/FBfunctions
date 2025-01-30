@@ -3,6 +3,8 @@ import { AuthenticatedUser } from '../auth/userAuth';
 import { ApiKeyManager } from '../services/apiKeyManager';
 import { interfaces } from 'inversify';
 import { fluentProvide } from 'inversify-binding-decorators';
+import { AuthStrategyFactory } from '../strategies/strategyHelpers';
+
 
 export enum FirebaseAuthProvider {
     EMAIL_PASSWORD = 'email_pass',
@@ -62,7 +64,7 @@ export enum SecurityScopes {
 export const registry = {
     FirebaseAdmin: Symbol.for('FirebaseAdmin'),
     FirebaseJwtAuthStrategy: Symbol.for('FirebaseJwtAuthStrategy'),
-    FirebaseApiKeyAuthStrategy: Symbol.for('FirebaseApiKeyAuthStrategy'),
+    FirebaseApiKeyAuthStrategy: Symbol.for('FirebaseApiKeyAuthStrategy')
 }
 
 export const StrategyRegistry = {
@@ -127,6 +129,8 @@ export interface ValidationResult {
     config: FirebaseConfig | null;
 }
 
+//Binding parameters for the IoC container
+
 export const SYMBOLS = {
     AUTH_STRATEGY_FACTORY: Symbol.for('AuthStrategyFactory'),
     CUSTOM_LOGGER: Symbol.for('CustomLogger'),
@@ -140,7 +144,6 @@ export const SYMBOLS = {
     CONTAINER_ADAPTER: Symbol.for('ContainerAdapter'),
     SERVER_INITIALIZER: Symbol.for('ServerInitializer')
     }
-    
 
 export interface ApiKeyResult {
     name: string;
@@ -159,9 +162,18 @@ export const requiredBindngs = [
         { symbol: SYMBOLS.APP, name: 'App'}
     ] as const;
 
-
+//it semplify the binding process
 export function provideSingleton<T>(
     indentifier: interfaces.ServiceIdentifier<T>
     ) {
     return fluentProvide(indentifier).inSingletonScope().done();
     }
+
+
+//key for the auth context in the wrapper RegisterRoutes function
+export const AUTH_CONTEXT_KEY = 'tsoa-auth-context';
+
+export type AuthContext = {
+    strategyFactory: AuthStrategyFactory;
+}
+    

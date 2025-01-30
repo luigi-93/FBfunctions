@@ -15,16 +15,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ApiApp = void 0;
 const inversify_1 = require("inversify");
 const servConfig_1 = require("../config/servConfig");
-const routes_1 = require("../../build/api/routes");
 const apiHandlerError_1 = require("../errors/apiHandlerError");
 const customLogger_1 = require("../logging/customLogger");
 const firebaseType_1 = require("../utility/firebaseType");
+const strategyHelpers_1 = require("../strategies/strategyHelpers");
+const regitster_routes_1 = require("./regitster-routes");
 let ApiApp = class ApiApp extends servConfig_1.ServerConfig {
-    constructor(logger) {
+    constructor(logger, strategyFactory) {
         super(logger);
+        this.strategyFactory = strategyFactory;
     }
     setRoutes() {
-        (0, routes_1.RegisterRoutes)(this.app);
+        (0, regitster_routes_1.resisterRoutesWithAuth)(this.app, this.strategyFactory);
     }
     setErrorHandler() {
         this.app.use((err, req, res, _next) => {
@@ -36,6 +38,8 @@ exports.ApiApp = ApiApp;
 exports.ApiApp = ApiApp = __decorate([
     (0, inversify_1.injectable)(),
     __param(0, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)),
-    __metadata("design:paramtypes", [customLogger_1.CustomLogger])
+    __param(1, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.AUTH_STRATEGY_FACTORY)),
+    __metadata("design:paramtypes", [customLogger_1.CustomLogger,
+        strategyHelpers_1.AuthStrategyFactory])
 ], ApiApp);
 //# sourceMappingURL=index.js.map

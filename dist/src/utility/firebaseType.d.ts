@@ -2,6 +2,7 @@ import express from 'express';
 import { AuthenticatedUser } from '../auth/userAuth';
 import { ApiKeyManager } from '../services/apiKeyManager';
 import { interfaces } from 'inversify';
+import { AuthStrategyFactory } from '../strategies/strategyHelpers';
 export declare enum FirebaseAuthProvider {
     EMAIL_PASSWORD = "email_pass",
     GOOGLE = "Google",
@@ -134,3 +135,7 @@ export declare const requiredBindngs: readonly [{
     readonly name: "App";
 }];
 export declare function provideSingleton<T>(indentifier: interfaces.ServiceIdentifier<T>): (target: any) => any;
+export declare const AUTH_CONTEXT_KEY = "tsoa-auth-context";
+export type AuthContext = {
+    strategyFactory: AuthStrategyFactory;
+};

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.requiredBindngs = exports.SYMBOLS = exports.StrategyRegistry = exports.registry = exports.SecurityScopes = exports.SecurityNameTypes = exports.FirebaseAuthProvider = void 0;
+exports.AUTH_CONTEXT_KEY = exports.requiredBindngs = exports.SYMBOLS = exports.StrategyRegistry = exports.registry = exports.SecurityScopes = exports.SecurityNameTypes = exports.FirebaseAuthProvider = void 0;
 exports.provideSingleton = provideSingleton;
 const inversify_binding_decorators_1 = require("inversify-binding-decorators");
 var FirebaseAuthProvider;
@@ -25,7 +25,7 @@ var SecurityScopes;
 exports.registry = {
     FirebaseAdmin: Symbol.for('FirebaseAdmin'),
     FirebaseJwtAuthStrategy: Symbol.for('FirebaseJwtAuthStrategy'),
-    FirebaseApiKeyAuthStrategy: Symbol.for('FirebaseApiKeyAuthStrategy'),
+    FirebaseApiKeyAuthStrategy: Symbol.for('FirebaseApiKeyAuthStrategy')
 };
 exports.StrategyRegistry = {
     FirebaseJwtAuthStrategy: exports.registry.FirebaseJwtAuthStrategy,
@@ -51,4 +51,5 @@ exports.requiredBindngs = [
 function provideSingleton(indentifier) {
     return (0, inversify_binding_decorators_1.fluentProvide)(indentifier).inSingletonScope().done();
 }
+exports.AUTH_CONTEXT_KEY = 'tsoa-auth-context';
 //# sourceMappingURL=firebaseType.js.map

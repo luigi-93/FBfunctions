@@ -9,12 +9,13 @@ import express from 'express';
     import { inject, injectable } from 'inversify';
     import { requiredBindngs, SYMBOLS } from './utility/firebaseType';
     import { CustomError } from './errors/customError';
-import { initializeContainer } from './ioc/iocHelpers';
+import { initializeContainer } from './ioc/containerInit';
+
 
     dotenv.config();
 
     @injectable()
-    export class App {
+    export class App { 
         constructor(
             @inject(SYMBOLS.CUSTOM_LOGGER) private readonly logger: CustomLogger,
             @inject(SYMBOLS.SERVER) private readonly server: Server,
@@ -22,6 +23,7 @@ import { initializeContainer } from './ioc/iocHelpers';
             @inject(SYMBOLS.API_KEY_MANAGER) private readonly apikeyManager: ApiKeyManager,
             @inject(SYMBOLS.SERVER_INITIALIZER) private readonly serverInitializer: ServerInitializer
         ) {}
+
 
         private async cleanup(): Promise<void> {
             this.logger.info(

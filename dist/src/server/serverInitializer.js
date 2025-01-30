@@ -19,17 +19,19 @@ const server_1 = require("./server");
 const apiKeyManager_1 = require("../services/apiKeyManager");
 const firebaseType_1 = require("../utility/firebaseType");
 const inversify_1 = require("inversify");
-const routes_2 = require("../../build/api/routes");
+const strategyHelpers_1 = require("../strategies/strategyHelpers");
+const regitster_routes_1 = require("../routes/regitster-routes");
 let ServerInitializer = class ServerInitializer {
-    constructor(logger, server, apiApp, apiKeyManager) {
+    constructor(logger, server, apiApp, apiKeyManager, strategyFactory) {
         this.logger = logger;
         this.server = server;
         this.apiApp = apiApp;
         this.apiKeyManager = apiKeyManager;
+        this.strategyFactory = strategyFactory;
     }
     async initialize(app, port, cleanup) {
         try {
-            (0, routes_2.RegisterRoutes)(app);
+            (0, regitster_routes_1.resisterRoutesWithAuth)(app, this.strategyFactory);
             await this.server
                 .build(app, '/api', this.apiApp)
                 .setupProcessErrorHandler(cleanup);
@@ -64,9 +66,11 @@ exports.ServerInitializer = ServerInitializer = __decorate([
     __param(1, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.SERVER)),
     __param(2, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.API_APP)),
     __param(3, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.API_KEY_MANAGER)),
+    __param(4, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.AUTH_STRATEGY_FACTORY)),
     __metadata("design:paramtypes", [customLogger_1.CustomLogger,
         server_1.Server,
         routes_1.ApiApp,
-        apiKeyManager_1.ApiKeyManager])
+        apiKeyManager_1.ApiKeyManager,
+        strategyHelpers_1.AuthStrategyFactory])
 ], ServerInitializer);
 //# sourceMappingURL=serverInitializer.js.map

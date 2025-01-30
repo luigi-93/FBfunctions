@@ -8,6 +8,6 @@
   "compilerOptions": {
         "baseUrl": "..",
         "outDir": "../dist",
-        "paths": {"*": ["../node_modules/*", "build/*"]} 
+        "paths": {"*": ["../node_modules/", "build/*"]} 
       },
 }
