@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthenticatedUser = void 0;
-const firebaseType_1 = require("../utility/firebaseType");
+const utilityKeys_1 = require("../utility/utilityKeys");
 const customLogger_1 = require("../logging/customLogger");
 const customError_1 = require("../errors/customError");
 class AuthenticatedUser {
@@ -17,7 +17,7 @@ class AuthenticatedUser {
         return requiredScopes.find(scope => this._rawDecodedToken.acl?.includes(scope));
     }
     get isAdmin() {
-        return this._hasOneOfAcl([firebaseType_1.SecurityScopes.Admin]) !== undefined;
+        return this._hasOneOfAcl([utilityKeys_1.SecurityScopes.Admin]) !== undefined;
     }
     getCustomClaim(claimName) {
         return this._rawDecodedToken[claimName];

@@ -32,6 +32,7 @@ exports.StrategyRegistry = {
     ApiKeyStrategy: exports.registry.FirebaseApiKeyAuthStrategy,
 };
 exports.SYMBOLS = {
+    CONTAINER: Symbol.for('Container'),
     AUTH_STRATEGY_FACTORY: Symbol.for('AuthStrategyFactory'),
     CUSTOM_LOGGER: Symbol.for('CustomLogger'),
     API_KEY_MANAGER: Symbol.for('ApiKeyManager'),
@@ -42,7 +43,8 @@ exports.SYMBOLS = {
     API_KEY_VALIDATOR: Symbol.for('ApiKeyValidator'),
     SERVER_CONFIG: Symbol.for('ServerConfig'),
     CONTAINER_ADAPTER: Symbol.for('ContainerAdapter'),
-    SERVER_INITIALIZER: Symbol.for('ServerInitializer')
+    SERVER_INITIALIZER: Symbol.for('ServerInitializer'),
+    ROUTE_REGISTRAR: Symbol.for('RouteRegistrar'),
 };
 exports.requiredBindngs = [
     { symbol: exports.SYMBOLS.CUSTOM_LOGGER, name: 'CustomLogger' },
@@ -52,4 +54,4 @@ function provideSingleton(indentifier) {
     return (0, inversify_binding_decorators_1.fluentProvide)(indentifier).inSingletonScope().done();
 }
 exports.AUTH_CONTEXT_KEY = 'tsoa-auth-context';
-//# sourceMappingURL=firebaseType.js.map
+//# sourceMappingURL=utilityKeys.js.map

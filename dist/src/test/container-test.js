@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv_1 = __importDefault(require("dotenv"));
-const firebaseType_1 = require("../utility/firebaseType");
+const utilityKeys_1 = require("../utility/utilityKeys");
 const customLogger_1 = require("../logging/customLogger");
 const containerInit_1 = require("../ioc/containerInit");
 dotenv_1.default.config();
@@ -14,11 +14,11 @@ async function testContainer() {
         loggertest.debug('Starting container test');
         const container = await (0, containerInit_1.initializeContainer)();
         loggertest.debug('Container initialized', 'testContainer');
-        const logger = container.get(firebaseType_1.SYMBOLS.CUSTOM_LOGGER);
+        const logger = container.get(utilityKeys_1.SYMBOLS.CUSTOM_LOGGER);
         console.log('Successfully resolved logger');
         const dependecies = [
-            { name: 'Server', symbol: firebaseType_1.SYMBOLS.SERVER },
-            { name: 'ApiApp', symbol: firebaseType_1.SYMBOLS.API_APP },
+            { name: 'Server', symbol: utilityKeys_1.SYMBOLS.SERVER },
+            { name: 'ApiApp', symbol: utilityKeys_1.SYMBOLS.API_APP },
         ];
         for (const dep of dependecies) {
             try {
@@ -33,10 +33,10 @@ async function testContainer() {
                 console.error(`Failed to resolve ${dep.name}:`, error);
             }
         }
-        if (!container.isBound(firebaseType_1.SYMBOLS.APP)) {
+        if (!container.isBound(utilityKeys_1.SYMBOLS.APP)) {
             throw new Error('App binding not found in the container');
         }
-        const app = container.get(firebaseType_1.SYMBOLS.APP);
+        const app = container.get(utilityKeys_1.SYMBOLS.APP);
         console.log('Successfully resolved app');
     }
     catch (error) {

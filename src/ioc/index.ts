@@ -11,7 +11,7 @@ import { CustomLogger } from '../logging/customLogger';
 import { Server } from "../server/server";
 import { ApiApp } from "../routes";
 import { App } from "../app";
-import { SYMBOLS } from "../utility/firebaseType";
+import { SYMBOLS } from "../utility/utilityKeys";
 import { ServerInitializer } from "../server/serverInitializer";
 import { ContainerAdapter } from "./iocHelpers";
 

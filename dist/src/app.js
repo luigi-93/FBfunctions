@@ -26,7 +26,7 @@ const firebaseConfig_1 = require("./config/firebaseConfig");
 const serverInitializer_1 = require("./server/serverInitializer");
 const customLogger_1 = require("./logging/customLogger");
 const inversify_1 = require("inversify");
-const firebaseType_1 = require("./utility/firebaseType");
+const utilityKeys_1 = require("./utility/utilityKeys");
 const customError_1 = require("./errors/customError");
 const containerInit_1 = require("./ioc/containerInit");
 dotenv_1.default.config();
@@ -58,11 +58,11 @@ let App = class App {
 exports.App = App;
 exports.App = App = __decorate([
     (0, inversify_1.injectable)(),
-    __param(0, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)),
-    __param(1, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.SERVER)),
-    __param(2, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.API_APP)),
-    __param(3, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.API_KEY_MANAGER)),
-    __param(4, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.SERVER_INITIALIZER)),
+    __param(0, (0, inversify_1.inject)(utilityKeys_1.SYMBOLS.CUSTOM_LOGGER)),
+    __param(1, (0, inversify_1.inject)(utilityKeys_1.SYMBOLS.SERVER)),
+    __param(2, (0, inversify_1.inject)(utilityKeys_1.SYMBOLS.API_APP)),
+    __param(3, (0, inversify_1.inject)(utilityKeys_1.SYMBOLS.API_KEY_MANAGER)),
+    __param(4, (0, inversify_1.inject)(utilityKeys_1.SYMBOLS.SERVER_INITIALIZER)),
     __metadata("design:paramtypes", [customLogger_1.CustomLogger,
         server_1.Server,
         routes_1.ApiApp,
@@ -77,7 +77,7 @@ async function createApp() {
         if (!initializedContainer) {
             throw customError_1.CustomError.create('Container inialization', 401, {});
         }
-        for (const binding of firebaseType_1.requiredBindngs) {
+        for (const binding of utilityKeys_1.requiredBindngs) {
             if (!initializedContainer.isBound(binding.symbol)) {
                 logger.error(`Missing required binding: ${binding.name}`, 'App-Init');
                 throw customError_1.CustomError.create(`${binding.name} binding not found`, 500, {
@@ -86,7 +86,7 @@ async function createApp() {
                 });
             }
         }
-        const application = initializedContainer.get(firebaseType_1.SYMBOLS.APP);
+        const application = initializedContainer.get(utilityKeys_1.SYMBOLS.APP);
         const result = await application.initialize();
         logger.info('Application created successfully', 'App-Init');
         return result;

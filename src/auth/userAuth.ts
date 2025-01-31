@@ -2,7 +2,7 @@ import { Request } from 'express';
 import { 
     DecodedFirebaseToken, 
     SecurityScopes } 
-    from "../utility/firebaseType";
+    from "../utility/utilityKeys";
 import { CustomLogger } from '../logging/customLogger';
 import { CustomError } from '../errors/customError';
 

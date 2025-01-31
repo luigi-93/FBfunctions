@@ -1,4 +1,4 @@
-import { IJson } from "../utility/firebaseType";
+import { IJson } from "../utility/utilityKeys";
 import { flatten } from 'lodash'
 import express from 'express';
 import { ValidateError } from "tsoa";

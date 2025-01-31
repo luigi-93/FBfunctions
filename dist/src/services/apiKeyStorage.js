@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.InMemoryStorageAdapter = void 0;
 const inversify_1 = require("inversify");
 const customError_1 = require("../errors/customError");
-const firebaseType_1 = require("../utility/firebaseType");
+const utilityKeys_1 = require("../utility/utilityKeys");
 const customLogger_1 = require("../logging/customLogger");
 let InMemoryStorageAdapter = class InMemoryStorageAdapter {
     constructor(logger) {
@@ -100,7 +100,7 @@ let InMemoryStorageAdapter = class InMemoryStorageAdapter {
 exports.InMemoryStorageAdapter = InMemoryStorageAdapter;
 exports.InMemoryStorageAdapter = InMemoryStorageAdapter = __decorate([
     (0, inversify_1.injectable)(),
-    __param(0, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)),
+    __param(0, (0, inversify_1.inject)(utilityKeys_1.SYMBOLS.CUSTOM_LOGGER)),
     __metadata("design:paramtypes", [customLogger_1.CustomLogger])
 ], InMemoryStorageAdapter);
 //# sourceMappingURL=apiKeyStorage.js.map

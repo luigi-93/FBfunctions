@@ -3,7 +3,7 @@
  */
 
 import { Controller, Get, Route, Security } from "tsoa";
-import { provideSingleton, SecurityScopes } from "../../utility/firebaseType";
+import { provideSingleton, SecurityScopes } from "../../utility/utilityKeys";
 
 
 @provideSingleton(MockController)

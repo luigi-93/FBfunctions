@@ -19,7 +19,7 @@ exports.ServerConfig = void 0;
 const inversify_1 = require("inversify");
 const express_1 = __importDefault(require("express"));
 const customError_1 = require("../errors/customError");
-const firebaseType_1 = require("../utility/firebaseType");
+const utilityKeys_1 = require("../utility/utilityKeys");
 const customLogger_1 = require("../logging/customLogger");
 let ServerConfig = class ServerConfig {
     constructor(logger) {
@@ -88,7 +88,7 @@ let ServerConfig = class ServerConfig {
 exports.ServerConfig = ServerConfig;
 exports.ServerConfig = ServerConfig = __decorate([
     (0, inversify_1.injectable)(),
-    __param(0, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)),
+    __param(0, (0, inversify_1.inject)(utilityKeys_1.SYMBOLS.CUSTOM_LOGGER)),
     __metadata("design:paramtypes", [customLogger_1.CustomLogger])
 ], ServerConfig);
 //# sourceMappingURL=servConfig.js.map

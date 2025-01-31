@@ -48,7 +48,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ApiKeyManager = void 0;
 const inversify_1 = require("inversify");
 const customError_1 = require("../errors/customError");
-const firebaseType_1 = require("../utility/firebaseType");
+const utilityKeys_1 = require("../utility/utilityKeys");
 const customLogger_1 = require("../logging/customLogger");
 const validationApiKey_1 = require("../validation/validationApiKey");
 const crypto = __importStar(require("crypto"));
@@ -65,8 +65,8 @@ let ApiKeyManager = class ApiKeyManager {
         const metadata = {
             id: apiKey,
             name,
-            scopes: options.scopes || [firebaseType_1.SecurityScopes.User],
-            provider: options.provider || firebaseType_1.FirebaseAuthProvider.EMAIL_PASSWORD,
+            scopes: options.scopes || [utilityKeys_1.SecurityScopes.User],
+            provider: options.provider || utilityKeys_1.FirebaseAuthProvider.EMAIL_PASSWORD,
             createdAt: now,
             expiresAt: options.expiresAt || (now + this.keyRotationInterval),
             status: 'ACTIVE',
@@ -207,9 +207,9 @@ let ApiKeyManager = class ApiKeyManager {
 exports.ApiKeyManager = ApiKeyManager;
 exports.ApiKeyManager = ApiKeyManager = __decorate([
     (0, inversify_1.injectable)(),
-    __param(0, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)),
-    __param(1, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.STORAGE_ADAPTER)),
-    __param(2, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.API_KEY_VALIDATOR)),
+    __param(0, (0, inversify_1.inject)(utilityKeys_1.SYMBOLS.CUSTOM_LOGGER)),
+    __param(1, (0, inversify_1.inject)(utilityKeys_1.SYMBOLS.STORAGE_ADAPTER)),
+    __param(2, (0, inversify_1.inject)(utilityKeys_1.SYMBOLS.API_KEY_VALIDATOR)),
     __metadata("design:paramtypes", [customLogger_1.CustomLogger, Object, validationApiKey_1.ApiKeyValidator])
 ], ApiKeyManager);
 //# sourceMappingURL=apiKeyManager.js.map

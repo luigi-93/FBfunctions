@@ -5,7 +5,7 @@ import * as admin from 'firebase-admin';
 import { CustomLogger } from "../logging/customLogger";
 import express from 'express';
 import { AuthenticatedUser } from "../auth/userAuth";
-import { DecodedFirebaseToken } from "../utility/firebaseType";
+import { DecodedFirebaseToken } from "../utility/utilityKeys";
 
 @injectable()
 export class FirebaseJwtAuthStrategy extends BaseAuthStrategy {

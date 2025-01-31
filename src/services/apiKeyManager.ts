@@ -7,7 +7,7 @@ import {
     DecodedFirebaseToken, 
     FirebaseAuthProvider, 
     SecurityScopes, 
-    SYMBOLS} from "../utility/firebaseType";
+    SYMBOLS} from "../utility/utilityKeys";
 import { CustomLogger } from '../logging/customLogger';
 import { ApiKeyValidator } from "../validation/validationApiKey";
 import * as crypto from 'crypto';

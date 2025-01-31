@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { DecodedFirebaseToken, SecurityScopes } from "../utility/firebaseType";
+import { DecodedFirebaseToken, SecurityScopes } from "../utility/utilityKeys";
 import { CustomLogger } from '../logging/customLogger';
 export declare class AuthenticatedUser {
     private readonly _rawDecodedToken;

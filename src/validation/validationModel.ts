@@ -6,7 +6,7 @@ import { CustomLogger } from "../logging/customLogger";
 import { plainToClass } from 'class-transformer';
 import { CustomError } from "../errors/customError";
 import { inject, injectable } from 'inversify';
-import { SYMBOLS } from '../utility/firebaseType';
+import { SYMBOLS } from '../utility/utilityKeys';
 
 
 export declare type ClassType<T> = {

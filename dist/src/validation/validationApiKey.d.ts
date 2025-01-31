@@ -1,4 +1,4 @@
-import { ApiKeyMetadata } from "../utility/firebaseType";
+import { ApiKeyMetadata } from "../utility/utilityKeys";
 import { CustomLogger } from "../logging/customLogger";
 export declare class ApiKeyValidator {
     private readonly logger;

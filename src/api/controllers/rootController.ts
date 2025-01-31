@@ -1,4 +1,4 @@
-import { provideSingleton } from "../../utility/firebaseType";
+import { provideSingleton } from "../../utility/utilityKeys";
 //import { injectable } from "inversify";
 import { Controller, Get, Route } from "tsoa";
 

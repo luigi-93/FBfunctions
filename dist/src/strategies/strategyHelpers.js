@@ -14,7 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseAuthStrategy = exports.AuthStrategyFactory = void 0;
 const inversify_1 = require("inversify");
-const firebaseType_1 = require("../utility/firebaseType");
+const utilityKeys_1 = require("../utility/utilityKeys");
 const customError_1 = require("../errors/customError");
 const customLogger_1 = require("../logging/customLogger");
 const iocHelpers_1 = require("../ioc/iocHelpers");
@@ -28,12 +28,12 @@ let AuthStrategyFactory = class AuthStrategyFactory {
             this.logger.warn('Strategy name not provided', 'AuthStrategyFactory');
             throw customError_1.CustomError.create('strategy name is reuired', 400, { details: 'The strategy name parameter was not provided.' });
         }
-        const strategySymbol = firebaseType_1.StrategyRegistry[name];
+        const strategySymbol = utilityKeys_1.StrategyRegistry[name];
         if (!strategySymbol) {
             this.logger.warn(`Strategy ${name} not found in registry`, 'AuthStrategyFactory');
             throw customError_1.CustomError.create(`Authentication strategy ${name} not found`, 403, {
                 name,
-                availableStrategies: Object.keys(firebaseType_1.StrategyRegistry),
+                availableStrategies: Object.keys(utilityKeys_1.StrategyRegistry),
             });
         }
         try {
@@ -59,8 +59,8 @@ let AuthStrategyFactory = class AuthStrategyFactory {
 exports.AuthStrategyFactory = AuthStrategyFactory;
 exports.AuthStrategyFactory = AuthStrategyFactory = __decorate([
     (0, inversify_1.injectable)(),
-    __param(0, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)),
-    __param(1, (0, inversify_1.inject)(new inversify_1.LazyServiceIdentifier(() => firebaseType_1.SYMBOLS.CONTAINER_ADAPTER))),
+    __param(0, (0, inversify_1.inject)(utilityKeys_1.SYMBOLS.CUSTOM_LOGGER)),
+    __param(1, (0, inversify_1.inject)(new inversify_1.LazyServiceIdentifier(() => utilityKeys_1.SYMBOLS.CONTAINER_ADAPTER))),
     __metadata("design:paramtypes", [customLogger_1.CustomLogger,
         iocHelpers_1.ContainerAdapter])
 ], AuthStrategyFactory);

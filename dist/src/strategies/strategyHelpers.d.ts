@@ -1,4 +1,4 @@
-import { IAuthStrategy, StrategyName } from '../utility/firebaseType';
+import { IAuthStrategy, StrategyName } from '../utility/utilityKeys';
 import { CustomLogger } from '../logging/customLogger';
 import express from 'express';
 import { AuthenticatedUser } from '../auth/userAuth';

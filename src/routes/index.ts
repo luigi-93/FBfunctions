@@ -1,27 +1,27 @@
 import { inject, injectable } from "inversify";
 import { ServerConfig } from "../config/servConfig";
-//import { RegisterRoutes } from "../../build/api/routes";
 import express, 
         { Response } 
         from 'express';
 import { setErrorHandler } from "../errors/apiHandlerError";
 import { CustomLogger } from "../logging/customLogger";
-import { SYMBOLS } from "../utility/firebaseType";
+import { SYMBOLS } from '../utility/utilityKeys';
 import { AuthStrategyFactory } from "../strategies/strategyHelpers";
-//import { expressAuthentication } from "../api/tsoaAuth";
-import { resisterRoutesWithAuth } from "./regitster-routes";
+import { RouteRegistrar } from "./register-routes";
+
 
 
 @injectable()
 export class ApiApp extends ServerConfig {
     constructor(
         @inject(SYMBOLS.CUSTOM_LOGGER) logger: CustomLogger,
-        @inject(SYMBOLS.AUTH_STRATEGY_FACTORY) private strategyFactory: AuthStrategyFactory
+        @inject(SYMBOLS.AUTH_STRATEGY_FACTORY) private strategyFactory: AuthStrategyFactory,
+        @inject(SYMBOLS.ROUTE_REGISTRAR) private routeRegistrar: RouteRegistrar
     ) {
         super(logger);
     }
     protected setRoutes() {
-        resisterRoutesWithAuth(this.app, this.strategyFactory)
+        this.routeRegistrar.register(this.app, this.strategyFactory)
     }
 
     protected setErrorHandler() {

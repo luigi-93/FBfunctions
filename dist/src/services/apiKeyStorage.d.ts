@@ -1,4 +1,4 @@
-import { ApiKeyMetadata, ApiKeyStorageAdapter } from "../utility/firebaseType";
+import { ApiKeyMetadata, ApiKeyStorageAdapter } from "../utility/utilityKeys";
 import { CustomLogger } from "../logging/customLogger";
 export declare class InMemoryStorageAdapter implements ApiKeyStorageAdapter {
     private readonly logger;

@@ -5,7 +5,7 @@ import {
     StrategyName, 
     StrategyRegistry, 
     SYMBOLS} 
-    from '../utility/firebaseType';
+    from '../utility/utilityKeys';
 import { CustomError } from '../errors/customError';
 import { CustomLogger } from '../logging/customLogger';
 import express from 'express';

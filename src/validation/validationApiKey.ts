@@ -3,7 +3,7 @@ import {
     ApiKeyMetadata, 
     SecurityScopes, 
     SYMBOLS} 
-    from "../utility/firebaseType";
+    from "../utility/utilityKeys";
 import { CustomLogger } from "../logging/customLogger";
 
 

@@ -11,7 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MockController = void 0;
 const tsoa_1 = require("tsoa");
-const firebaseType_1 = require("../../utility/firebaseType");
+const utilityKeys_1 = require("../../utility/utilityKeys");
 let MockController = class MockController extends tsoa_1.Controller {
     async getMockData() {
         return { status: "public ok" };
@@ -32,7 +32,7 @@ __decorate([
 ], MockController.prototype, "getMockData", null);
 __decorate([
     (0, tsoa_1.Get)("/secured/jwt"),
-    (0, tsoa_1.Security)("jwt", [firebaseType_1.SecurityScopes.Admin]),
+    (0, tsoa_1.Security)("jwt", [utilityKeys_1.SecurityScopes.Admin]),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
@@ -45,7 +45,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], MockController.prototype, "getSecurityApiKeyData", null);
 exports.MockController = MockController = __decorate([
-    (0, firebaseType_1.provideSingleton)(MockController),
+    (0, utilityKeys_1.provideSingleton)(MockController),
     (0, tsoa_1.Route)("mock")
 ], MockController);
 //# sourceMappingURL=mockController.js.map

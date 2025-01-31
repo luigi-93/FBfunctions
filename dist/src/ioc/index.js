@@ -11,7 +11,7 @@ const customLogger_1 = require("../logging/customLogger");
 const server_1 = require("../server/server");
 const routes_1 = require("../routes");
 const app_1 = require("../app");
-const firebaseType_1 = require("../utility/firebaseType");
+const utilityKeys_1 = require("../utility/utilityKeys");
 const serverInitializer_1 = require("../server/serverInitializer");
 const iocHelpers_1 = require("./iocHelpers");
 exports.container = new inversify_1.Container({ defaultScope: 'Singleton' });
@@ -32,13 +32,13 @@ async function setupIoC(existingContainer) {
     });
     try {
         logger.debug('Container state before setup:', 'IoC-Setup', {
-            bindings: Object.keys(firebaseType_1.SYMBOLS).filter(key => existingContainer.isBound(firebaseType_1.SYMBOLS[key]))
+            bindings: Object.keys(utilityKeys_1.SYMBOLS).filter(key => existingContainer.isBound(utilityKeys_1.SYMBOLS[key]))
         });
         logger.debug('First, bind the logger itself');
-        if (existingContainer.isBound(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)) {
-            existingContainer.unbind(firebaseType_1.SYMBOLS.CUSTOM_LOGGER);
+        if (existingContainer.isBound(utilityKeys_1.SYMBOLS.CUSTOM_LOGGER)) {
+            existingContainer.unbind(utilityKeys_1.SYMBOLS.CUSTOM_LOGGER);
         }
-        existingContainer.bind(firebaseType_1.SYMBOLS.CUSTOM_LOGGER).toConstantValue(logger);
+        existingContainer.bind(utilityKeys_1.SYMBOLS.CUSTOM_LOGGER).toConstantValue(logger);
         logger.debug('Now bind CustomLogger class for future eventually instantiations');
         if (!existingContainer.isBound(customLogger_1.CustomLogger)) {
             existingContainer.bind(customLogger_1.CustomLogger).toSelf().inSingletonScope();
@@ -49,10 +49,10 @@ async function setupIoC(existingContainer) {
             needAdminPrivileges: false
         }, logger);
         const bindings = [
-            { symbol: firebaseType_1.SYMBOLS.SERVER_INITIALIZER, constructor: serverInitializer_1.ServerInitializer },
-            { symbol: firebaseType_1.SYMBOLS.SERVER, constructor: server_1.Server },
-            { symbol: firebaseType_1.SYMBOLS.API_APP, constructor: routes_1.ApiApp },
-            { symbol: firebaseType_1.SYMBOLS.APP, constructor: app_1.App }
+            { symbol: utilityKeys_1.SYMBOLS.SERVER_INITIALIZER, constructor: serverInitializer_1.ServerInitializer },
+            { symbol: utilityKeys_1.SYMBOLS.SERVER, constructor: server_1.Server },
+            { symbol: utilityKeys_1.SYMBOLS.API_APP, constructor: routes_1.ApiApp },
+            { symbol: utilityKeys_1.SYMBOLS.APP, constructor: app_1.App }
         ];
         for (const binding of bindings) {
             if (existingContainer.isBound(binding.symbol)) {
@@ -67,8 +67,8 @@ async function setupIoC(existingContainer) {
         return existingContainer;
     }
     catch (error) {
-        const logger = exports.container.isBound(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)
-            ? exports.container.get(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)
+        const logger = exports.container.isBound(utilityKeys_1.SYMBOLS.CUSTOM_LOGGER)
+            ? exports.container.get(utilityKeys_1.SYMBOLS.CUSTOM_LOGGER)
             : new customLogger_1.CustomLogger({ logLevel: 'debug' });
         logger.error('Failed to setup IoC container', 'IoC-Setup-Error', {
             errorDetails: error instanceof Error

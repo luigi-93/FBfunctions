@@ -3,7 +3,7 @@ import { Express } from 'express';
 import http from 'http';
 import { CustomLogger } from "../logging/customLogger";
 import { ApiApp } from "../routes";
-import { SYMBOLS } from "../utility/firebaseType";
+import { SYMBOLS } from "../utility/utilityKeys";
 
 
 @injectable()

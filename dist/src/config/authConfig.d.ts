@@ -1,4 +1,4 @@
-import { ServiceConfig, ValidationResult, FirebaseConfig } from '../utility/firebaseType';
+import { ServiceConfig, ValidationResult, FirebaseConfig } from '../utility/utilityKeys';
 export declare class FirebaseConfigurationManager {
     private static instance;
     private config;

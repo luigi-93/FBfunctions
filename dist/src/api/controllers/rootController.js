@@ -10,7 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RootController = void 0;
-const firebaseType_1 = require("../../utility/firebaseType");
+const utilityKeys_1 = require("../../utility/utilityKeys");
 const tsoa_1 = require("tsoa");
 let RootController = class RootController extends tsoa_1.Controller {
     async getRoot() {
@@ -25,7 +25,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], RootController.prototype, "getRoot", null);
 exports.RootController = RootController = __decorate([
-    (0, firebaseType_1.provideSingleton)(RootController),
+    (0, utilityKeys_1.provideSingleton)(RootController),
     (0, tsoa_1.Route)("/")
 ], RootController);
 //# sourceMappingURL=rootController.js.map

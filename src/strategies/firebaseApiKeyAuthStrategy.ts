@@ -1,7 +1,7 @@
 import { ApiKeyManager } from "../services/apiKeyManager";
 import { CustomError } from "../errors/customError";
-import { DecodedFirebaseToken } from "../utility/firebaseType";
-import { ApiKeyMetadata } from "../utility/firebaseType";
+import { DecodedFirebaseToken } from "../utility/utilityKeys";
+import { ApiKeyMetadata } from "../utility/utilityKeys";
 import { BaseAuthStrategy } from "./strategyHelpers";
 import { injectable } from "inversify";
 import { CustomLogger } from "../logging/customLogger";

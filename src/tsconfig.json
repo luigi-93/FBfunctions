@@ -6,7 +6,7 @@
     "../build/**/*"
   ],
   "compilerOptions": {
-        "baseUrl": "..",
+        "baseUrl": ".",
         "outDir": "../dist",
         "paths": {"*": ["../node_modules/", "build/*"]} 
       },

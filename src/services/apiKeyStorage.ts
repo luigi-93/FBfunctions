@@ -1,6 +1,6 @@
 import { inject, injectable } from "inversify";
 import { CustomError } from "../errors/customError";
-import { ApiKeyMetadata, ApiKeyStorageAdapter, SYMBOLS } from "../utility/firebaseType";
+import { ApiKeyMetadata, ApiKeyStorageAdapter, SYMBOLS } from "../utility/utilityKeys";
 import { CustomLogger } from "../logging/customLogger";
 
 @injectable()

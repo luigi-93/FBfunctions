@@ -78,6 +78,16 @@ export interface DecodedFirebaseToken {
     };
     [key: string]: any;
 }
+export interface ApiKeyResult {
+    name: string;
+    key: string;
+    scopes: SecurityScopes[];
+    expiresAt?: number;
+}
+export interface IoCSetupResult {
+    apiKeyManager: ApiKeyManager;
+    generatedKeys: ApiKeyResult[];
+}
 export type StrategyName = keyof typeof StrategyRegistry;
 export interface ApiKeyMetadata {
     id: string;
@@ -105,6 +115,7 @@ export interface ValidationResult {
     config: FirebaseConfig | null;
 }
 export declare const SYMBOLS: {
+    CONTAINER: symbol;
     AUTH_STRATEGY_FACTORY: symbol;
     CUSTOM_LOGGER: symbol;
     API_KEY_MANAGER: symbol;
@@ -116,17 +127,8 @@ export declare const SYMBOLS: {
     SERVER_CONFIG: symbol;
     CONTAINER_ADAPTER: symbol;
     SERVER_INITIALIZER: symbol;
+    ROUTE_REGISTRAR: symbol;
 };
-export interface ApiKeyResult {
-    name: string;
-    key: string;
-    scopes: SecurityScopes[];
-    expiresAt?: number;
-}
-export interface IoCSetupResult {
-    apiKeyManager: ApiKeyManager;
-    generatedKeys: ApiKeyResult[];
-}
 export declare const requiredBindngs: readonly [{
     readonly symbol: symbol;
     readonly name: "CustomLogger";
@@ -139,3 +141,6 @@ export declare const AUTH_CONTEXT_KEY = "tsoa-auth-context";
 export type AuthContext = {
     strategyFactory: AuthStrategyFactory;
 };
+export interface IRouteRegistrar {
+    register(app: express.Express, strategyFactory: AuthStrategyFactory): void;
+}

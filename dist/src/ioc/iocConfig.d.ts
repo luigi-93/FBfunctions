@@ -1,5 +1,5 @@
 import { Container } from 'inversify';
-import { IoCSetupResult, SecurityScopes } from '../utility/firebaseType';
+import { IoCSetupResult, SecurityScopes } from '../utility/utilityKeys';
 import { CustomLogger } from '../logging/customLogger';
 export declare function IoCSetup(iocContainer: Container, options: {
     apiKeys?: Array<{

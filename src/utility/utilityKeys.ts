@@ -6,6 +6,7 @@ import { fluentProvide } from 'inversify-binding-decorators';
 import { AuthStrategyFactory } from '../strategies/strategyHelpers';
 
 
+
 export enum FirebaseAuthProvider {
     EMAIL_PASSWORD = 'email_pass',
     GOOGLE = 'Google',
@@ -98,6 +99,17 @@ export interface DecodedFirebaseToken {
     [key: string]: any;
 }
 
+export interface ApiKeyResult {
+    name: string;
+    key: string;
+    scopes: SecurityScopes[];
+    expiresAt?: number;
+    }
+    
+export interface IoCSetupResult {
+    apiKeyManager: ApiKeyManager;
+    generatedKeys: ApiKeyResult[];
+    }
 
 export type StrategyName = keyof typeof StrategyRegistry;
 
@@ -129,9 +141,10 @@ export interface ValidationResult {
     config: FirebaseConfig | null;
 }
 
-//Binding parameters for the IoC container
+//Binding kyes for the container building 
 
 export const SYMBOLS = {
+    CONTAINER: Symbol.for('Container'),
     AUTH_STRATEGY_FACTORY: Symbol.for('AuthStrategyFactory'),
     CUSTOM_LOGGER: Symbol.for('CustomLogger'),
     API_KEY_MANAGER: Symbol.for('ApiKeyManager'),
@@ -142,19 +155,8 @@ export const SYMBOLS = {
     API_KEY_VALIDATOR: Symbol.for('ApiKeyValidator'),
     SERVER_CONFIG: Symbol.for('ServerConfig'),
     CONTAINER_ADAPTER: Symbol.for('ContainerAdapter'),
-    SERVER_INITIALIZER: Symbol.for('ServerInitializer')
-    }
-
-export interface ApiKeyResult {
-    name: string;
-    key: string;
-    scopes: SecurityScopes[];
-    expiresAt?: number;
-    }
-    
-export interface IoCSetupResult {
-    apiKeyManager: ApiKeyManager;
-    generatedKeys: ApiKeyResult[];
+    SERVER_INITIALIZER: Symbol.for('ServerInitializer'),
+    ROUTE_REGISTRAR: Symbol.for('RouteRegistrar'),
     }
 
 export const requiredBindngs = [
@@ -175,5 +177,9 @@ export const AUTH_CONTEXT_KEY = 'tsoa-auth-context';
 
 export type AuthContext = {
     strategyFactory: AuthStrategyFactory;
+}
+
+export interface IRouteRegistrar {
+    register(app: express.Express, strategyFactory: AuthStrategyFactory): void;
 }
     

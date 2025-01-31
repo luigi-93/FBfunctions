@@ -14,7 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ApiKeyValidator = void 0;
 const inversify_1 = require("inversify");
-const firebaseType_1 = require("../utility/firebaseType");
+const utilityKeys_1 = require("../utility/utilityKeys");
 const customLogger_1 = require("../logging/customLogger");
 let ApiKeyValidator = class ApiKeyValidator {
     constructor(logger) {
@@ -38,7 +38,7 @@ let ApiKeyValidator = class ApiKeyValidator {
     }
     checkScopes(metadata) {
         const hasValidScopes = metadata.scopes.length > 0 &&
-            metadata.scopes.every((scope) => Object.values(firebaseType_1.SecurityScopes).includes(scope));
+            metadata.scopes.every((scope) => Object.values(utilityKeys_1.SecurityScopes).includes(scope));
         if (!hasValidScopes) {
             this.logger.error('Invalid API Key scopes', 'ApikeyValidator', {
                 keyId: metadata.id.slice(0, 4) + '****',
@@ -60,9 +60,9 @@ let ApiKeyValidator = class ApiKeyValidator {
     }
     calculateSecurityLevel(metadata) {
         const scopeWeight = {
-            [firebaseType_1.SecurityScopes.Admin]: 3,
-            [firebaseType_1.SecurityScopes.SuperAdmin]: 5,
-            [firebaseType_1.SecurityScopes.User]: 1
+            [utilityKeys_1.SecurityScopes.Admin]: 3,
+            [utilityKeys_1.SecurityScopes.SuperAdmin]: 5,
+            [utilityKeys_1.SecurityScopes.User]: 1
         };
         const totalWeight = metadata.scopes.reduce((acc, scope) => acc + (scopeWeight[scope] || 0), 0);
         return totalWeight > 4 ? 'HIGH' :
@@ -72,7 +72,7 @@ let ApiKeyValidator = class ApiKeyValidator {
 };
 exports.ApiKeyValidator = ApiKeyValidator;
 exports.ApiKeyValidator = ApiKeyValidator = __decorate([
-    __param(0, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)),
+    __param(0, (0, inversify_1.inject)(utilityKeys_1.SYMBOLS.CUSTOM_LOGGER)),
     __metadata("design:paramtypes", [customLogger_1.CustomLogger])
 ], ApiKeyValidator);
 //# sourceMappingURL=validationApiKey.js.map

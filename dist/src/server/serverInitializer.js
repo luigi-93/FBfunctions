@@ -17,21 +17,22 @@ const routes_1 = require("../routes");
 const customLogger_1 = require("../logging/customLogger");
 const server_1 = require("./server");
 const apiKeyManager_1 = require("../services/apiKeyManager");
-const firebaseType_1 = require("../utility/firebaseType");
+const utilityKeys_1 = require("../utility/utilityKeys");
 const inversify_1 = require("inversify");
 const strategyHelpers_1 = require("../strategies/strategyHelpers");
-const regitster_routes_1 = require("../routes/regitster-routes");
+const register_routes_1 = require("../routes/register-routes");
 let ServerInitializer = class ServerInitializer {
-    constructor(logger, server, apiApp, apiKeyManager, strategyFactory) {
+    constructor(logger, server, apiApp, apiKeyManager, strategyFactory, routeRegistrar) {
         this.logger = logger;
         this.server = server;
         this.apiApp = apiApp;
         this.apiKeyManager = apiKeyManager;
         this.strategyFactory = strategyFactory;
+        this.routeRegistrar = routeRegistrar;
     }
     async initialize(app, port, cleanup) {
         try {
-            (0, regitster_routes_1.resisterRoutesWithAuth)(app, this.strategyFactory);
+            this.routeRegistrar.register(app, this.strategyFactory);
             await this.server
                 .build(app, '/api', this.apiApp)
                 .setupProcessErrorHandler(cleanup);
@@ -54,7 +55,7 @@ let ServerInitializer = class ServerInitializer {
     }
     registerDefaultApiKey() {
         this.apiKeyManager.create('default-service-key', {
-            scopes: [firebaseType_1.SecurityScopes.User],
+            scopes: [utilityKeys_1.SecurityScopes.User],
             expiresAt: Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60,
         });
     }
@@ -62,15 +63,17 @@ let ServerInitializer = class ServerInitializer {
 exports.ServerInitializer = ServerInitializer;
 exports.ServerInitializer = ServerInitializer = __decorate([
     (0, inversify_1.injectable)(),
-    __param(0, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.CUSTOM_LOGGER)),
-    __param(1, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.SERVER)),
-    __param(2, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.API_APP)),
-    __param(3, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.API_KEY_MANAGER)),
-    __param(4, (0, inversify_1.inject)(firebaseType_1.SYMBOLS.AUTH_STRATEGY_FACTORY)),
+    __param(0, (0, inversify_1.inject)(utilityKeys_1.SYMBOLS.CUSTOM_LOGGER)),
+    __param(1, (0, inversify_1.inject)(utilityKeys_1.SYMBOLS.SERVER)),
+    __param(2, (0, inversify_1.inject)(utilityKeys_1.SYMBOLS.API_APP)),
+    __param(3, (0, inversify_1.inject)(utilityKeys_1.SYMBOLS.API_KEY_MANAGER)),
+    __param(4, (0, inversify_1.inject)(utilityKeys_1.SYMBOLS.AUTH_STRATEGY_FACTORY)),
+    __param(5, (0, inversify_1.inject)(utilityKeys_1.SYMBOLS.ROUTE_REGISTRAR)),
     __metadata("design:paramtypes", [customLogger_1.CustomLogger,
         server_1.Server,
         routes_1.ApiApp,
         apiKeyManager_1.ApiKeyManager,
-        strategyHelpers_1.AuthStrategyFactory])
+        strategyHelpers_1.AuthStrategyFactory,
+        register_routes_1.RouteRegistrar])
 ], ServerInitializer);
 //# sourceMappingURL=serverInitializer.js.map

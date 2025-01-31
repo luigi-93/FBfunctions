@@ -1,19 +1,17 @@
 import express from 'express';
 import { AuthStrategyFactory } from '../strategies/strategyHelpers';
 import { expressAuthentication } from '../api/tsoaAuth';
-import { AuthContext, AUTH_CONTEXT_KEY } from '../utility/firebaseType';
-import { RegisterRoutes } from 'api/routes';
+import { IRouteRegistrar } from '../utility/utilityKeys';
+import { RegisterRoutes } from '../../build/api/routes';
+import { injectable } from 'inversify';
 
+@injectable()
+export class RouteRegistrar implements IRouteRegistrar {
+    register(app: express.Express, strategyFactory: AuthStrategyFactory) {
+        // Store strategy in app locals
+        app.locals.strategyFactory = strategyFactory;
 
-export function resisterRoutesWithAuth(
-    app: express.Express, 
-    strategyFactory: AuthStrategyFactory)
-    {
-        // Store context in app locals
-        const ctx: AuthContext = { strategyFactory};
-        app.locals[AUTH_CONTEXT_KEY] = ctx;
-
-        // Configure authentication handler
+        // Temporary overide of authentication handler
         const originalAuth = (global as any).expressAuthentication;
 
         (global as any).expressAuthentication = (
@@ -21,12 +19,12 @@ export function resisterRoutesWithAuth(
             securityName: string,
             scopes: string[]
         ) => {
-            const ctx = app.locals[AUTH_CONTEXT_KEY] as AuthContext;
+            const factory = app.locals.strategyFactory = strategyFactory;
             return expressAuthentication(
                 request, 
                 securityName, 
                 scopes, 
-                ctx.strategyFactory
+                factory
             );
         }; 
 
@@ -36,6 +34,4 @@ export function resisterRoutesWithAuth(
             (global as any).expressAuthentication = originalAuth;
         }
     }
-
-
-    
+}

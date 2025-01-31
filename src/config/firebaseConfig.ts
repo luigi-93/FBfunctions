@@ -1,5 +1,5 @@
 import { CustomLogger } from "../logging/customLogger";
-import { FirebaseConfig } from "../utility/firebaseType";
+import { FirebaseConfig } from "../utility/utilityKeys";
 import { firebaseConfigManager } from "./authConfig";
 
 const logger: CustomLogger = new CustomLogger({ logLevel: 'debug'})

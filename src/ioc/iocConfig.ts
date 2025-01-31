@@ -1,5 +1,5 @@
 import { Container } from 'inversify';
-import { ApiKeyResult, IoCSetupResult, registry, SecurityScopes, SYMBOLS } from '../utility/firebaseType';
+import { ApiKeyResult, IoCSetupResult, IRouteRegistrar, registry, SecurityScopes, SYMBOLS } from '../utility/utilityKeys';
 import { ApiKeyManager } from '../services/apiKeyManager';
 import { CustomError } from '../errors/customError';
 import { ApiKeyValidator } from '../validation/validationApiKey';
@@ -11,6 +11,7 @@ import { CustomLogger } from '../logging/customLogger';
 import { FirebaseJwtAuthStrategy } from '../strategies/firebaseJwtAuthStrategy';
 import { FirebaseApiKeyAuthStrategy } from '../strategies/firebaseApiKeyAuthStrategy';
 import { ContainerAdapter } from './iocHelpers';
+import { RouteRegistrar } from '../routes/register-routes';
 
 
 export async function IoCSetup(
@@ -32,6 +33,12 @@ export async function IoCSetup(
         apiKeys = [],
         needAdminPrivileges = false 
     } = options;
+
+    logger.debug('Binding Route Registar', 'IoC-Config');
+    if(!iocContainer.isBound(SYMBOLS.ROUTE_REGISTRAR)) {
+        iocContainer
+            .bind<IRouteRegistrar>(SYMBOLS.ROUTE_REGISTRAR).to(RouteRegistrar)
+    }
 
     logger.debug('Setting up Firebase dependencies', 'IoC-Config');
     try {

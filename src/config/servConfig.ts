@@ -5,7 +5,7 @@ import express,
     Response, 
     NextFunction }  from 'express';
 import { CustomError } from "../errors/customError";
-import { SYMBOLS } from "../utility/firebaseType";
+import { SYMBOLS } from "../utility/utilityKeys";
 import { CustomLogger } from "../logging/customLogger";
 
 /**
