@@ -3,8 +3,6 @@ import { CustomLogger } from "../logging/customLogger";
 import { container, setupIoC } from "./index";
 import { CustomError } from "../errors/customError";
 
-
-
 export async function initializeContainer(): Promise<Container> {
     const tempLogger = new CustomLogger({ logLevel:'debug'});
     try {

@@ -1,13 +1,17 @@
 {
   "extends": "../tsconfig.base.json",
-  "exclude": ["**/test.ts", "../dist"],
+  "exclude": ["**/test.ts", "../dist", "../build/**/*"],
   "include": [
     "../src/**/*",
-    "../build/**/*"
   ],
   "compilerOptions": {
         "baseUrl": ".",
         "outDir": "../dist",
-        "paths": {"*": ["../node_modules/", "build/*"]} 
+        "paths": {
+          "@ioc/*": ["./ioc/*"],
+          "@routes/*": ["./routes/*"],
+          "@strategies/*": ["./strategies/*"],
+          "api/routes": ["../build/api/routes"]
+        } 
       },
 }

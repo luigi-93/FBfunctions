@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "esModuleInterop": true,
+    "skipLibCheck": true,
     "resolveJsonModule": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -14,9 +15,13 @@
     "strict": true,
     "target": "ES2021",
     "typeRoots": ["./types", "./node_modules/@types"],
-    "rootDir": ".",
     "moduleResolution": "node",
-    "types": ["node", "express"]
+    "types": ["node", "express"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*" : ["./src/*"],
+      "api/routes": ["./build/api/routes"]
+    }
   }
 }
 
