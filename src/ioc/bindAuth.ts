@@ -14,7 +14,7 @@ import { ContainerAdapter } from './iocHelpers';
 import { RouteRegistrar } from '../routes/register-routes';
 
 
-export async function IoCSetup(
+export async function ioCSetup(
     iocContainer: Container, 
     options: {
         apiKeys?: Array<{ 
@@ -38,7 +38,7 @@ export async function IoCSetup(
     if(!iocContainer.isBound(SYMBOLS.ROUTE_REGISTRAR)) {
         iocContainer
             .bind<IRouteRegistrar>(SYMBOLS.ROUTE_REGISTRAR).to(RouteRegistrar)
-    }
+    } 
 
     logger.debug('Setting up Firebase dependencies', 'IoC-Config');
     try {
@@ -104,13 +104,6 @@ export async function IoCSetup(
         iocContainer    
             .bind(SYMBOLS.STORAGE_ADAPTER)
             .to(InMemoryStorageAdapter)
-            .inSingletonScope();
-    }
-
-    if (!iocContainer.isBound(SYMBOLS.CONTAINER_ADAPTER)) {
-        iocContainer
-            .bind(SYMBOLS.CONTAINER_ADAPTER)
-            .to(ContainerAdapter)
             .inSingletonScope();
     }
 

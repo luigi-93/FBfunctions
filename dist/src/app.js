@@ -19,23 +19,17 @@ exports.App = void 0;
 exports.app = createApp;
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const server_1 = require("./server/server");
-const routes_1 = require("./routes");
-const apiKeyManager_1 = require("./services/apiKeyManager");
 const firebaseConfig_1 = require("./config/firebaseConfig");
 const serverInitializer_1 = require("./server/serverInitializer");
 const customLogger_1 = require("./logging/customLogger");
 const inversify_1 = require("inversify");
 const utilityKeys_1 = require("./utility/utilityKeys");
 const customError_1 = require("./errors/customError");
-const containerInit_1 = require("./ioc/containerInit");
+const index_1 = require("./ioc/index");
 dotenv_1.default.config();
 let App = class App {
-    constructor(logger, server, apiApp, apikeyManager, serverInitializer) {
+    constructor(logger, serverInitializer) {
         this.logger = logger;
-        this.server = server;
-        this.apiApp = apiApp;
-        this.apikeyManager = apikeyManager;
         this.serverInitializer = serverInitializer;
     }
     async cleanup() {
@@ -59,23 +53,17 @@ exports.App = App;
 exports.App = App = __decorate([
     (0, inversify_1.injectable)(),
     __param(0, (0, inversify_1.inject)(utilityKeys_1.SYMBOLS.CUSTOM_LOGGER)),
-    __param(1, (0, inversify_1.inject)(utilityKeys_1.SYMBOLS.SERVER)),
-    __param(2, (0, inversify_1.inject)(utilityKeys_1.SYMBOLS.API_APP)),
-    __param(3, (0, inversify_1.inject)(utilityKeys_1.SYMBOLS.API_KEY_MANAGER)),
-    __param(4, (0, inversify_1.inject)(utilityKeys_1.SYMBOLS.SERVER_INITIALIZER)),
+    __param(1, (0, inversify_1.inject)(utilityKeys_1.SYMBOLS.SERVER_INITIALIZER)),
     __metadata("design:paramtypes", [customLogger_1.CustomLogger,
-        server_1.Server,
-        routes_1.ApiApp,
-        apiKeyManager_1.ApiKeyManager,
         serverInitializer_1.ServerInitializer])
 ], App);
 async function createApp() {
     const logger = new customLogger_1.CustomLogger({ logLevel: 'debug' });
     try {
         logger.debug('Starting application creation', 'App-Init');
-        const initializedContainer = await (0, containerInit_1.initializeContainer)();
+        const initializedContainer = await (0, index_1.initializeContainer)();
         if (!initializedContainer) {
-            throw customError_1.CustomError.create('Container inialization', 401, {});
+            throw customError_1.CustomError.create('Container inialization failed', 500, {});
         }
         for (const binding of utilityKeys_1.requiredBindngs) {
             if (!initializedContainer.isBound(binding.symbol)) {

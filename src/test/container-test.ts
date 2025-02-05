@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import { SYMBOLS } from "../utility/utilityKeys";
 import { CustomLogger } from "../logging/customLogger";
-import { initializeContainer } from '../ioc/containerInit';
+import { initializeContainer } from '@ioc/index';
 
 
 

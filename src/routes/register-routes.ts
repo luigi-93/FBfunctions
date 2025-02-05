@@ -2,12 +2,13 @@ import express from 'express';
 import { AuthStrategyFactory } from '../strategies/strategyHelpers';
 import { expressAuthentication } from '../api/tsoaAuth';
 import { IRouteRegistrar } from '../utility/utilityKeys';
-import { RegisterRoutes } from '../../build/api/routes';
+import { RegisterRoutes } from '../../build/api/routes'
 import { injectable } from 'inversify';
 
 @injectable()
 export class RouteRegistrar implements IRouteRegistrar {
-    register(app: express.Express, strategyFactory: AuthStrategyFactory) {
+
+    register(app: express.Express, strategyFactory: AuthStrategyFactory)  {
         // Store strategy in app locals
         app.locals.strategyFactory = strategyFactory;
 
