@@ -25,7 +25,6 @@ let ServerConfig = class ServerConfig {
     constructor(logger) {
         this.logger = logger;
         this.app = (0, express_1.default)();
-        this.initialized();
     }
     initialized() {
         this.setTrustProxy();

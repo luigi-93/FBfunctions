@@ -7,6 +7,7 @@ import { inject, injectable } from 'inversify';
 import { requiredBindngs, SYMBOLS } from './utility/utilityKeys';
 import { CustomError } from './errors/customError';
 import { initializeContainer } from './ioc/index';
+import { ApiApp } from './routes/index';
 
 dotenv.config();
 
@@ -14,7 +15,8 @@ dotenv.config();
 export class App { 
     constructor(
         @inject(SYMBOLS.CUSTOM_LOGGER) private readonly logger: CustomLogger,
-        @inject(SYMBOLS.SERVER_INITIALIZER) private readonly serverInitializer: ServerInitializer
+        @inject(SYMBOLS.SERVER_INITIALIZER) private readonly serverInitializer: ServerInitializer,
+        @inject(SYMBOLS.API_APP) private readonly apiApp: ApiApp
     ) {}
 
     private async cleanup(): Promise<void> {
@@ -40,6 +42,7 @@ export class App {
             );
             process.exit(1);
         }
+
         const PORT = Number(process.env.PORT || 3000);
         await this.serverInitializer.initialize(app, PORT, () => this.cleanup());
 
@@ -79,7 +82,9 @@ async function createApp(): Promise<express.Express> {
                 )
             }
         }
-            
+
+
+        //resolve and initilize the app instance    
         const application = initializedContainer.get<App>(SYMBOLS.APP);
         const result = await application.initialize();
 

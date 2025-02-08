@@ -6,6 +6,7 @@ import { Server } from "../server/server";
 import { ServerInitializer } from "../server/serverInitializer";
 import { SYMBOLS } from "../utility/utilityKeys";
 import { ContainerAdapter } from "../ioc/iocHelpers";
+import { RouteRegistrar } from "../routes/register-routes";
 
 export function configBindings(container: Container): void {
     const logger = new CustomLogger({ logLevel: 'debug'});
@@ -40,8 +41,10 @@ export function configBindings(container: Container): void {
         { symbol: SYMBOLS.SERVER_INITIALIZER, constructor: ServerInitializer},
         { symbol: SYMBOLS.SERVER, constructor: Server},
         { symbol: SYMBOLS.API_APP, constructor: ApiApp},
-        { symbol: SYMBOLS.APP, constructor: App}
+        { symbol: SYMBOLS.APP, constructor: App},
+        { symbol: SYMBOLS.ROUTE_REGISTRAR, constructor: RouteRegistrar}
     ];
+    
     
     for (const binding of bindings) {
         if (container.isBound(binding.symbol)) {

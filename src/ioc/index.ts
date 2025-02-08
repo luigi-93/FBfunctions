@@ -55,7 +55,8 @@ export async function initializeContainer(): Promise<Container> {
                 ? {
                     name: error.name,
                     message: error.message, 
-                }: 'Unknown error'
+                }
+                : 'Unknown error'
             }
         );
 

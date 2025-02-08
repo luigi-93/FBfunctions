@@ -26,11 +26,13 @@ const inversify_1 = require("inversify");
 const utilityKeys_1 = require("./utility/utilityKeys");
 const customError_1 = require("./errors/customError");
 const index_1 = require("./ioc/index");
+const index_2 = require("./routes/index");
 dotenv_1.default.config();
 let App = class App {
-    constructor(logger, serverInitializer) {
+    constructor(logger, serverInitializer, apiApp) {
         this.logger = logger;
         this.serverInitializer = serverInitializer;
+        this.apiApp = apiApp;
     }
     async cleanup() {
         this.logger.info('Performing cleanup before server shutdown...');
@@ -54,8 +56,10 @@ exports.App = App = __decorate([
     (0, inversify_1.injectable)(),
     __param(0, (0, inversify_1.inject)(utilityKeys_1.SYMBOLS.CUSTOM_LOGGER)),
     __param(1, (0, inversify_1.inject)(utilityKeys_1.SYMBOLS.SERVER_INITIALIZER)),
+    __param(2, (0, inversify_1.inject)(utilityKeys_1.SYMBOLS.API_APP)),
     __metadata("design:paramtypes", [customLogger_1.CustomLogger,
-        serverInitializer_1.ServerInitializer])
+        serverInitializer_1.ServerInitializer,
+        index_2.ApiApp])
 ], App);
 async function createApp() {
     const logger = new customLogger_1.CustomLogger({ logLevel: 'debug' });

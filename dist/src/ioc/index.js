@@ -32,7 +32,8 @@ async function initializeContainer() {
                 ? {
                     name: error.name,
                     message: error.message,
-                } : 'Unknown error'
+                }
+                : 'Unknown error'
         });
         throw customError_1.CustomError.create('Failed to setup IoC container', 500, { error });
     }

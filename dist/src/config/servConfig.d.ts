@@ -4,7 +4,7 @@ export declare abstract class ServerConfig {
     protected readonly logger: CustomLogger;
     protected readonly app: Express;
     constructor(logger: CustomLogger);
-    private initialized;
+    initialized(): void;
     build(): Express;
     protected abstract setRoutes(): void;
     protected setBasicSecurity(): void;

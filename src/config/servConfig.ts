@@ -21,10 +21,9 @@ export abstract class ServerConfig {
         @inject(SYMBOLS.CUSTOM_LOGGER) protected readonly logger: CustomLogger
     ) {
         this.app = express();
-        this.initialized();  
     }
 
-    private initialized(): void {
+    public initialized(): void {
         this.setTrustProxy();
         this.setMiddlewares();
         this.setBodyParser();

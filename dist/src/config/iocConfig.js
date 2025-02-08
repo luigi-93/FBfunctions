@@ -8,6 +8,7 @@ const server_1 = require("../server/server");
 const serverInitializer_1 = require("../server/serverInitializer");
 const utilityKeys_1 = require("../utility/utilityKeys");
 const iocHelpers_1 = require("../ioc/iocHelpers");
+const register_routes_1 = require("../routes/register-routes");
 function configBindings(container) {
     const logger = new customLogger_1.CustomLogger({ logLevel: 'debug' });
     logger.debug('Binding container instance');
@@ -35,7 +36,8 @@ function configBindings(container) {
         { symbol: utilityKeys_1.SYMBOLS.SERVER_INITIALIZER, constructor: serverInitializer_1.ServerInitializer },
         { symbol: utilityKeys_1.SYMBOLS.SERVER, constructor: server_1.Server },
         { symbol: utilityKeys_1.SYMBOLS.API_APP, constructor: index_1.ApiApp },
-        { symbol: utilityKeys_1.SYMBOLS.APP, constructor: app_1.App }
+        { symbol: utilityKeys_1.SYMBOLS.APP, constructor: app_1.App },
+        { symbol: utilityKeys_1.SYMBOLS.ROUTE_REGISTRAR, constructor: register_routes_1.RouteRegistrar }
     ];
     for (const binding of bindings) {
         if (container.isBound(binding.symbol)) {
