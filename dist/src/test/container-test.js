@@ -6,13 +6,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv_1 = __importDefault(require("dotenv"));
 const utilityKeys_1 = require("../utility/utilityKeys");
 const customLogger_1 = require("../logging/customLogger");
-const containerInit_1 = require("../ioc/containerInit");
+const ioc_1 = require("../ioc");
 dotenv_1.default.config();
 async function testContainer() {
     const loggertest = new customLogger_1.CustomLogger({ logLevel: 'debug' });
     try {
         loggertest.debug('Starting container test');
-        const container = await (0, containerInit_1.initializeContainer)();
+        const container = await (0, ioc_1.initializeContainer)();
         loggertest.debug('Container initialized', 'testContainer');
         const logger = container.get(utilityKeys_1.SYMBOLS.CUSTOM_LOGGER);
         console.log('Successfully resolved logger');

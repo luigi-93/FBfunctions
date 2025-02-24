@@ -10,18 +10,11 @@ const setAuth_1 = require("../auth/setAuth");
 const strategyHelpers_1 = require("../strategies/strategyHelpers");
 const firebaseJwtAuthStrategy_1 = require("../strategies/firebaseJwtAuthStrategy");
 const firebaseApiKeyAuthStrategy_1 = require("../strategies/firebaseApiKeyAuthStrategy");
-const iocHelpers_1 = require("./iocHelpers");
-const register_routes_1 = require("../routes/register-routes");
 async function IoCSetup(iocContainer, options = {
     apiKeys: [],
     needAdminPrivileges: false
 }, logger) {
     const { apiKeys = [], needAdminPrivileges = false } = options;
-    logger.debug('Binding Route Registar', 'IoC-Config');
-    if (!iocContainer.isBound(utilityKeys_1.SYMBOLS.ROUTE_REGISTRAR)) {
-        iocContainer
-            .bind(utilityKeys_1.SYMBOLS.ROUTE_REGISTRAR).to(register_routes_1.RouteRegistrar);
-    }
     logger.debug('Setting up Firebase dependencies', 'IoC-Config');
     try {
         iocContainer
@@ -65,12 +58,6 @@ async function IoCSetup(iocContainer, options = {
         iocContainer
             .bind(utilityKeys_1.SYMBOLS.STORAGE_ADAPTER)
             .to(apiKeyStorage_1.InMemoryStorageAdapter)
-            .inSingletonScope();
-    }
-    if (!iocContainer.isBound(utilityKeys_1.SYMBOLS.CONTAINER_ADAPTER)) {
-        iocContainer
-            .bind(utilityKeys_1.SYMBOLS.CONTAINER_ADAPTER)
-            .to(iocHelpers_1.ContainerAdapter)
             .inSingletonScope();
     }
     try {
@@ -155,4 +142,4 @@ async function IoCSetup(iocContainer, options = {
         throw customError_1.CustomError.create('Failed to bind ApiKeyManager', 500, { error });
     }
 }
-//# sourceMappingURL=iocConfig.js.map
+//# sourceMappingURL=bindAuth.js.map

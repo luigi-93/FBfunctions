@@ -13,12 +13,20 @@ import { RouteRegistrar } from "./register-routes";
 
 @injectable()
 export class ApiApp extends ServerConfig {
+    private routeRegistrar: RouteRegistrar;
     constructor(
         @inject(SYMBOLS.CUSTOM_LOGGER) logger: CustomLogger,
         @inject(SYMBOLS.AUTH_STRATEGY_FACTORY) private strategyFactory: AuthStrategyFactory,
-        @inject(SYMBOLS.ROUTE_REGISTRAR) private routeRegistrar: RouteRegistrar
+        @inject(SYMBOLS.ROUTE_REGISTRAR) routeRegistrar: RouteRegistrar
     ) {
         super(logger);
+        logger.debug(
+            'Route injected:', 
+            'ApiApp',
+            routeRegistrar
+        )
+        this.routeRegistrar = routeRegistrar;
+        this.initialized();
     }
     protected setRoutes() {
         this.routeRegistrar.register(this.app, this.strategyFactory)

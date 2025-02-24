@@ -24,7 +24,9 @@ let ApiApp = class ApiApp extends servConfig_1.ServerConfig {
     constructor(logger, strategyFactory, routeRegistrar) {
         super(logger);
         this.strategyFactory = strategyFactory;
+        logger.debug('Route injected:', 'ApiApp', routeRegistrar);
         this.routeRegistrar = routeRegistrar;
+        this.initialized();
     }
     setRoutes() {
         this.routeRegistrar.register(this.app, this.strategyFactory);

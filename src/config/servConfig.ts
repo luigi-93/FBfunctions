@@ -20,11 +20,10 @@ export abstract class ServerConfig {
     constructor(
         @inject(SYMBOLS.CUSTOM_LOGGER) protected readonly logger: CustomLogger
     ) {
-        this.app = express();
-        this.initialized();  
+        this.app = express(); 
     }
 
-    private initialized(): void {
+    public initialized(): void {
         this.setTrustProxy();
         this.setMiddlewares();
         this.setBodyParser();
@@ -56,7 +55,6 @@ export abstract class ServerConfig {
     protected setLogger(): void {
         this.app.use((req: Request, _res: Response, next: NextFunction) => {
             this.logger.info(`${req.method} ${req.path}`);  
-            
             next();
         });
     }
