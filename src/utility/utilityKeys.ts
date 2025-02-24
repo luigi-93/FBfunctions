@@ -5,8 +5,6 @@ import { interfaces } from 'inversify';
 import { fluentProvide } from 'inversify-binding-decorators';
 import { AuthStrategyFactory } from '../strategies/strategyHelpers';
 
-
-
 export enum FirebaseAuthProvider {
     EMAIL_PASSWORD = 'email_pass',
     GOOGLE = 'Google',

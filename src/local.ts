@@ -1,15 +1,12 @@
 import { app } from "./app";
 import { CustomLogger } from "./logging/customLogger";
 
-
-
- async function startLocalServer() {
+async function startLocalServer() {
     const logger: CustomLogger = new CustomLogger({ logLevel:'debug' })
 
     try {
         const expressApp = await app();
         const PORT = Number(process.env.PORT || 3000);
-
         expressApp.listen(PORT, () => {
             console.log(`Server running on http://localhost:${PORT}`)
         });
@@ -24,8 +21,5 @@ import { CustomLogger } from "./logging/customLogger";
             });
         process.exit(1);
     }
-     
-    
- }
-
- startLocalServer();
+}
+startLocalServer();

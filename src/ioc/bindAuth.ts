@@ -34,12 +34,6 @@ export async function IoCSetup(
         needAdminPrivileges = false 
     } = options;
 
-    logger.debug('Binding Route Registar', 'IoC-Config');
-    if(!iocContainer.isBound(SYMBOLS.ROUTE_REGISTRAR)) {
-        iocContainer
-            .bind<IRouteRegistrar>(SYMBOLS.ROUTE_REGISTRAR).to(RouteRegistrar)
-    }
-
     logger.debug('Setting up Firebase dependencies', 'IoC-Config');
     try {
         // Bind Firebase Admin
@@ -104,13 +98,6 @@ export async function IoCSetup(
         iocContainer    
             .bind(SYMBOLS.STORAGE_ADAPTER)
             .to(InMemoryStorageAdapter)
-            .inSingletonScope();
-    }
-
-    if (!iocContainer.isBound(SYMBOLS.CONTAINER_ADAPTER)) {
-        iocContainer
-            .bind(SYMBOLS.CONTAINER_ADAPTER)
-            .to(ContainerAdapter)
             .inSingletonScope();
     }
 

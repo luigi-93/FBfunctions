@@ -91,7 +91,6 @@ export class Server {
                         errorMessage: error.message,
                         errorName: error.name
                     });
-
                     reject(error);
                 });
             } catch (error) {
@@ -100,8 +99,6 @@ export class Server {
                     ? error.message 
                     : String(error)
                 });
-
-
                 reject(error);
             }
         });
@@ -111,11 +108,8 @@ export class Server {
      * Performs a graceful shutdown of the server
      * @param cleanup Optional cleanup function to run
      */
-
     gracefulShutdown(cleanup?: () => void): void {
         this.logger.warn('Initiating graceful shutdown', 'Server');
-
-
 
         // Run otional cleanup
         if (cleanup) {
@@ -137,7 +131,6 @@ export class Server {
                         errorMessage: err.message
                     });
                 }
-
                 setTimeout(() => {
                     this.logger.warn('Forcefully down', 'Server');
                     process.exit(1);
@@ -146,9 +139,5 @@ export class Server {
         } else {
             process.exit(1);
         }
-
-
     }
-
-    
 }

@@ -19,7 +19,6 @@ export class ContainerAdapter implements IocContainer {
     get<T>(controller: interfaces.ServiceIdentifier<T> | { prototype: T }): T 
     {
         try {
-
             if (!controller) {
                 throw CustomError.create(
                     'Controller parameter is requireds',
@@ -28,13 +27,11 @@ export class ContainerAdapter implements IocContainer {
                         message: 'Constroller was not provided'
                     });
             }
-
             if (typeof controller === 'symbol' || 
                 typeof controller === 'string' || 
                 typeof controller === 'function') {
                 return this.container.get<T>(controller);
             }
-            
             if (typeof controller === 'object' && 'prototype' in controller) {
                 const serviceIdentifier = controller.constructor as interfaces.ServiceIdentifier<T>;
             
@@ -46,25 +43,21 @@ export class ContainerAdapter implements IocContainer {
                             message: 'Provide the right controller constructor'
                         });
                 }
-
                 return this.container.get<T>(serviceIdentifier)
             }
-
             throw CustomError.create(
                 'Unsupported controller type',
                 500,
                 {
                     message: 'The type of controller is not supported'
                 }
-            )
-            
+            ) 
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'Unknown error';
             const errorDetails = {
                 controller: this.getControllerIdentifier(controller),
                 originalError: errorMessage
             };
-
             throw CustomError.create(
                 'Dependency resolution failed',
                 500,
@@ -83,7 +76,6 @@ export class ContainerAdapter implements IocContainer {
         if (controller?.constructor) {
             return controller.constructor.name || 'Unknown Class';
         }
-
         return 'Unknow Controller Type'
     }
 }

@@ -13,7 +13,6 @@ import { AuthenticatedUser } from "../auth/userAuth";
 export class FirebaseApiKeyAuthStrategy extends BaseAuthStrategy {
     private apiKeyManager: ApiKeyManager;
     
-
     constructor(
         apiKeyManager: ApiKeyManager,
         logger?: CustomLogger
@@ -28,7 +27,6 @@ export class FirebaseApiKeyAuthStrategy extends BaseAuthStrategy {
         securityName: string,
         scopes: string[] = []
     ): Promise<AuthenticatedUser> {
-         
         //Improved API key extraction
         const apikey = this.extractApiKey(request);
 
@@ -42,7 +40,6 @@ export class FirebaseApiKeyAuthStrategy extends BaseAuthStrategy {
                 { reason: 'Missing API key'}
             );
         }
-
         // Validate and retrive API key metadata
         const keyMetadata = await this.validateApiKey(apikey);
 
@@ -58,7 +55,6 @@ export class FirebaseApiKeyAuthStrategy extends BaseAuthStrategy {
         return mockUser;
        
     }
-
 
     private extractApiKey(request: express.Request): string | undefined {
         return  typeof request.headers['x-api-key'] === 'string' 
@@ -124,19 +120,14 @@ export class FirebaseApiKeyAuthStrategy extends BaseAuthStrategy {
                 }
             )
         }
-
         return keyMetadata;
-
     }
-
     private generateMockToken(
         apiKey: string,
         metadata: ApiKeyMetadata
     ): DecodedFirebaseToken {
         return this.apiKeyManager.generateMockToken(apiKey, metadata);
     }
-
-
     private maskApiKey(apiKey: string): string {
         return apiKey.slice(0, 4) + apiKey.slice(-4);
     }

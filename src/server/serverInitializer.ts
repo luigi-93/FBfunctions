@@ -28,9 +28,8 @@ export class ServerInitializer {
         cleanup?: () => void
     ) {
         try {
-
             this.routeRegistrar.register(app, this.strategyFactory)
-
+            
             await this.server
             .build(app, '/api', this.apiApp)
             .setupProcessErrorHandler(cleanup);
