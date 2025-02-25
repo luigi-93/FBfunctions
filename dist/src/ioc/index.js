@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.container = void 0;
+exports.iocContainer = exports.container = void 0;
 exports.initializeContainer = initializeContainer;
 const inversify_1 = require("inversify");
 const customLogger_1 = require("../logging/customLogger");
@@ -9,7 +9,9 @@ const tsoa_1 = require("tsoa");
 const iocConfig_1 = require("../config/iocConfig");
 const inversify_binding_decorators_1 = require("inversify-binding-decorators");
 const bindAuth_1 = require("./bindAuth");
+const iocHelpers_1 = require("./iocHelpers");
 exports.container = new inversify_1.Container({ defaultScope: 'Singleton' });
+exports.iocContainer = new iocHelpers_1.ContainerAdapter(exports.container);
 (0, inversify_1.decorate)((0, inversify_1.injectable)(), tsoa_1.Controller);
 async function initializeContainer() {
     const logger = new customLogger_1.CustomLogger({ logLevel: 'debug' });

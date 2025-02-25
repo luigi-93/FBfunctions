@@ -10,9 +10,6 @@ import * as admin from 'firebase-admin';
 import { CustomLogger } from '../logging/customLogger';
 import { FirebaseJwtAuthStrategy } from '../strategies/firebaseJwtAuthStrategy';
 import { FirebaseApiKeyAuthStrategy } from '../strategies/firebaseApiKeyAuthStrategy';
-import { ContainerAdapter } from './iocHelpers';
-import { RouteRegistrar } from '../routes/register-routes';
-
 
 export async function IoCSetup(
     iocContainer: Container, 

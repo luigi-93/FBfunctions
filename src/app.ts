@@ -1,14 +1,12 @@
 import express from 'express';
-    import dotenv from 'dotenv';
-    import { Server } from './server/server';
-    import { ApiApp } from './routes';
-    import { ApiKeyManager } from './services/apiKeyManager';
-    import { configureFirebase, createFirebaseConfig } from './config/firebaseConfig';
-    import { ServerInitializer } from './server/serverInitializer';
-    import { CustomLogger } from './logging/customLogger';
-    import { inject, injectable } from 'inversify';
-    import { requiredBindngs, SYMBOLS } from './utility/utilityKeys';
-    import { CustomError } from './errors/customError';
+import dotenv from 'dotenv';
+import { ApiApp } from './routes';
+import { configureFirebase, createFirebaseConfig } from './config/firebaseConfig';
+import { ServerInitializer } from './server/serverInitializer';
+import { CustomLogger } from './logging/customLogger';
+import { inject, injectable } from 'inversify';
+import { requiredBindngs, SYMBOLS } from './utility/utilityKeys';
+import { CustomError } from './errors/customError';
 import { initializeContainer } from './ioc';
 
 dotenv.config();

@@ -1,13 +1,14 @@
 import { Container, decorate, injectable } from "inversify";
 import { CustomLogger } from "../logging/customLogger";
 import { CustomError } from "../errors/customError";
-import { logger } from "firebase-functions/v2";
 import { Controller } from "tsoa";
 import { configBinding } from "../config/iocConfig";
 import { buildProviderModule } from "inversify-binding-decorators";
 import { IoCSetup } from "./bindAuth";
+import { ContainerAdapter } from "./iocHelpers";
 
 export const container = new Container({ defaultScope: 'Singleton' });
+export const iocContainer = new ContainerAdapter(container);
 decorate(injectable(), Controller);
 
 export async function initializeContainer(): Promise<Container> {

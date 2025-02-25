@@ -3,7 +3,6 @@ import { ApiApp } from "../routes/index";
 import { RouteRegistrar } from "../routes/register-routes";
 import { App } from "../app";
 import { Container } from "inversify";
-import { symbol } from "joi";
 import { CustomLogger } from "../logging/customLogger";
 import { Server } from "../server/server";
 import { ServerInitializer } from "../server/serverInitializer";
