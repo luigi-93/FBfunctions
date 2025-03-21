@@ -22,6 +22,10 @@ let FirebaseApiKeyAuthStrategy = class FirebaseApiKeyAuthStrategy extends strate
         this.apiKeyManager = apiKeyManager;
     }
     async authenticate(request, securityName, scopes = []) {
+        this.logger.info('Authentication attempt', 'ApiKeyAuth', {
+            headers: request.headers,
+            query: request.query
+        });
         const apikey = this.extractApiKey(request);
         if (!apikey) {
             this.logger.warn('API key extration failed', 'ApiKeyAuth');
@@ -34,11 +38,17 @@ let FirebaseApiKeyAuthStrategy = class FirebaseApiKeyAuthStrategy extends strate
         return mockUser;
     }
     extractApiKey(request) {
-        return typeof request.headers['x-api-key'] === 'string'
-            ? request.headers['x-api-key']
-            : typeof request.query.apiKey === 'string'
-                ? request.query.apiKey
-                : undefined;
+        const headerKeys = Object.keys(request.headers).map(key => key.toLowerCase());
+        if (headerKeys.includes('x-api-key')) {
+            return request.headers['x-api-key'];
+        }
+        if (headerKeys.includes('apikey')) {
+            return request.headers['apikey'];
+        }
+        if (typeof request.query.apikey === 'string') {
+            return request.query.apikey;
+        }
+        return undefined;
     }
     async validateApiKey(apiKey) {
         const keyMetadata = await this.apiKeyManager.get(apiKey);
@@ -46,7 +56,7 @@ let FirebaseApiKeyAuthStrategy = class FirebaseApiKeyAuthStrategy extends strate
             this.logger.error('Invalid API key', 'FirebaseApiKeyAuthStrategy', {
                 keyId: this.maskApiKey(apiKey)
             });
-            throw customError_1.CustomError.create('Authenctication failed', 403, {
+            throw customError_1.CustomError.create('Authenctication failed', 401, {
                 reason: 'Unauthorized API key',
                 errorCode: 'API_KEY_INVALID'
             });

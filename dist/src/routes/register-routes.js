@@ -28,10 +28,20 @@ let RouteRegistrar = class RouteRegistrar {
         this.logger.debug(`App instance received: ${app !== undefined}`, 'RouteRegistrar');
         this.logger.debug(`StrategyFactory instance received: ${strategyFactory !== undefined}`, 'RouteRegistrar');
         app.locals.strategyFactory = strategyFactory;
+        this.logger.debug('Storing factory in app.locals', 'RouteRegistrar', {
+            factoryType: typeof strategyFactory,
+            hasGetStrategy: typeof strategyFactory.getStrategy === 'function',
+            method: Object.getOwnPropertyNames(Object.getPrototypeOf(strategyFactory))
+        });
         const originalAuth = global.expressAuthentication;
         global.expressAuthentication = (request, securityName, scopes) => {
-            const factory = app.locals.strategyFactory = strategyFactory;
-            return (0, tsoaAuth_1.expressAuthentication)(request, securityName, scopes, factory);
+            const factory = app.locals.strategyFactory;
+            this.logger.debug('Factory from app.locals', 'expressAuthentication', {
+                hasFactory: !!factory,
+                factoryType: typeof factory,
+                hasGetStrategy: typeof factory.getStrategy === 'function'
+            });
+            return (0, tsoaAuth_1.expressAuthentication)(request, securityName, scopes);
         };
         try {
             this.logger.debug('Calling Register Route', 'RouteRegistrar');

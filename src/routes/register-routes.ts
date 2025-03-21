@@ -20,6 +20,16 @@ export class RouteRegistrar implements IRouteRegistrar {
         // Store strategy in app locals
         app.locals.strategyFactory = strategyFactory;
 
+        this.logger.debug(
+            'Storing factory in app.locals',
+            'RouteRegistrar',
+            {
+                factoryType: typeof strategyFactory,
+                hasGetStrategy: typeof strategyFactory.getStrategy === 'function',
+                method: Object.getOwnPropertyNames(Object.getPrototypeOf(strategyFactory))
+            }
+        )
+
         // Temporary overide of authentication handler
         const originalAuth = (global as any).expressAuthentication;
 
@@ -28,12 +38,23 @@ export class RouteRegistrar implements IRouteRegistrar {
             securityName: string,
             scopes: string[]
         ) => {
-            const factory = app.locals.strategyFactory = strategyFactory;
+            const factory = app.locals.strategyFactory;
+
+            this.logger.debug(
+                'Factory from app.locals',
+                'expressAuthentication',
+                {
+                    hasFactory: !!factory,
+                    factoryType: typeof factory,
+                    hasGetStrategy: typeof factory.getStrategy === 'function'
+                }
+            )
+
             return expressAuthentication(
                 request, 
                 securityName, 
                 scopes, 
-                factory
+                //factory
             );
         }; 
 

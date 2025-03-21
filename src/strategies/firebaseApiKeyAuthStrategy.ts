@@ -28,6 +28,16 @@ export class FirebaseApiKeyAuthStrategy extends BaseAuthStrategy {
         scopes: string[] = []
     ): Promise<AuthenticatedUser> {
         //Improved API key extraction
+
+        this.logger.info(
+            'Authentication attempt',
+            'ApiKeyAuth',
+            {
+                headers: request.headers,
+                query: request.query
+            }
+        )
+
         const apikey = this.extractApiKey(request);
 
         if(!apikey) {
@@ -57,11 +67,17 @@ export class FirebaseApiKeyAuthStrategy extends BaseAuthStrategy {
     }
 
     private extractApiKey(request: express.Request): string | undefined {
-        return  typeof request.headers['x-api-key'] === 'string' 
-            ? request.headers['x-api-key']
-            : typeof request.query.apiKey === 'string'
-            ? request.query.apiKey
-            : undefined;
+        const headerKeys = Object.keys(request.headers).map(key => key.toLowerCase());
+        if (headerKeys.includes('x-api-key')) {
+            return request.headers['x-api-key'] as string;
+        }
+        if (headerKeys.includes('apikey')) {
+            return request.headers['apikey'] as string;
+        }
+        if (typeof request.query.apikey === 'string') {
+            return request.query.apikey;
+        }
+        return undefined;
     }
 
     private async validateApiKey(apiKey: string): Promise<ApiKeyMetadata> {
@@ -75,7 +91,7 @@ export class FirebaseApiKeyAuthStrategy extends BaseAuthStrategy {
             });
             throw CustomError.create(
                 'Authenctication failed',
-                403,
+                401,
                 { 
                     reason: 'Unauthorized API key',
                     errorCode: 'API_KEY_INVALID'
